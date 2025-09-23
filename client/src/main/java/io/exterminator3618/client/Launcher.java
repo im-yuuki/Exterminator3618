@@ -1,8 +1,7 @@
-package io.exterminator3618.client.desktop;
+package io.exterminator3618.client;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import io.exterminator3618.client.core.GameClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class Launcher {
         cfg.setWindowIcon("icon.png", "icon32.png", "icon64.png", "icon128.png");
         //
         log.info("Starting game client");
-        new Lwjgl3Application(new GameClient(), cfg);
+        new Lwjgl3Application(new Game(), cfg);
     }
 
 }

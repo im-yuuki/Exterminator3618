@@ -1,4 +1,4 @@
-package io.exterminator3618.client.core;
+package io.exterminator3618.client;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GameClient extends ApplicationAdapter {
+public class Game extends ApplicationAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(GameClient.class);
+    private static final Logger log = LoggerFactory.getLogger(Game.class);
 
 	@Override
     public void render() {
