@@ -3,11 +3,11 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                [%d{HH:mm:ss dd/MM/yyyy}] %highlight(%-5level) %cyan(%-40logger{40}) - %msg%n
+                [%d{HH:mm:ss dd/MM/yyyy}] %highlight(%-5level) %cyan(%-40logger{40}): %msg%n
             </pattern>
         </encoder>
     </appender>
-    <logger name="io.exterminator3618.client" level="debug"/>
+    <logger name="io.exterminator3618.client" level="trace"/>
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

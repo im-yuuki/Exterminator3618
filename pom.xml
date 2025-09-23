@@ -7,7 +7,7 @@
     <name>Exterminator3618</name>
     <groupId>io.exterminator3618</groupId>
     <artifactId>common</artifactId>
-    <version>1.0.0-mainline</version>
+    <version>mainline</version>
     <packaging>pom</packaging>
 
     <properties>

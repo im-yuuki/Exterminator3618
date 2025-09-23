@@ -4,16 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Exterminator3618-Client</name>
-    <artifactId>client</artifactId>
-    <version>0.1.0-dev</version>
-
     <parent>
         <groupId>io.exterminator3618</groupId>
         <artifactId>common</artifactId>
-        <version>1.0.0-mainline</version>
+        <version>mainline</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <name>Exterminator3618-Client</name>
+    <artifactId>client</artifactId>
+    <version>0.1.0-dev</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -22,9 +23,34 @@
     </properties>
 
     <dependencies>
+        <!-- inherit from parent -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx -->
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx</artifactId>
+            <version>1.13.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-backend-lwjgl3 -->
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-backend-lwjgl3</artifactId>
+            <version>1.13.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-platform -->
+        <dependency>
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-platform</artifactId>
+            <version>1.13.5</version>
+            <classifier>natives-desktop</classifier>
         </dependency>
     </dependencies>
 
