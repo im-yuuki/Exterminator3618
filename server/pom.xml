@@ -5,15 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Exterminator3618-Server</name>
+    <groupId>io.exterminator3618</groupId>
     <artifactId>server</artifactId>
     <version>0.1.0-dev</version>
-
-    <parent>
-        <groupId>io.exterminator3618</groupId>
-        <artifactId>common</artifactId>
-        <version>1.0.0-mainline</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
