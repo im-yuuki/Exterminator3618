@@ -29,19 +29,19 @@ public class Constants {
     /**
      * 16x16 window icon path.
      */
-    public static final String ICON_16_PATH = "icon.png";
+    public static final String ICON_16_PATH = "icons/logo.png";
     /**
      * 32x32 window icon path.
      */
-    public static final String ICON_32_PATH = "icon32.png";
+    public static final String ICON_32_PATH = "icons/logo32.png";
     /**
      * 64x64 window icon path.
      */
-    public static final String ICON_64_PATH = "icon64.png";
+    public static final String ICON_64_PATH = "icons/logo64.png";
     /**
      * 128x128 window icon path.
      */
-    public static final String ICON_128_PATH = "icon128.png";
+    public static final String ICON_128_PATH = "icons/logo128.png";
 
     // Ball defaults
     /**

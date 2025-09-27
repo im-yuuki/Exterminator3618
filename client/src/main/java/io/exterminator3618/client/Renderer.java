@@ -69,7 +69,7 @@ public class Renderer {
     public void draw(GameObject obj) {
         Texture texture = getTexture(obj.getFilepath());
         batch.draw(texture, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
-        log.trace("Drew object '{}' at ({}, {}) with size {}x{}", obj.getFilepath(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
+        // log.trace("Drew object '{}' at ({}, {}) with size {}x{}", obj.getFilepath(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
     }
 
     /**
