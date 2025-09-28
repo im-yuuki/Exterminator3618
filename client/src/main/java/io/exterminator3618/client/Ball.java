@@ -20,12 +20,12 @@ public class Ball extends MovableObject {
      * @param y        initial Y position
      * @param width    width in pixels
      * @param height   height in pixels
-     * @param filepath texture resource path
+     * @param regionName texture region name in the atlas
      * @param speed    initial speed
      * @param angle    angle in degrees
      */
-    public Ball(int x, int y, int width, int height, String filepath, double speed, double angle) {
-        super(x, y, width, height, filepath);
+    public Ball(int x, int y, int width, int height, String regionName, double speed, double angle) {
+        super(x, y, width, height, regionName);
         this.speed = speed;
         this.angle = angle;
         updateVelocity();

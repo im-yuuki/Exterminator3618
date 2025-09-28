@@ -17,15 +17,15 @@ public class Constants {
     /**
      * Default ball width in pixels.
      */
-    public static final int BALL_WIDTH = 64;
+    public static final int BALL_WIDTH = 32;
     /**
      * Default ball height in pixels.
      */
-    public static final int BALL_HEIGHT = 64;
+    public static final int BALL_HEIGHT = 32;
     /**
      * Path to the ball texture.
      */
-    public static final String BALL_IMAGE_PATH = "ball.png";
+    public static final String BALL_REGION_NAME = "big_red_ball";
     /**
      * Default ball speed.
      */
@@ -41,4 +41,9 @@ public class Constants {
     public static final String TEST_LONG_MUSIC_2 = "sound/test_bgr2.wav";
     public static final String BACKGROUND_MUSIC = "sound/test_bgr.mp3";
     public static final String BUFF_SOUND = "sound/buff_sound.mp3";
+
+    /**
+     * Path to the texture atlas file.
+     */
+    public static final String ATLAS_PATH = "assets/textures.atlas";
 }

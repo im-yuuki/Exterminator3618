@@ -14,6 +14,7 @@ import static io.exterminator3618.client.Constants.*;
  */
 public class Game extends ApplicationAdapter {
     private static final Logger log = LoggerFactory.getLogger(Game.class);
+    private Assets assets;
     private Renderer renderer;
     private Ball ball;
     private SoundManager soundManager;
@@ -24,10 +25,12 @@ public class Game extends ApplicationAdapter {
     @Override
     public void create() {
         log.info("Game created");
+        assets = new Assets();
+        Assets.load();
         renderer = new Renderer();
         soundManager = new SoundManager();
         
-        // Phát nhạc nền
+        // Play background music
         soundManager.play(BACKGROUND_MUSIC, true);
         log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
         soundManager.play(TEST_LONG_MUSIC_2, true);
@@ -46,13 +49,14 @@ public class Game extends ApplicationAdapter {
         //         Thread.currentThread().interrupt();
         //     }
         // }).start();
-        
+
+        // Testing: create a ball in the center of the window
         ball = new Ball(
                 WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
                 WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
                 BALL_WIDTH,
                 BALL_HEIGHT,
-                BALL_IMAGE_PATH,
+                BALL_REGION_NAME,
                 BALL_SPEED,
                 45
         );
@@ -82,6 +86,7 @@ public class Game extends ApplicationAdapter {
      */
     @Override
     public void dispose() {
+        Assets.dispose();
         renderer.dispose();
         soundManager.dispose();
         log.info("Game disposed");
