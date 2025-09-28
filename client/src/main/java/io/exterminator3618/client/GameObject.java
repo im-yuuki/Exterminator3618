@@ -7,9 +7,9 @@ package io.exterminator3618.client;
  */
 public abstract class GameObject {
     /**
-     * Path to the texture resource on the classpath (e.g. assets in resources).
+     * Name of the texture region in the atlas.
      */
-    private final String filepath;
+    private final String regionName;
     /**
      * X and Y coordinates in screen pixels, measured from the bottom-left.
      */
@@ -26,14 +26,14 @@ public abstract class GameObject {
      * @param y        initial Y position in pixels
      * @param width    width in pixels
      * @param height   height in pixels
-     * @param filepath path to the texture resource (relative to the assets root)
+     * @param regionName name of the texture region in the atlas
      */
-    public GameObject(int x, int y, int width, int height, String filepath) {
+    public GameObject(int x, int y, int width, int height, String regionName) {
+        this.regionName = regionName;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.filepath = filepath;
     }
 
     /**
@@ -94,9 +94,9 @@ public abstract class GameObject {
     public abstract void update(float deltaTime);
 
     /**
-     * @return the path to the texture file used for rendering
+     * @return name of the texture region in the atlas
      */
-    public String getFilepath() {
-        return filepath;
+    public String getRegionName(){
+        return regionName;
     }
 }

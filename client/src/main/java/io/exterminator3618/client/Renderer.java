@@ -3,6 +3,7 @@ package io.exterminator3618.client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +20,6 @@ public class Renderer {
      * Underlying batch used for 2D rendering.
      */
     private final SpriteBatch batch;
-    /**
-     * Simple in-memory cache: texture path -> Texture. Disposed on {@link #dispose()}.
-     */
-    private final Map<String, Texture> textureCache = new HashMap<>();
 
     /**
      * Creates a renderer and its SpriteBatch.
@@ -46,29 +43,17 @@ public class Renderer {
     }
 
     /**
-     * Returns a cached texture for the provided path, loading it if necessary.
-     *
-     * @param path texture path
-     * @return Texture instance
-     */
-    private Texture getTexture(String path) {
-        Texture tex = textureCache.get(path);
-        if (tex == null) {
-            tex = new Texture(Gdx.files.internal(path));
-            textureCache.put(path, tex);
-            log.info("Loaded texture: {} ({}x{})", path, tex.getWidth(), tex.getHeight());
-        }
-        return tex;
-    }
-
-    /**
-     * Draws a GameObject using its texture path and current bounds.
+     * Draws a GameObject using its region in TextureAtlas and current bounds.
      *
      * @param obj object to draw
      */
     public void draw(GameObject obj) {
-        Texture texture = getTexture(obj.getFilepath());
-        batch.draw(texture, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
+        String name = obj.getRegionName();
+        TextureRegion region = Assets.getRegion(name);
+        if (region == null) {
+            return;
+        }
+        batch.draw(region, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
         // log.trace("Drew object '{}' at ({}, {}) with size {}x{}", obj.getFilepath(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
     }
 
@@ -77,10 +62,6 @@ public class Renderer {
      * Should be called when the application shuts down.
      */
     public void dispose() {
-        for (Texture t : textureCache.values()) {
-            t.dispose();
-        }
-        textureCache.clear();
         batch.dispose();
         log.info("Disposed of renderer resources");
     }
