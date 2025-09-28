@@ -16,6 +16,7 @@ public class Game extends ApplicationAdapter {
     private static final Logger log = LoggerFactory.getLogger(Game.class);
     private Renderer renderer;
     private Ball ball;
+    private SoundManager soundManager;
 
     /**
      * Initializes rendering and creates initial game objects.
@@ -24,6 +25,28 @@ public class Game extends ApplicationAdapter {
     public void create() {
         log.info("Game created");
         renderer = new Renderer();
+        soundManager = new SoundManager();
+        
+        // Phát nhạc nền
+        soundManager.play(BACKGROUND_MUSIC, true);
+        log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
+        soundManager.play(TEST_LONG_MUSIC_2, true);
+        log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
+
+        //soundManager.play(BUFF_SOUND);
+        // Phát BUFF_SOUND sau 5 giây
+        // new Thread(() -> {
+        //     try {
+        //         Thread.sleep(5000);
+        //         soundManager.play(BUFF_SOUND);
+        //         Thread.sleep(2000);
+        //         soundManager.play(BUFF_SOUND);
+        //         log.info("Đã phát BUFF_SOUND sau 5 giây");
+        //     } catch (InterruptedException e) {
+        //         Thread.currentThread().interrupt();
+        //     }
+        // }).start();
+        
         ball = new Ball(
                 WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
                 WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
@@ -44,6 +67,7 @@ public class Game extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
         ball.update(deltaTime);
 
         renderer.begin();
@@ -51,12 +75,15 @@ public class Game extends ApplicationAdapter {
         renderer.end();
     }
 
+
+
     /**
      * Releases resources and other disposable assets.
      */
     @Override
     public void dispose() {
         renderer.dispose();
+        soundManager.dispose();
         log.info("Game disposed");
     }
 }

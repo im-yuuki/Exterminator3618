@@ -34,4 +34,11 @@ public class Constants {
      * Friction factor applied each frame to velocity (0..1).
      */
     public static final double FRICTION = 0.98;
+
+    /**
+     * Audio file paths.
+     */
+    public static final String TEST_LONG_MUSIC_2 = "sound/test_bgr2.wav";
+    public static final String BACKGROUND_MUSIC = "sound/test_bgr.mp3";
+    public static final String BUFF_SOUND = "sound/buff_sound.mp3";
 }
