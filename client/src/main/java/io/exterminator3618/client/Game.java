@@ -28,13 +28,13 @@ public class Game extends ApplicationAdapter {
         assets = new Assets();
         Assets.load();
         renderer = new Renderer();
-        soundManager = new SoundManager();
-        
-        // Play background music
-        soundManager.play(BACKGROUND_MUSIC, true);
-        log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
-        soundManager.play(TEST_LONG_MUSIC_2, true);
-        log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
+        // soundManager = new SoundManager();
+        //
+        // // Play background music
+        // soundManager.play(BACKGROUND_MUSIC, true);
+        // log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
+        // soundManager.play(TEST_LONG_MUSIC_2, true);
+        // log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
 
         //soundManager.play(BUFF_SOUND);
         // Phát BUFF_SOUND sau 5 giây
@@ -56,9 +56,9 @@ public class Game extends ApplicationAdapter {
                 WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
                 BALL_WIDTH,
                 BALL_HEIGHT,
-                BALL_REGION_NAME,
+                BALL_REGION_NAME, //object name
                 BALL_SPEED,
-                45
+                67
         );
     }
 
@@ -68,12 +68,16 @@ public class Game extends ApplicationAdapter {
     @Override
     public void render() {
         float deltaTime = Gdx.graphics.getDeltaTime();
+        
+        // Clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
+        // Update game objects
         ball.update(deltaTime);
+        //log.info("ball velocity", ball.getVelocityX(), ball.getVelocityY()); đéo cần nữa
 
+        // Render everything
         renderer.begin();
         renderer.draw(ball);
         renderer.end();
@@ -88,7 +92,7 @@ public class Game extends ApplicationAdapter {
     public void dispose() {
         Assets.dispose();
         renderer.dispose();
-        soundManager.dispose();
+        //soundManager.dispose();
         log.info("Game disposed");
     }
 }

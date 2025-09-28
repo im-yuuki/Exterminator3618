@@ -25,15 +25,11 @@ public class Constants {
     /**
      * Path to the ball texture.
      */
-    public static final String BALL_REGION_NAME = "big_red_ball";
+    public static final String BALL_REGION_NAME = "green_ball";
     /**
      * Default ball speed.
      */
-    public static final double BALL_SPEED = 500.0;
-    /**
-     * Friction factor applied each frame to velocity (0..1).
-     */
-    public static final double FRICTION = 0.98;
+    public static final double BALL_SPEED = 1000.0;
 
     /**
      * Audio file paths.
