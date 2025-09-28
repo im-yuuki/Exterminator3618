@@ -25,8 +25,8 @@
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>github-packages-libgdx-packr</id>
+            <url>https://maven.pkg.github.com/libgdx/packr</url>
         </repository>
     </repositories>
 
