@@ -7,30 +7,20 @@ import org.slf4j.LoggerFactory;
 
 import static io.exterminator3618.client.Constants.*;
 
-/**
- * Desktop entry point for the Exterminator3618 client using LWJGL3 backend.
- * Configures the window and starts the LibGDX application.
- */
 public class Launcher {
 
     private static final Logger log = LoggerFactory.getLogger(Launcher.class);
 
-    /**
-     * Application main method.
-     *
-     * @param args command line arguments
-     */
     public static void main(String[] args) {
-        // Configure application
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(WINDOW_TITLE);
         cfg.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-        cfg.useVsync(VSYNC_ENABLED);
-        cfg.setIdleFPS(IDLE_FPS);
-        cfg.setWindowIcon(ICON_16_PATH, ICON_32_PATH, ICON_64_PATH, ICON_128_PATH);
-
-        // Start application
+        cfg.useVsync(true);
+        cfg.setIdleFPS(10);
+        cfg.setWindowIcon("icons/logo.png", "icons/logo32.png", "icons/logo64.png", "icons/logo128.png");
+        //
         log.info("Starting game client");
         new Lwjgl3Application(new Game(), cfg);
     }
+
 }
