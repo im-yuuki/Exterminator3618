@@ -167,6 +167,7 @@ public class Ball extends MovableObject {
                  ballTop <= brickBottom || ballBottom >= brickTop);
     }
 
+
     // /**
     //  * check collision.
     //  * @param paddle paddle to test
@@ -262,6 +263,7 @@ public class Ball extends MovableObject {
         }
         return false;
     }
+
 
     /**
      * Handles collision with a brick by reversing appropriate velocity component.
