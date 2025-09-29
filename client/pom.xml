@@ -115,6 +115,7 @@
             <groupId>com.badlogicgames.packr</groupId>
             <artifactId>packr-all</artifactId>
             <version>3.0.0</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
