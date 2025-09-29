@@ -3,6 +3,7 @@ package io.exterminator3618.client;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer; //SAU NÀY XÓA ĐI, GIỜ ADD ĐỂ TEST I/O THÔI
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,11 @@ public class Game extends ApplicationAdapter {
     private SoundManager soundManager;
     private List<Brick> bricks;
 
+    //test inpút
+    float circleX = 200;
+    float circleY = 100;
+    ShapeRenderer shapeRenderer;
+
     /**
      * Initializes rendering and creates initial game objects.
      */
@@ -32,6 +38,10 @@ public class Game extends ApplicationAdapter {
         assets = new Assets();
         Assets.load();
         renderer = new Renderer();
+
+        //TEST INPÚT
+        shapeRenderer = new ShapeRenderer();
+
         // soundManager = new SoundManager();
         //
         // // Play background music
@@ -79,6 +89,16 @@ public class Game extends ApplicationAdapter {
         // Clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        //Test inpút
+        if (Gdx.input.isTouched()) {
+            circleX = Gdx.input.getX();
+            circleY = Gdx.graphics.getHeight() - Gdx.input.getY();
+        }
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0, 1, 0, 1);
+        shapeRenderer.circle(circleX, circleY, 75);
+        shapeRenderer.end();
 
         // Update game objects
         ball.update(deltaTime);
