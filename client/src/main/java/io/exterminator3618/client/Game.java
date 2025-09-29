@@ -3,6 +3,7 @@ package io.exterminator3618.client;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+//import com.badlogic.gdx.graphics.glutils.ShapeRenderer; //SAU NÀY XÓA ĐI, GIỜ ADD ĐỂ TEST I/O THÔI
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,13 @@ public class Game extends ApplicationAdapter {
     private Ball ball;
     private SoundManager soundManager;
     private List<Brick> bricks;
+    private Paddle paddle;
+
+    //test inpút
+    // float circleX = 200;
+    // float circleY = 100;
+    // ShapeRenderer shapeRenderer;
+
 
     /**
      * Initializes rendering and creates initial game objects.
@@ -32,6 +40,10 @@ public class Game extends ApplicationAdapter {
         assets = new Assets();
         Assets.load();
         renderer = new Renderer();
+
+        //TEST INPÚT
+        //shapeRenderer = new ShapeRenderer();
+
         // soundManager = new SoundManager();
         //
         // // Play background music
@@ -67,6 +79,16 @@ public class Game extends ApplicationAdapter {
 
         // Create some bricks for testing
         createTestBricks();
+
+        // Test Paddle
+        paddle = new Paddle(
+                PADDLE_START_X,
+                PADDLE_START_Y,
+                PADDLE_WIDTH,
+                PADDLE_HEIGHT,
+                PADDLE_REGION_NAME
+        );
+
     }
 
     /**
@@ -75,14 +97,22 @@ public class Game extends ApplicationAdapter {
     @Override
     public void render() {
         float deltaTime = Gdx.graphics.getDeltaTime();
-        
+
         // Clear screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Update game objects
-        ball.update(deltaTime);
         //log.info("ball velocity", ball.getVelocityX(), ball.getVelocityY()); đéo cần nữa
+
+        // Update game objects
+        paddle.update(deltaTime);
+        ball.update(deltaTime);
+        ball.checkPaddleCollision(paddle);
+        checkBallBrickCollisions();
+        // Thừa
+        // for (Brick brick : bricks) {
+        //     brick.update(deltaTime);
+        // }
 
         // Check for ball-brick collisions
         checkBallBrickCollisions();
@@ -95,18 +125,101 @@ public class Game extends ApplicationAdapter {
         // Render everything
         renderer.begin();
         renderer.draw(ball);
-        
+
         // Render only existing (non-destroyed) bricks
         for (Brick brick : bricks) {
             if (!brick.isDestroyed()) {
                 renderer.draw(brick);
             }
         }
-        
+
+        renderer.draw(paddle);
+
         renderer.end();
+        // Đã test xong mouse input, xóa đi cx đc
+        // shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        // shapeRenderer.setColor(0, 1, 0, 1);
+        // shapeRenderer.circle(circleX, circleY, 75);
+        // shapeRenderer.end();
     }
 
 
+
+    /**
+     * Checks for collisions between the ball and all bricks.
+     * Handles brick destruction and ball bouncing.
+     * Optimized for performance with early exits and efficient removal.
+     */
+    private void checkBallBrickCollisions() {
+        // Early exit if no bricks to check
+        if (bricks.isEmpty()) {
+            return;
+        }
+
+        // Use iterator for safe removal during iteration
+        var iterator = bricks.iterator();
+        boolean collisionHandled = false;
+
+        while (iterator.hasNext() && !collisionHandled) {
+            Brick brick = iterator.next();
+
+            // Skip destroyed bricks (defensive programming)
+            if (brick.isDestroyed()) {
+                iterator.remove();
+                continue;
+            }
+
+            if (ball.collidesWith(brick)) {
+                // Handle ball collision (bounce)
+                ball.handleBrickCollision(brick);
+
+                // Damage the brick
+                boolean wasDestroyed = brick.takeHit();
+
+                if (wasDestroyed) {
+                    // Remove the destroyed brick immediately
+                    iterator.remove();
+                    log.info("Brick destroyed! Remaining bricks: {}", bricks.size());
+                } else {
+                    // Brick still has hit points remaining
+                    log.info("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
+                            brick.getType().equals("strong") ? 3 : 1);
+                }
+
+                // Only handle one collision per frame to avoid multiple hits
+                collisionHandled = true;
+            }
+        }
+    }
+
+
+    /**
+     * Creates test bricks for demonstration.
+     */
+    private void createTestBricks() {
+        bricks = new ArrayList<>();
+
+        // Create a row of normal bricks
+        for (int i = 0; i < 15; i++) {
+            Brick brick = BrickFactory.createRandomNormalBrick(
+                    i * (BRICK_WIDTH + BRICK_SPACING) + BRICK_START_X,
+                    WINDOW_HEIGHT - BRICK_START_Y
+            );
+            bricks.add(brick);
+        }
+
+        // Create a row of strong bricks
+        for (int i = 0; i < 15; i++) {
+            Brick brick = BrickFactory.createRandomStrongBrick(
+                    i * (BRICK_WIDTH + BRICK_SPACING) + BRICK_START_X,
+                    WINDOW_HEIGHT - BRICK_START_Y - BRICK_ROW_HEIGHT
+            );
+            bricks.add(brick);
+        }
+
+
+        log.info("Created {} test bricks", bricks.size());
+    }
 
     /**
      * Checks for collisions between the ball and all bricks.
