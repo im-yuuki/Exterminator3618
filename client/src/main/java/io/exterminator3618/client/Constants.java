@@ -29,7 +29,7 @@ public class Constants {
     /**
      * Default ball speed.
      */
-    public static final double BALL_SPEED = 2000.0;
+    public static final double BALL_SPEED = 1000.0;
 
     /**
      * Audio file paths.
@@ -76,4 +76,13 @@ public class Constants {
     public static final int BRICK_START_X = 100;
     public static final int BRICK_START_Y = 100;
     public static final int BRICK_ROW_HEIGHT = BRICK_HEIGHT;
+    /**
+     * Paddle dimensions and layout.
+     */
+    public static final int PADDLE_WIDTH = 150;
+    public static final int PADDLE_HEIGHT = 20;
+    public static final int PADDLE_START_X = WINDOW_WIDTH / 2 - PADDLE_WIDTH / 2;
+    public static final int PADDLE_START_Y = 100;
+    public static final String PADDLE_REGION_NAME = "red_paddle";
+    public static final int PADDLE_SPEED = 900;
 }
