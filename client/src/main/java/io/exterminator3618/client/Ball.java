@@ -135,4 +135,93 @@ public class Ball extends MovableObject {
         return Math.sqrt(velocityX * velocityX + velocityY * velocityY);
     }
 
+    /**
+     * Checks if this ball collides with a brick.
+     * Uses optimized AABB (Axis-Aligned Bounding Box) collision detection.
+     * 
+     * @param brick the brick to check collision with
+     * @return true if colliding, false otherwise
+     */
+    public boolean collidesWith(Brick brick) {
+        // Early exit if brick is destroyed
+        if (brick.isDestroyed()) {
+            return false;
+        }
+        
+        // Optimized AABB collision detection with early exits
+        int ballLeft = getX();
+        int ballRight = ballLeft + getWidth();
+        int ballTop = getY() + getHeight();
+        int ballBottom = getY();
+        
+        int brickLeft = brick.getX();
+        int brickRight = brickLeft + brick.getWidth();
+        int brickTop = brick.getY() + brick.getHeight();
+        int brickBottom = brick.getY();
+        
+        // Check for separation on each axis - if separated on any axis, no collision
+        return !(ballRight <= brickLeft || ballLeft >= brickRight || 
+                 ballTop <= brickBottom || ballBottom >= brickTop);
+    }
+
+    /**
+     * Handles collision with a brick by reversing appropriate velocity component.
+     * Determines which side of the brick was hit and bounces accordingly.
+     * 
+     * @param brick the brick that was hit
+     */
+    public void handleBrickCollision(Brick brick) {
+        // Current bounds
+        int ballLeft = getX();
+        int ballRight = ballLeft + getWidth();
+        int ballBottom = getY();
+        int ballTop = ballBottom + getHeight();
+
+        int brickLeft = brick.getX();
+        int brickRight = brickLeft + brick.getWidth();
+        int brickBottom = brick.getY();
+        int brickTop = brickBottom + brick.getHeight();
+
+        // Compute overlap depths on both axes (strictly positive because we already detected collision)
+        int overlapX = Math.min(ballRight, brickRight) - Math.max(ballLeft, brickLeft);
+        int overlapY = Math.min(ballTop, brickTop) - Math.max(ballBottom, brickBottom);
+
+        // Decide resolution axis by minimal penetration to avoid corner flipping issues
+        if (overlapX < overlapY) {
+            // Resolve along X axis
+            double ballCenterX = ballLeft + getWidth() / 2.0;
+            double brickCenterX = brickLeft + brick.getWidth() / 2.0;
+
+            if (ballCenterX < brickCenterX) {
+                // Collided with brick's left face
+                setPosition(brickLeft - getWidth(), getY());
+                velocityX = -Math.abs(velocityX);
+            } else {
+                // Collided with brick's right face
+                setPosition(brickRight, getY());
+                velocityX = Math.abs(velocityX);
+            }
+        } else {
+            // Resolve along Y axis
+            double ballCenterY = ballBottom + getHeight() / 2.0;
+            double brickCenterY = brickBottom + brick.getHeight() / 2.0;
+
+            if (ballCenterY < brickCenterY) {
+                // Collided with brick's bottom face
+                setPosition(getX(), brickBottom - getHeight());
+                velocityY = -Math.abs(velocityY);
+            } else {
+                // Collided with brick's top face
+                setPosition(getX(), brickTop);
+                velocityY = Math.abs(velocityY);
+            }
+        }
+
+        // Maintain constant speed after collision
+        normalizeVelocity();
+
+        log.info("Ball hit brick! New velocity: ({}, {})",
+            String.format("%.1f", velocityX), String.format("%.1f", velocityY));
+    }
+
 }
