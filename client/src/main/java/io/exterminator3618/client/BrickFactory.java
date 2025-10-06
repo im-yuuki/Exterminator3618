@@ -47,15 +47,6 @@ public class BrickFactory {
      * @param y position Y
      * @return StrongBrick with random color (blue or green)
      */
-    public static StrongBrick createRandomStrongBrick(int x, int y) {
-        String[] normalBricks = {
-            Constants.NORMAL_BLUE_BRICK,
-            Constants.NORMAL_GREEN_BRICK
-        };
-
-        String randomTexture = normalBricks[random.nextInt(normalBricks.length)];
-        return new StrongBrick(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, randomTexture);
-    }
 
     /**
      * Creates a strong brick with specific color.
@@ -65,11 +56,6 @@ public class BrickFactory {
      * @param color brick color
      * @return StrongBrick with specified color
      */
-    public static StrongBrick createStrongBrick(int x, int y, BrickColor color) {
-        String textureName = getNormalBrickTexture(color);
-        return new StrongBrick(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, textureName);
-    }
-
 
     /**
      * Gets the texture name for a normal brick of blue or green.
