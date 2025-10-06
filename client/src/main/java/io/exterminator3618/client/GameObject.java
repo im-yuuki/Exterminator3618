@@ -9,7 +9,7 @@ public abstract class GameObject {
     /**
      * Name of the texture region in the atlas.
      */
-    private final String regionName;
+    private String regionName;
     /**
      * X and Y coordinates in screen pixels, measured from the bottom-left.
      */
@@ -98,5 +98,10 @@ public abstract class GameObject {
      */
     public String getRegionName(){
         return regionName;
+    }
+
+    public void setRegionName(String regionName){
+        // do nothing, override in subclass if needed
+        this.regionName = regionName;
     }
 }
