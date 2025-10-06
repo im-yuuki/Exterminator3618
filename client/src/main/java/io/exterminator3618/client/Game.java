@@ -200,10 +200,10 @@ public class Game extends ApplicationAdapter {
                 if (wasDestroyed) {
                     // Remove the destroyed brick immediately
                     iterator.remove();
-                    log.info("Brick destroyed! Remaining bricks: {}", bricks.size());
+                    log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
                 } else {
                     // Brick still has hit points remaining
-                    log.info("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
+                    log.debug("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
                             brick.getType().equals("strong") ? 3 : 1);
                 }
 
