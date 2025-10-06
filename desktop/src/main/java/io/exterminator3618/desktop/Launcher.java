@@ -1,15 +1,12 @@
-package io.exterminator3618.client;
+package io.exterminator3618.desktop;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.exterminator3618.client.Exterminator3618;
 
 import static io.exterminator3618.client.Constants.*;
 
 public class Launcher {
-
-    private static final Logger log = LoggerFactory.getLogger(Launcher.class);
 
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
@@ -19,8 +16,7 @@ public class Launcher {
         cfg.setIdleFPS(10);
         cfg.setWindowIcon("icons/logo.png", "icons/logo32.png", "icons/logo64.png", "icons/logo128.png");
         //
-        log.info("Starting game client");
-        new Lwjgl3Application(new Game(), cfg);
+        new Lwjgl3Application(new Exterminator3618(), cfg);
     }
 
 }

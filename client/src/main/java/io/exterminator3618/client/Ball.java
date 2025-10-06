@@ -110,7 +110,7 @@ public class Ball extends MovableObject {
             // Log bounce event with angle and speed
             double newAngle = Math.toDegrees(Math.atan2(normalizedVy, normalizedVx));
             double newSpeed = getCurrentSpeed();
-            log.info("Ball bounced! Angle: {}°, Speed: {}, Velocity: ({}, {})", 
+            log.debug("Ball bounced! Angle: {}°, Speed: {}, Velocity: ({}, {})",
                 String.format("%.1f", newAngle), String.format("%.1f", newSpeed), 
                 String.format("%.1f", normalizedVx), String.format("%.1f", normalizedVy));
         }
