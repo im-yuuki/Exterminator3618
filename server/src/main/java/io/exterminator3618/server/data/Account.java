@@ -21,4 +21,20 @@ public class Account {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column()
+    public LocalDateTime lastLoginAt;
+
+    @Column()
+    public LocalDateTime lastPasswordChangeAt;
+
+    @Column(columnDefinition = "MEDIUMBLOB")
+    @Lob
+    private byte[] avatarImage;
+
+    @Column(nullable = false)
+    private int xp = 0;
+
+    @Column(nullable = false)
+    private boolean invisibleMode = false;
+
 }

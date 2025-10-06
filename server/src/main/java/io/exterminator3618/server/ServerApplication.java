@@ -3,8 +3,10 @@ package io.exterminator3618.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class ServerApplication extends SpringApplication {
+@SpringBootApplication
+public class ServerApplication {
 
     private static final Logger log = LoggerFactory.getLogger(ServerApplication.class);
 
