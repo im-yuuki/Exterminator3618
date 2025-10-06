@@ -29,7 +29,7 @@ public class Constants {
     /**
      * Default ball speed.
      */
-    public static final double BALL_SPEED = 2000.0;
+    public static final double BALL_SPEED = 1000.0;
 
     /**
      * Audio file paths.
@@ -86,4 +86,13 @@ public class Constants {
     public static final int PADDLE_START_Y = 100;
     public static final String PADDLE_REGION_NAME = "red_paddle";
     public static final int PADDLE_SPEED = 900;
+
+    public enum GameState {
+        MENU,
+        PLAYING,
+        PAUSED,
+        GAME_OVER,
+        VICTORY,
+        LOSE
+    }
 }

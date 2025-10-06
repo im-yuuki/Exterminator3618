@@ -2,11 +2,11 @@ package io.exterminator3618.client;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 //import com.badlogic.gdx.graphics.glutils.ShapeRenderer; //SAU NÀY XÓA ĐI, GIỜ ADD ĐỂ TEST I/O THÔI
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,18 +18,13 @@ import static io.exterminator3618.client.Constants.*;
  */
 public class Game extends ApplicationAdapter {
     private static final Logger log = LoggerFactory.getLogger(Game.class);
+    private GameState state;
     private Assets assets;
     private Renderer renderer;
     private Ball ball;
     private SoundManager soundManager;
     private List<Brick> bricks;
     private Paddle paddle;
-
-    //test inpút
-    // float circleX = 200;
-    // float circleY = 100;
-    // ShapeRenderer shapeRenderer;
-
 
     /**
      * Initializes rendering and creates initial game objects.
@@ -40,33 +35,12 @@ public class Game extends ApplicationAdapter {
         assets = new Assets();
         Assets.load();
         renderer = new Renderer();
+        state = GameState.MENU;
+    }
+    private static final String[] BRICK_COLORS = {"red", "green", "blue", "yellow", "purple"};
 
-        //TEST INPÚT
-        //shapeRenderer = new ShapeRenderer();
-
-        // soundManager = new SoundManager();
-        //
-        // // Play background music
-        // soundManager.play(BACKGROUND_MUSIC, true);
-        // log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
-        // soundManager.play(TEST_LONG_MUSIC_2, true);
-        // log.info("Đang phát nhạc nền: {}", BACKGROUND_MUSIC);
-
-        //soundManager.play(BUFF_SOUND);
-        // Phát BUFF_SOUND sau 5 giây
-        // new Thread(() -> {
-        //     try {
-        //         Thread.sleep(5000);
-        //         soundManager.play(BUFF_SOUND);
-        //         Thread.sleep(2000);
-        //         soundManager.play(BUFF_SOUND);
-        //         log.info("Đã phát BUFF_SOUND sau 5 giây");
-        //     } catch (InterruptedException e) {
-        //         Thread.currentThread().interrupt();
-        //     }
-        // }).start();
-
-        // Testing: create a ball in the center of the window
+    public void loadLevel () {
+        // Initialize ball
         ball = new Ball(
                 WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
                 WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
@@ -77,10 +51,7 @@ public class Game extends ApplicationAdapter {
                 67
         );
 
-        // Create some bricks for testing
-        createTestBricks();
-
-        // Test Paddle
+        // Initialize paddle
         paddle = new Paddle(
                 PADDLE_START_X,
                 PADDLE_START_Y,
@@ -89,6 +60,22 @@ public class Game extends ApplicationAdapter {
                 PADDLE_REGION_NAME
         );
 
+        // Initialize random bricks for testing
+        bricks = new ArrayList<>();
+        int rows = 5;
+        int cols = 17;
+        int startX = 50;
+        int startY = WINDOW_HEIGHT - 100;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                int x = startX + col * (BRICK_WIDTH + BRICK_SPACING);
+                int y = startY - row * (BRICK_HEIGHT + BRICK_SPACING);
+                String color = BRICK_COLORS[row % BRICK_COLORS.length];
+                Brick brick = new Brick(x, y, BRICK_WIDTH, BRICK_HEIGHT,
+                        "normal_" + color + "_brick", 3, "normal");
+                bricks.add(brick);
+            }
+        }
     }
 
     /**
@@ -99,51 +86,85 @@ public class Game extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         // Clear screen
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        //Gdx.gl.glClearColor(0, 0, 0, 1);
+        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //log.info("ball velocity", ball.getVelocityX(), ball.getVelocityY()); đéo cần nữa
+        switch (state) {
+            case MENU -> {
+                // Render menu screen
+                Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                renderer.begin();
+                // Draw text here
+                renderer.drawText("Day la Main Screen", 300, 300);
+                renderer.end();
 
-        // Update game objects
-        paddle.update(deltaTime);
-        ball.update(deltaTime);
-        ball.checkPaddleCollision(paddle);
-        checkBallBrickCollisions();
-        // Thừa
-        // for (Brick brick : bricks) {
-        //     brick.update(deltaTime);
-        // }
+                // Transition to PLAYING state on input
+                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                    loadLevel();
+                    state = GameState.PLAYING;
+                }
+            }
+            case PLAYING -> {
+                // Update game logic
+                Gdx.gl.glClearColor(0, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Check for ball-brick collisions
-        checkBallBrickCollisions();
+                ball.update(deltaTime);
+                paddle.update(deltaTime);
+                for (Brick brick : bricks) {
+                    brick.update(deltaTime);
+                }
+                checkBallBrickCollisions();
+                ball.checkPaddleCollision(paddle);
+                // Render game objects
+                renderer.begin();
+                renderer.draw(ball);
+                renderer.draw(paddle);
+                for (Brick brick : bricks) {
+                    renderer.draw(brick);
+                }
+                renderer.end();
+                // Pause game on input
+                if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+                    state = GameState.PAUSED;
+                }
+            }
+            case PAUSED -> {
+                // Render paused screen overlay
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                Gdx.gl.glClearColor(0, 0, 0, 0.5f);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                renderer.begin();
+                // Draw paused text here
+                renderer.drawText("Day la Pause Screen", 250, 300);
+                renderer.end();
+                Gdx.gl.glDisable(GL20.GL_BLEND);
 
-        // Update bricks
-        for (Brick brick : bricks) {
-            brick.update(deltaTime);
-        }
+                // Resume game on input (e.g., P key)
+                if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+                    state = GameState.PLAYING;
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                    state = GameState.GAME_OVER;
+                }
+            }
+            case GAME_OVER -> {
+                // Render game over screen
+                Gdx.gl.glClearColor(0.2f, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                renderer.begin();
+                // Draw game over text here
+                renderer.drawText("Day la Game Over Screen", 250, 300);
+                renderer.end();
 
-        // Render everything
-        renderer.begin();
-        renderer.draw(ball);
-
-        // Render only existing (non-destroyed) bricks
-        for (Brick brick : bricks) {
-            if (!brick.isDestroyed()) {
-                renderer.draw(brick);
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                    state = GameState.MENU;
+                    disposeLevel();
+                }
             }
         }
-
-        renderer.draw(paddle);
-
-        renderer.end();
-        // Đã test xong mouse input, xóa đi cx đc
-        // shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        // shapeRenderer.setColor(0, 1, 0, 1);
-        // shapeRenderer.circle(circleX, circleY, 75);
-        // shapeRenderer.end();
     }
-
-
 
     /**
      * Checks for collisions between the ball and all bricks.
@@ -179,10 +200,10 @@ public class Game extends ApplicationAdapter {
                 if (wasDestroyed) {
                     // Remove the destroyed brick immediately
                     iterator.remove();
-                    log.info("Brick destroyed! Remaining bricks: {}", bricks.size());
+                    log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
                 } else {
                     // Brick still has hit points remaining
-                    log.info("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
+                    log.debug("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
                             brick.getType().equals("strong") ? 3 : 1);
                 }
 
@@ -192,36 +213,12 @@ public class Game extends ApplicationAdapter {
         }
     }
 
-
-    /**
-     * Creates test bricks for demonstration.
-     */
-    private void createTestBricks() {
-        bricks = new ArrayList<>();
-
-        // Create a row of normal bricks
-        for (int i = 0; i < 15; i++) {
-            Brick brick = BrickFactory.createRandomNormalBrick(
-                    i * (BRICK_WIDTH + BRICK_SPACING) + BRICK_START_X,
-                    WINDOW_HEIGHT - BRICK_START_Y
-            );
-            bricks.add(brick);
-        }
-
-        // Create a row of strong bricks
-        for (int i = 0; i < 15; i++) {
-            Brick brick = BrickFactory.createRandomStrongBrick(
-                    i * (BRICK_WIDTH + BRICK_SPACING) + BRICK_START_X,
-                    WINDOW_HEIGHT - BRICK_START_Y - BRICK_ROW_HEIGHT
-            );
-            bricks.add(brick);
-        }
-
-
-        log.info("Created {} test bricks", bricks.size());
+    public void disposeLevel () {
+        bricks.clear();
+        ball = null;
+        paddle = null;
+        log.info("Level disposed");
     }
-
-
     /**
      * Releases resources and other disposable assets.
      */

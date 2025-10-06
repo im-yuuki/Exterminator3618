@@ -113,7 +113,7 @@ public class Ball extends MovableObject {
             // Log bounce event with angle and speed
             double newAngle = Math.toDegrees(Math.atan2(normalizedVy, normalizedVx));
             double newSpeed = getCurrentSpeed();
-            log.info("Ball bounced! Angle: {}°, Speed: {}, Velocity: ({}, {})", 
+            log.debug("Ball bounced! Angle: {}°, Speed: {}, Velocity: ({}, {})",
                 String.format("%.1f", newAngle), String.format("%.1f", newSpeed), 
                 String.format("%.1f", normalizedVx), String.format("%.1f", normalizedVy));
         }
@@ -223,7 +223,7 @@ public class Ball extends MovableObject {
             normalizeVelocity();
 
             double newAngle = Math.toDegrees(Math.atan2(velocityY, velocityX));
-            log.info("Ball hit paddle! Offset: {}, Angle: {}°, Velocity: ({}, {})",
+            log.debug("Ball hit paddle! Offset: {}, Angle: {}°, Velocity: ({}, {})",
                 String.format("%.2f", offset), String.format("%.1f", newAngle),
                 String.format("%.1f", velocityX), String.format("%.1f", velocityY));
         }
@@ -321,7 +321,7 @@ public class Ball extends MovableObject {
         // Maintain constant speed after collision
         normalizeVelocity();
 
-        log.info("Ball hit brick! New velocity: ({}, {})",
+        log.debug("Ball hit brick! New velocity: ({}, {})",
             String.format("%.1f", velocityX), String.format("%.1f", velocityY));
     }
 

@@ -38,11 +38,34 @@ public class Assets {
 
     /**
      * Retrieves a texture region by name from the loaded atlas.
+     * Supports optional trailing index suffix (e.g., "normal_blue_brick_2").
+     * If a suffix is present, uses TextureAtlas.findRegion(baseName, index).
      *
-     * @param name name of the texture region
+     * @param name name of the texture region (optionally ending with _<index>)
      * @return TextureRegion instance, or null if not found
      */
     public static TextureRegion getRegion(String name) {
+        if (atlas == null || name == null) {
+            return null;
+        }
+
+        // Parse trailing _<number> to support multi-index regions in the atlas
+        int underscore = name.lastIndexOf('_');
+        if (underscore > 0 && underscore < name.length() - 1) {
+            String suffix = name.substring(underscore + 1);
+            try {
+                int index = Integer.parseInt(suffix);
+                String base = name.substring(0, underscore);
+                TextureRegion region = atlas.findRegion(base, index);
+                if (region != null) {
+                    return region;
+                }
+                // Fallback to full name if not found by index
+            } catch (NumberFormatException ignored) {
+                // Not an indexed name; fall through
+            }
+        }
+
         return atlas.findRegion(name);
     }
 

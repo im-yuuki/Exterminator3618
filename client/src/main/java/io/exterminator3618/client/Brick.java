@@ -16,6 +16,11 @@ public class Brick extends GameObject {
     protected String type;
 
     /**
+     * Base region name (without index) for texture switching
+     */
+    protected String baseRegionName;
+
+    /**
      * Creates a new brick.
      *
      * @param x          initial X position in pixels
@@ -30,6 +35,8 @@ public class Brick extends GameObject {
         super(x, y, width, height, regionName);
         this.hitPoints = hitPoints;
         this.type = type;
+        // Store base region name (without index)
+        this.baseRegionName = regionName;
     }
 
     /**
@@ -38,6 +45,15 @@ public class Brick extends GameObject {
      */
     public boolean takeHit() {
         hitPoints--;
+        if (hitPoints > 0) {
+            int state = switch (hitPoints) {
+                case 3 -> 1;
+                case 2 -> 2;
+                case 1 -> 3;
+                default -> 1;
+            };
+            setRegionName(baseRegionName + "_" + state);
+        }
         return isDestroyed();
     }
 
