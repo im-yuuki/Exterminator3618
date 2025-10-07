@@ -25,6 +25,10 @@
             <id>github-packages-libgdx-packr</id>
             <url>https://maven.pkg.github.com/libgdx/packr</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -84,6 +88,13 @@
             <artifactId>packr-all</artifactId>
             <version>3.0.0</version>
             <optional>true</optional>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.Vatuu/discord-rpc -->
+        <dependency>
+            <groupId>com.github.Vatuu</groupId>
+            <artifactId>discord-rpc</artifactId>
+            <version>1.6.2</version>
         </dependency>
     </dependencies>
 
