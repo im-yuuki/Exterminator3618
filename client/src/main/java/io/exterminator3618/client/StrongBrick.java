@@ -46,7 +46,7 @@ public class StrongBrick extends Brick {
      */
     public StrongBrick(int x, int y) {
         //this(x, y, 64, 32, "strong_brick", DEFAULT_STRONG_BRICK_HITPOINTS);
-        this(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_BLUE_BRICK, DEFAULT_STRONG_BRICK_HITPOINTS);
+        this(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_ORANGE_BRICK, DEFAULT_STRONG_BRICK_HITPOINTS);
     }
 
     /**

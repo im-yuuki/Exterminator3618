@@ -16,7 +16,7 @@ public class NormalBrick extends Brick {
      * @param regionName name of the texture region in the atlas
      */
     public NormalBrick(int x, int y, int width, int height, String regionName) {
-        super(x, y, width, height, regionName, 3, "normal");
+        super(x, y, width, height, regionName, 1, "normal");
     }
 
     /**

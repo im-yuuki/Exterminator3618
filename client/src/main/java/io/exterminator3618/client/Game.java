@@ -28,7 +28,9 @@ public class Game extends ApplicationAdapter {
     private List<Brick> bricks;
     private List<Ball> extraBalls;
     private Paddle paddle;
-
+    private int score;
+    private int lives;
+    private int currentLevel;
     /**
      * Initializes rendering and creates initial game objects.
      */
@@ -42,7 +44,9 @@ public class Game extends ApplicationAdapter {
     }
     private static final String[] BRICK_COLORS = {"red", "green", "blue", "yellow", "purple"};
 
-    public void loadLevel () {
+    public void loadLevel (int levelNumber) {
+        score = 0;
+        lives = 10;
         // Initialize ball
         ball = new Ball(
                 WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
@@ -73,16 +77,19 @@ public class Game extends ApplicationAdapter {
         int startX = 50;
         int startY = WINDOW_HEIGHT - 100;
 
+        bricks = LevelLoader.load("D:\\UET_NgocMai\\Java\\OOP_Project\\client\\target\\classes\\assets\\levels\\level" + levelNumber + ".txt");
+
+        /*
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 int x = startX + col * (BRICK_WIDTH + BRICK_SPACING);
                 int y = startY - row * (BRICK_HEIGHT + BRICK_SPACING);
 
-                //Random number for creating bricks
+                Random number for creating bricks
                 int randomNumber = random.nextInt(100);
 
                 if (randomNumber < 5) {
-                    bricks.add(new PowerUpBrick(x, y));
+                    bricks.add(new SolidBrick(x, y));
                 } else if (randomNumber < 20) { // 20% tạo MultiBallBrick
                     bricks.add(new MultiBallBrick(x, y));
                 } else if (randomNumber < 40) { // 20% cơ hội tạo StrongBrick
@@ -106,6 +113,7 @@ public class Game extends ApplicationAdapter {
                 //bricks.add(brick);
             }
         }
+        */
     }
 
     /**
@@ -131,7 +139,10 @@ public class Game extends ApplicationAdapter {
 
                 // Transition to PLAYING state on input
                 if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    loadLevel();
+                    this.currentLevel = 1;
+                    loadLevel(this.currentLevel);
+                    this.score = 0;
+                    this.lives = 10;
                     state = GameState.PLAYING;
                 }
             }
@@ -142,6 +153,18 @@ public class Game extends ApplicationAdapter {
 
                 ball.update(deltaTime);
                 paddle.update(deltaTime);
+
+                //Mạng
+                if (ball.getY() <= 0 && extraBalls.isEmpty()) {
+                    lives--; // Trừ 1 mạng
+
+                    if (lives <= 0) {
+                        state = GameState.GAME_OVER;
+                    } else {
+                        // Reset lại vị trí bóng và paddle để chơi tiếp màn hiện tại
+                        ball.resetToCenter();
+                    }
+                }
 
                 // CẬP NHẬT TẤT CẢ BÓNG PHỤ
                 for (Ball extraBall : extraBalls) {
@@ -174,6 +197,12 @@ public class Game extends ApplicationAdapter {
                 for (Brick brick : bricks) {
                     renderer.draw(brick);
                 }
+
+                //Cnay test thoi
+                renderer.setFontSize(24);
+                renderer.drawText("Score: " + score, 20, WINDOW_HEIGHT - 20);
+                renderer.drawText("Lives: " + lives, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 20);
+
                 renderer.end();
                 // Pause game on input
                 if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
@@ -232,15 +261,15 @@ public class Game extends ApplicationAdapter {
         int spawnY = y + (BRICK_HEIGHT / 2);
 
         // Tạo 3 bóng với 3 góc khác nhau
-        Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, BALL_REGION_NAME, BALL_SPEED, -45);
+        Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -45);
         ball1.setInvulnerable(INVULNERABLE_DURATION);
         extraBalls.add(ball1);
 
-        Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, BALL_REGION_NAME, BALL_SPEED, -90);
+        Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -90);
         ball2.setInvulnerable(INVULNERABLE_DURATION);
         extraBalls.add(ball2);
 
-        Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, BALL_REGION_NAME, BALL_SPEED, -135);
+        Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -135);
         ball3.setInvulnerable(INVULNERABLE_DURATION);
         extraBalls.add(ball3);
     }
@@ -304,16 +333,33 @@ public class Game extends ApplicationAdapter {
                     boolean wasDestroyed = brick.takeHit();
 
                     if (wasDestroyed) {
+                        score += 10;
                         // Nếu gạch bị phá hủy, kiểm tra xem có phải loại đặc biệt không
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
                         } else if (brick instanceof PowerUpBrick) {
                             // KÍCH HOẠT HIỆU ỨNG Ở ĐÂY
                             paddle.activateWidenPowerUp(15.0f); // 30 giây
+                        } else if (brick instanceof StrongBrick) {
+                            score += 20;
                         }
 
                         // Xóa gạch khỏi danh sách
                         brickIterator.remove();
+
+                        // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
+                        if (bricks.isEmpty()) {
+                            currentLevel++;
+                            // Giả sử bạn có 2 level, đánh số 1 và 2
+                            if (currentLevel > 2) {
+                                state = GameState.VICTORY; // Thắng cả game
+                            } else {
+                                // Tải màn chơi tiếp theo
+                                loadLevel(currentLevel);
+                            }
+                        }
+
+                        //log
                         log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
                     } else {
                         // Gạch vẫn còn máu

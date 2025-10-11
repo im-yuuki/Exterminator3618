@@ -26,6 +26,7 @@ public class Constants {
      * Path to the ball texture.
      */
     public static final String BALL_REGION_NAME = "green_ball";
+    public static final String EXTRA_BALL_REGION_NAME = "blue_ball";
     /**
      * Default ball speed.
      */
