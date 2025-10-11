@@ -26,7 +26,8 @@ public class NormalBrick extends Brick {
      * @param y          initial Y position in pixels
      */
     public NormalBrick(int x, int y) {
-        this(x, y, 64, 32, "normal_brick"); // Default brick size and texture
+        //this(x, y, 64, 32, "normal_brick"); // Default brick size and texture
+        this(x,y,Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_GREEN_BRICK);
     }
 
     /**

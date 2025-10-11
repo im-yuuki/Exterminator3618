@@ -14,7 +14,7 @@ public class Ball extends MovableObject {
      */
     private double angle;
     private int previousY;
-
+    private float invulnerabilityTimer;
     /**
      * Creates a new ball with constant speed from Constants.BALL_SPEED.
      *
@@ -50,6 +50,10 @@ public class Ball extends MovableObject {
     public void update(float deltaTime) {
         // prevY để kiểm tra nó có bị bounce 2 lần ko, chống bug
         previousY = getY();
+        // for extra balls
+        if (invulnerabilityTimer > 0) {
+            invulnerabilityTimer -= deltaTime;
+        }
         super.update(deltaTime);
         handleScreenCollision();
     }
@@ -323,6 +327,24 @@ public class Ball extends MovableObject {
 
         log.debug("Ball hit brick! New velocity: ({}, {})",
             String.format("%.1f", velocityX), String.format("%.1f", velocityY));
+    }
+
+    /**
+     * THÊM PHƯƠNG THỨC MỚI
+     * Kích hoạt trạng thái bất tử tạm thời cho bóng.
+     * @param duration Thời gian bất tử tính bằng giây.
+     */
+    public void setInvulnerable(float duration) {
+        this.invulnerabilityTimer = duration;
+    }
+
+    /**
+     * THÊM PHƯƠNG THỨC MỚI
+     * Kiểm tra xem bóng có đang trong trạng thái bất tử không.
+     * @return true nếu đang bất tử, false nếu không.
+     */
+    public boolean isInvulnerable() {
+        return invulnerabilityTimer > 0;
     }
 
 }

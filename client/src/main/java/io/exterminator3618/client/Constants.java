@@ -67,6 +67,7 @@ public class Constants {
     public static final String THICK_RED_BRICK = "thick_red_brick";
     public static final String THICK_YELLOW_BRICK = "thick_yellow_brick";
 
+    public static final String MULTIBALL_BRICK = "normal_purple_brick";
     /**
      * Brick dimensions and layout.
      */
