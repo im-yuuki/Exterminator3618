@@ -81,7 +81,9 @@ public class Game extends ApplicationAdapter {
                 //Random number for creating bricks
                 int randomNumber = random.nextInt(100);
 
-                if (randomNumber < 20) { // 20% tạo MultiBallBrick
+                if (randomNumber < 5) {
+                    bricks.add(new PowerUpBrick(x, y));
+                } else if (randomNumber < 20) { // 20% tạo MultiBallBrick
                     bricks.add(new MultiBallBrick(x, y));
                 } else if (randomNumber < 40) { // 20% cơ hội tạo StrongBrick
                     bricks.add(new StrongBrick(x, y));
@@ -305,7 +307,11 @@ public class Game extends ApplicationAdapter {
                         // Nếu gạch bị phá hủy, kiểm tra xem có phải loại đặc biệt không
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
+                        } else if (brick instanceof PowerUpBrick) {
+                            // KÍCH HOẠT HIỆU ỨNG Ở ĐÂY
+                            paddle.activateWidenPowerUp(15.0f); // 30 giây
                         }
+
                         // Xóa gạch khỏi danh sách
                         brickIterator.remove();
                         log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
