@@ -290,6 +290,11 @@ public class Game extends ApplicationAdapter {
             // Với mỗi viên gạch, kiểm tra va chạm với TẤT CẢ các quả bóng
             for (Ball currentBall : allBalls) {
                 if (currentBall.collidesWith(brick)) {
+
+                    // 0. Check xem bóng có invulnerable không
+                    if (currentBall.isInvulnerable()) {
+                        continue;
+                    }
                     // 1. Xử lý bóng nảy lại
                     currentBall.handleBrickCollision(brick);
 
@@ -310,9 +315,6 @@ public class Game extends ApplicationAdapter {
                                 brick.getType().equals("strong") ? 3 : 1);
                     }
 
-                    if (currentBall.isInvulnerable()) {
-                        continue;
-                    }
                     // 3. QUAN TRỌNG: Thoát khỏi vòng lặp kiểm tra bóng
                     // Vì viên gạch này đã được xử lý va chạm rồi.
                     // Điều này ngăn một viên gạch bị nhiều bóng phá hủy trong cùng một frame.
@@ -321,58 +323,7 @@ public class Game extends ApplicationAdapter {
             }
         }
     }
-/**
-    private void checkBallBrickCollisions() {
-        // Thoát sớm nếu không còn gạch
-        if (bricks.isEmpty()) {
-            return;
-        }
 
-        // Tạo danh sách tất cả các bóng để kiểm tra
-        List<Ball> allBalls = new ArrayList<>(extraBalls);
-        allBalls.add(ball);
-
-        // VỚI MỖI QUẢ BÓNG...
-        for (Ball currentBall : allBalls) {
-            // Bỏ qua nếu bóng đang bất tử (logic này vẫn giữ lại vì nó hữu ích)
-            if (currentBall.isInvulnerable()) {
-                continue;
-            }
-
-            // Dùng iterator cho bricks để có thể xóa an toàn
-            Iterator<Brick> brickIterator = bricks.iterator();
-            while (brickIterator.hasNext()) {
-                Brick brick = brickIterator.next();
-
-                // KIỂM TRA VA CHẠM
-                if (currentBall.collidesWith(brick)) {
-                    // 1. Xử lý bóng nảy lại
-                    currentBall.handleBrickCollision(brick);
-
-                    // 2. Gạch nhận sát thương
-                    boolean wasDestroyed = brick.takeHit();
-
-                    if (wasDestroyed) {
-                        if ("multiball".equals(brick.getType())) {
-                            spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
-                        }
-                        brickIterator.remove(); // Xóa gạch
-                        log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
-                    } else {
-                        log.debug("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
-                                brick.getType().equals("strong") ? 3 : 1);
-                    }
-
-                    // 3. QUAN TRỌNG NHẤT:
-                    // Sau khi quả bóng này đã va chạm với MỘT viên gạch,
-                    // chúng ta dừng việc xét va chạm cho quả bóng này và chuyển sang quả bóng tiếp theo.
-                    // Điều này đảm bảo mỗi quả bóng chỉ phá được 1 gạch mỗi frame.
-                    break; // Thoát khỏi vòng lặp `while` (vòng lặp gạch)
-                }
-            }
-        }
-    }
- */
     public void disposeLevel() {
         bricks.clear();
         extraBalls.clear();
