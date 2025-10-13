@@ -189,48 +189,51 @@ public class Ball extends MovableObject {
     // }
 
     /**
-     * outgoing angle based on hit position.
+     * Handle collision when ball center bottom hits paddle top.
+     * Calculates bounce angle based on hit position on paddle.
      */
     public void handlePaddleCollision(Paddle paddle) {
-        // chỉ xử lý nếu đi xuống
+        // Only process if moving downward
         if (velocityY < 0) {
-            // resolve overlap
-            int newY = paddle.getY() + paddle.getHeight();
-            setPosition(getX(), newY);
+            // Position ball so its center bottom is exactly on paddle top
+            int paddleTopY = paddle.getY() + paddle.getHeight();
+            setPosition(getX(), paddleTopY);
 
-            // set hit position to be in range [-1, 1]
+            // Calculate hit position relative to paddle center [-1, 1]
             double ballCenterX = getX() + getWidth() / 2.0;
             double paddleCenterX = paddle.getX() + paddle.getWidth() / 2.0;
             double halfWidth = paddle.getWidth() / 2.0;
             double offset = (ballCenterX - paddleCenterX) / halfWidth;
-            if (offset < -1) offset = -1;
-            if (offset > 1) offset = 1;
+            
+            // Clamp offset to valid range
+            offset = Math.max(-1.0, Math.min(1.0, offset));
 
-            // Map offset to an angle relative to vertical (straight up)
+            // Map offset to bounce angle
             // 0 => straight up, -1 => max left, 1 => max right
             double maxBounceFromVerticalDeg = 75.0; // cap to avoid too-horizontal
             double angleFromVertical = offset * maxBounceFromVerticalDeg;
 
-            // ổn định speed
+            // Calculate new velocity
             double radiansFromVertical = Math.toRadians(angleFromVertical);
             double speed = Constants.BALL_SPEED;
             double vx = speed * Math.sin(radiansFromVertical);
             double vy = speed * Math.cos(radiansFromVertical);
-            // Ensure going upwards
+            
+            // Ensure ball always goes upward
             if (vy < 0) vy = -vy;
 
             setVelocity(vx, vy);
             normalizeVelocity();
 
             double newAngle = Math.toDegrees(Math.atan2(velocityY, velocityX));
-            log.debug("Ball hit paddle! Offset: {}, Angle: {}°, Velocity: ({}, {})",
+            log.debug("Ball center bottom hit paddle top! Offset: {}, Angle: {}°, Velocity: ({}, {})",
                 String.format("%.2f", offset), String.format("%.1f", newAngle),
                 String.format("%.1f", velocityX), String.format("%.1f", velocityY));
         }
     }
 
     /**
-     * Optimized single-step swept-Y collision test against paddle top and bounce.
+     * Precise collision detection: only center bottom of ball with top of paddle.
      * Call this AFTER ball.update(deltaTime).
      * @return true if a bounce was applied
      */
@@ -238,29 +241,35 @@ public class Ball extends MovableObject {
         // Only when moving downward
         if (velocityY >= 0) return false;
 
-        // Broad-phase X overlap first
-        int padLeft = paddle.getX();
-        int padRight = padLeft + paddle.getWidth();
-        int ballLeft = getX();
-        int ballRight = ballLeft + getWidth();
-        if (ballRight <= padLeft || ballLeft >= padRight) return false;
-
-        // Swept Y: did the ball bottom cross the paddle top this frame?
-        int paddleTop = paddle.getY() + paddle.getHeight();
-        int prevBottom = previousY;
-        int currBottom = getY();
-        if (prevBottom >= paddleTop && currBottom <= paddleTop) {
+        // Get ball center bottom point
+        int ballCenterX = getX() + getWidth() / 2;
+        int ballBottomY = getY();
+        
+        // Get paddle top surface
+        int paddleTopY = paddle.getY() + paddle.getHeight();
+        int paddleLeft = paddle.getX();
+        int paddleRight = paddle.getX() + paddle.getWidth();
+        
+        // Check if ball center bottom is horizontally within paddle bounds
+        if (ballCenterX < (paddleLeft - getWidth()) || ballCenterX > (paddleRight + getWidth())) {
+            return false;
+        }
+        
+        // Check if ball center bottom has crossed or is at paddle top
+        int prevBottomY = previousY;
+        
+        // Swept collision: did the ball center bottom cross the paddle top this frame?
+        if (prevBottomY >= paddleTopY && ballBottomY <= paddleTopY) {
             handlePaddleCollision(paddle);
             return true;
         }
-
-        int ballTop = currBottom + getHeight();
-        int padBottom = paddle.getY();
-        boolean overlappingY = !(ballTop <= padBottom || currBottom >= paddleTop);
-        if (overlappingY) {
+        
+        // Also check if ball center bottom is currently touching paddle top
+        if (ballBottomY == paddleTopY) {
             handlePaddleCollision(paddle);
             return true;
         }
+        
         return false;
     }
 
