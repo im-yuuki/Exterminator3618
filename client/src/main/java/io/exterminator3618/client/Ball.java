@@ -1,14 +1,11 @@
 package io.exterminator3618.client;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A simple moving ball that derives its velocity from a constant speed and an angle.
  */
 public class Ball extends MovableObject {
-    private static final Logger log = LoggerFactory.getLogger(Ball.class);
-    
+
     /**
      * Angle in degrees.
      */
@@ -18,12 +15,12 @@ public class Ball extends MovableObject {
     /**
      * Creates a new ball with constant speed from Constants.BALL_SPEED.
      *
-     * @param x        initial X position
-     * @param y        initial Y position
-     * @param width    width in pixels
-     * @param height   height in pixels
+     * @param x          initial X position
+     * @param y          initial Y position
+     * @param width      width in pixels
+     * @param height     height in pixels
      * @param regionName texture region name in the atlas
-     * @param angle    angle in degrees
+     * @param angle      angle in degrees
      */
     public Ball(int x, int y, int width, int height, String regionName, double speed, double angle) {
         super(x, y, width, height, regionName);
@@ -51,72 +48,7 @@ public class Ball extends MovableObject {
         // prevY để kiểm tra nó có bị bounce 2 lần ko, chống bug
         previousY = getY();
         super.update(deltaTime);
-        handleScreenCollision();
-    }
-
-    /**
-     * Handles collision with screen boundaries and makes the ball bounce.
-     * Maintains constant speed after collision.
-     */
-    private void handleScreenCollision() {
-        int screenWidth = Constants.WINDOW_WIDTH;
-        int screenHeight = Constants.WINDOW_HEIGHT;
-        boolean bounced = false;
-        
-        // check đụng tường
-        if (getX() <= 0) {
-            // tường trái
-            setPosition(0, getY());
-            velocityX = Math.abs(velocityX);
-            bounced = true;
-        } else if (getX() + getWidth() >= screenWidth) {
-            // tưởng phải
-            setPosition(screenWidth - getWidth(), getY());
-            velocityX = -Math.abs(velocityX); //thêm abs cho chắc
-            bounced = true;
-        }
-        
-        // tường trên dưới
-        if (getY() <= 0) {
-            // tường dưới
-            setPosition(getX(), 0);
-            velocityY = Math.abs(velocityY);
-            bounced = true;
-        } else if (getY() + getHeight() >= screenHeight) {
-            // tường trên
-            setPosition(getX(), screenHeight - getHeight());
-            velocityY = -Math.abs(velocityY);
-            bounced = true;
-        }
-        
-        // maintain const spid
-        if (bounced) {
-            normalizeVelocity();
-        }
-
-    }
-    
-    /**
-     * Normalizes velocity to maintain constant speed.
-     * Uses the original speed from Constants.BALL_SPEED for consistency.
-     * Preserves the natural bounce angle while maintaining speed.
-     */
-    private void normalizeVelocity() {
-        double currentSpeed = getCurrentSpeed();
-        if (currentSpeed > 0) {
-            // Use the original ball speed from constants
-            double targetSpeed = Constants.BALL_SPEED;
-            double normalizedVx = velocityX / currentSpeed * targetSpeed;
-            double normalizedVy = velocityY / currentSpeed * targetSpeed;
-            setVelocity(normalizedVx, normalizedVy);
-            
-            // Log bounce event with angle and speed
-            double newAngle = Math.toDegrees(Math.atan2(normalizedVy, normalizedVx));
-            double newSpeed = getCurrentSpeed();
-            log.debug("Ball bounced! Angle: {}°, Speed: {}, Velocity: ({}, {})",
-                String.format("%.1f", newAngle), String.format("%.1f", newSpeed), 
-                String.format("%.1f", normalizedVx), String.format("%.1f", normalizedVy));
-        }
+        Physics.handleScreenCollision(this);
     }
 
     /**
@@ -127,47 +59,29 @@ public class Ball extends MovableObject {
         int centerY = Constants.WINDOW_HEIGHT / 2 - getHeight() / 2;
         setPosition(centerX, centerY);
         updateVelocity(); // Reset to original speed and angle
-        //log.info("Ball reset to center at ({}, {})", centerX, centerY);
+        // log.info("Ball reset to center at ({}, {})", centerX, centerY);
     }
 
     /**
      * Gets the current speed magnitude.
+     *
      * @return current speed
      */
     public double getCurrentSpeed() {
-        return Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+        return Physics.getBallCurrentSpeed(this);
     }
 
     /**
-     * Checks if this ball collides with a brick.
-     * Uses optimized AABB (Axis-Aligned Bounding Box) collision detection.
-     * 
+     * if this ball collides with a brick.
+     *
      * @param brick the brick to check collision with
      * @return true if colliding, false otherwise
      */
     public boolean collidesWith(Brick brick) {
-        // Early exit if brick is destroyed
-        if (brick.isDestroyed()) {
-            return false;
-        }
-        
-        // Optimized AABB collision detection with early exits
-        int ballLeft = getX();
-        int ballRight = ballLeft + getWidth();
-        int ballTop = getY() + getHeight();
-        int ballBottom = getY();
-        
-        int brickLeft = brick.getX();
-        int brickRight = brickLeft + brick.getWidth();
-        int brickTop = brick.getY() + brick.getHeight();
-        int brickBottom = brick.getY();
-        
-        // Check for separation on each axis - if separated on any axis, no collision
-        return !(ballRight <= brickLeft || ballLeft >= brickRight || 
-                 ballTop <= brickBottom || ballBottom >= brickTop);
+        return Physics.checkBallBrickCollision(this, brick);
     }
 
-
+    //OLD COLLISION CHECKING METHOD
     // /**
     //  * check collision.
     //  * @param paddle paddle to test
@@ -190,148 +104,35 @@ public class Ball extends MovableObject {
 
     /**
      * Handle collision when ball center bottom hits paddle top.
-     * Calculates bounce angle based on hit position on paddle.
+     * Delegates to Physics class for collision handling.
      */
     public void handlePaddleCollision(Paddle paddle) {
-        // Only process if moving downward
-        if (velocityY < 0) {
-            // Position ball so its center bottom is exactly on paddle top
-            int paddleTopY = paddle.getY() + paddle.getHeight();
-            setPosition(getX(), paddleTopY);
-
-            // Calculate hit position relative to paddle center [-1, 1]
-            double ballCenterX = getX() + getWidth() / 2.0;
-            double paddleCenterX = paddle.getX() + paddle.getWidth() / 2.0;
-            double halfWidth = paddle.getWidth() / 2.0;
-            double offset = (ballCenterX - paddleCenterX) / halfWidth;
-            
-            // Clamp offset to valid range
-            offset = Math.max(-1.0, Math.min(1.0, offset));
-
-            // Map offset to bounce angle
-            // 0 => straight up, -1 => max left, 1 => max right
-            double maxBounceFromVerticalDeg = 75.0; // cap to avoid too-horizontal
-            double angleFromVertical = offset * maxBounceFromVerticalDeg;
-
-            // Calculate new velocity
-            double radiansFromVertical = Math.toRadians(angleFromVertical);
-            double speed = Constants.BALL_SPEED;
-            double vx = speed * Math.sin(radiansFromVertical);
-            double vy = speed * Math.cos(radiansFromVertical);
-            
-            // Ensure ball always goes upward
-            if (vy < 0) vy = -vy;
-
-            setVelocity(vx, vy);
-            normalizeVelocity();
-
-            double newAngle = Math.toDegrees(Math.atan2(velocityY, velocityX));
-            log.debug("Ball center bottom hit paddle top! Offset: {}, Angle: {}°, Velocity: ({}, {})",
-                String.format("%.2f", offset), String.format("%.1f", newAngle),
-                String.format("%.1f", velocityX), String.format("%.1f", velocityY));
-        }
+        Physics.handleBallPaddleCollision(this, paddle);
     }
 
     /**
-     * Precise collision detection: only center bottom of ball with top of paddle.
+     * center bottom of ball with top of paddle.
+     * Delegates to Physics class for collision detection.
      * Call this AFTER ball.update(deltaTime).
+     *
      * @return true if a bounce was applied
      */
     public boolean checkPaddleCollision(Paddle paddle) {
-        // Only when moving downward
-        if (velocityY >= 0) return false;
-
-        // Get ball center bottom point
-        int ballCenterX = getX() + getWidth() / 2;
-        int ballBottomY = getY();
-        
-        // Get paddle top surface
-        int paddleTopY = paddle.getY() + paddle.getHeight();
-        int paddleLeft = paddle.getX();
-        int paddleRight = paddle.getX() + paddle.getWidth();
-        
-        // Check if ball center bottom is horizontally within paddle bounds
-        if (ballCenterX < (paddleLeft - getWidth()) || ballCenterX > (paddleRight + getWidth())) {
-            return false;
-        }
-        
-        // Check if ball center bottom has crossed or is at paddle top
-        int prevBottomY = previousY;
-        
-        // Swept collision: did the ball center bottom cross the paddle top this frame?
-        if (prevBottomY >= paddleTopY && ballBottomY <= paddleTopY) {
+        boolean collision = Physics.checkBallPaddleCollision(this, paddle, previousY);
+        if (collision) {
             handlePaddleCollision(paddle);
-            return true;
         }
-        
-        // Also check if ball center bottom is currently touching paddle top
-        if (ballBottomY == paddleTopY) {
-            handlePaddleCollision(paddle);
-            return true;
-        }
-        
-        return false;
+        return collision;
     }
 
 
     /**
-     * Handles collision with a brick by reversing appropriate velocity component.
-     * Determines which side of the brick was hit and bounces accordingly.
-     * 
+     * Physics class for collision handling.
+     *
      * @param brick the brick that was hit
      */
     public void handleBrickCollision(Brick brick) {
-        // Current bounds
-        int ballLeft = getX();
-        int ballRight = ballLeft + getWidth();
-        int ballBottom = getY();
-        int ballTop = ballBottom + getHeight();
-
-        int brickLeft = brick.getX();
-        int brickRight = brickLeft + brick.getWidth();
-        int brickBottom = brick.getY();
-        int brickTop = brickBottom + brick.getHeight();
-
-        // Compute overlap depths on both axes (strictly positive because we already detected collision)
-        int overlapX = Math.min(ballRight, brickRight) - Math.max(ballLeft, brickLeft);
-        int overlapY = Math.min(ballTop, brickTop) - Math.max(ballBottom, brickBottom);
-
-        // Decide resolution axis by minimal penetration to avoid corner flipping issues
-        if (overlapX < overlapY) {
-            // Resolve along X axis
-            double ballCenterX = ballLeft + getWidth() / 2.0;
-            double brickCenterX = brickLeft + brick.getWidth() / 2.0;
-
-            if (ballCenterX < brickCenterX) {
-                // Collided with brick's left face
-                setPosition(brickLeft - getWidth(), getY());
-                velocityX = -Math.abs(velocityX);
-            } else {
-                // Collided with brick's right face
-                setPosition(brickRight, getY());
-                velocityX = Math.abs(velocityX);
-            }
-        } else {
-            // Resolve along Y axis
-            double ballCenterY = ballBottom + getHeight() / 2.0;
-            double brickCenterY = brickBottom + brick.getHeight() / 2.0;
-
-            if (ballCenterY < brickCenterY) {
-                // Collided with brick's bottom face
-                setPosition(getX(), brickBottom - getHeight());
-                velocityY = -Math.abs(velocityY);
-            } else {
-                // Collided with brick's top face
-                setPosition(getX(), brickTop);
-                velocityY = Math.abs(velocityY);
-            }
-        }
-
-        // Maintain constant speed after collision
-        normalizeVelocity();
-
-        log.debug("Ball hit brick! New velocity: ({}, {})",
-            String.format("%.1f", velocityX), String.format("%.1f", velocityY));
+        Physics.handleBallBrickCollision(this, brick);
     }
 
 }

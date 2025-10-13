@@ -62,20 +62,20 @@ public class Game extends ApplicationAdapter {
 
         // Initialize random bricks for testing
         bricks = new ArrayList<>();
-        // int rows = 5;
-        // int cols = 17;
-        // int startX = 50;
-        // int startY = WINDOW_HEIGHT - 100;
-        // for (int row = 0; row < rows; row++) {
-        //     for (int col = 0; col < cols; col++) {
-        //         int x = startX + col * (BRICK_WIDTH + BRICK_SPACING);
-        //         int y = startY - row * (BRICK_HEIGHT + BRICK_SPACING);
-        //         String color = BRICK_COLORS[row % BRICK_COLORS.length];
-        //         Brick brick = new Brick(x, y, BRICK_WIDTH, BRICK_HEIGHT,
-        //                 "normal_" + color + "_brick", 3, "normal");
-        //         bricks.add(brick);
-        //     }
-        // }
+        int rows = 5;
+        int cols = 17;
+        int startX = 50;
+        int startY = WINDOW_HEIGHT - 100;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                int x = startX + col * (BRICK_WIDTH + BRICK_SPACING);
+                int y = startY - row * (BRICK_HEIGHT + BRICK_SPACING);
+                String color = BRICK_COLORS[row % BRICK_COLORS.length];
+                Brick brick = new Brick(x, y, BRICK_WIDTH, BRICK_HEIGHT,
+                        "normal_" + color + "_brick", 3, "normal");
+                bricks.add(brick);
+            }
+        }
     }
 
     /**
