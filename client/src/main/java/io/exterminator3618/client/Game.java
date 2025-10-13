@@ -3,6 +3,8 @@ package io.exterminator3618.client;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
+//import com.badlogic.gdx.graphics.glutils.ShapeRenderer; //SAU NÀY XÓA ĐI, GIỜ ADD ĐỂ TEST I/O THÔI
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -83,37 +85,64 @@ public class Game extends ApplicationAdapter {
     public void render() {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        // Handle input and state transitions
-        handleInput();
+        // Clear screen
+        //Gdx.gl.glClearColor(0, 0, 0, 1);
+        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Update game logic for playing state
-        if (state == GameState.PLAYING) {
-            updateGameLogic(deltaTime);
-        }
-
-        // Render using the game state renderer
-        renderer.render(this);
-    }
-
-    /**
-     * Handles input for state transitions.
-     */
-    private void handleInput() {
         switch (state) {
             case MENU -> {
+                // Render menu screen
+                Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                renderer.begin();
+                // Draw text here
+                renderer.drawText("Day la Main Screen", 300, 300);
+                renderer.end();
+
+                // Transition to PLAYING state on input
                 if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                     loadLevel();
                     state = GameState.PLAYING;
-                } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                    Gdx.app.exit();
                 }
             }
             case PLAYING -> {
+                // Update game logic
+                Gdx.gl.glClearColor(0, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+                ball.update(deltaTime);
+                paddle.update(deltaTime);
+                for (Brick brick : bricks) {
+                    brick.update(deltaTime);
+                }
+                checkBallBrickCollisions();
+                ball.checkPaddleCollision(paddle);
+                // Render game objects
+                renderer.begin();
+                renderer.draw(ball);
+                renderer.draw(paddle);
+                for (Brick brick : bricks) {
+                    renderer.draw(brick);
+                }
+                renderer.end();
+                // Pause game on input
                 if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
                     state = GameState.PAUSED;
                 }
             }
             case PAUSED -> {
+                // Render paused screen overlay
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                Gdx.gl.glClearColor(0, 0, 0, 0.5f);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                renderer.begin();
+                // Draw paused text here
+                renderer.drawText("Day la Pause Screen", 250, 300);
+                renderer.end();
+                Gdx.gl.glDisable(GL20.GL_BLEND);
+
+                // Resume game on input (e.g., P key)
                 if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
                     state = GameState.PLAYING;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -121,44 +150,19 @@ public class Game extends ApplicationAdapter {
                 }
             }
             case GAME_OVER -> {
+                // Render game over screen
+                Gdx.gl.glClearColor(0.2f, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                renderer.begin();
+                // Draw game over text here
+                renderer.drawText("Day la Game Over Screen", 250, 300);
+                renderer.end();
+
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     state = GameState.MENU;
                     disposeLevel();
                 }
             }
-            case VICTORY -> {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-                    state = GameState.MENU;
-                    disposeLevel();
-                }
-            }
-            case LOSE -> {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-                    state = GameState.MENU;
-                    disposeLevel();
-                }
-            }
-        }
-    }
-
-    /**
-     * Updates game logic for the playing state.
-     */
-    private void updateGameLogic(float deltaTime) {
-        if (ball != null) {
-            ball.update(deltaTime);
-        }
-        if (paddle != null) {
-            paddle.update(deltaTime);
-        }
-        if (bricks != null) {
-            for (Brick brick : bricks) {
-                brick.update(deltaTime);
-            }
-        }
-        checkBallBrickCollisions();
-        if (ball != null && paddle != null) {
-            ball.checkPaddleCollision(paddle);
         }
     }
 
@@ -196,56 +200,32 @@ public class Game extends ApplicationAdapter {
                 if (wasDestroyed) {
                     // Remove the destroyed brick immediately
                     iterator.remove();
-                    log.info("Brick destroyed! Remaining bricks: {}", bricks.size());
+                    log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
                 } else {
                     // Brick still has hit points remaining
-                    log.info("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
-                            3);
+                    log.debug("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
+                            brick.getType().equals("strong") ? 3 : 1);
                 }
 
                 // Only handle one collision per frame to avoid multiple hits
                 collisionHandled = true;
-                if (bricks.isEmpty()) {
-                    state = GameState.VICTORY;
-                }
             }
         }
     }
 
     public void disposeLevel () {
-        if (bricks != null) {
-            bricks.clear();
-        }
+        bricks.clear();
         ball = null;
         paddle = null;
         log.info("Level disposed");
-    }
-
-    // Getter methods for GameStateRenderer access
-    public GameState getState() {
-        return state;
-    }
-
-    public Ball getBall() {
-        return ball;
-    }
-
-    public Paddle getPaddle() {
-        return paddle;
-    }
-
-    public List<Brick> getBricks() {
-        return bricks;
     }
     /**
      * Releases resources and other disposable assets.
      */
     @Override
     public void dispose() {
-        if (renderer != null) {
-            renderer.dispose();
-        }
         Assets.dispose();
+        renderer.dispose();
         //soundManager.dispose();
         log.info("Game disposed");
     }

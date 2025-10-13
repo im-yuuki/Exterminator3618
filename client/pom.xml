@@ -20,15 +20,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <libgdx.version>1.13.5</libgdx.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>github-packages-libgdx-packr</id>
-            <url>https://maven.pkg.github.com/libgdx/packr</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <!-- inherit from parent -->
@@ -41,7 +33,6 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
-        <!-- LibGDX Core -->
         <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx -->
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
@@ -65,56 +56,6 @@
             <groupId>com.badlogicgames.ashley</groupId>
             <artifactId>ashley</artifactId>
             <version>1.7.4</version>
-        </dependency>
-
-        <!-- LibGDX Platform -->
-        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-platform -->
-        <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
-            <artifactId>gdx-platform</artifactId>
-            <version>${libgdx.version}</version>
-            <classifier>natives-desktop</classifier>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-box2d-platform -->
-        <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
-            <artifactId>gdx-box2d-platform</artifactId>
-            <version>${libgdx.version}</version>
-            <classifier>natives-desktop</classifier>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-freetype-platform -->
-        <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
-            <artifactId>gdx-freetype-platform</artifactId>
-            <version>${libgdx.version}</version>
-            <classifier>natives-desktop</classifier>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-backend-lwjgl3 -->
-        <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
-            <artifactId>gdx-backend-lwjgl3</artifactId>
-            <version>${libgdx.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-tools -->
-        <dependency>
-            <groupId>com.badlogicgames.gdx</groupId>
-            <artifactId>gdx-tools</artifactId>
-            <version>${libgdx.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.badlogicgames.gdx</groupId>
-                    <artifactId>gdx-backend-lwjgl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Please add the GitHub Personal Access Token with at least read:packages scope to your Maven settings.xml -->
-        <!-- to get this dependency from GitHub Packages. -->
-        <!-- https://github.com/libgdx/packr/packages/394128 -->
-        <dependency>
-            <groupId>com.badlogicgames.packr</groupId>
-            <artifactId>packr-all</artifactId>
-            <version>3.0.0</version>
         </dependency>
     </dependencies>
 
