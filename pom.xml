@@ -17,9 +17,38 @@
         <libgdx.version>1.13.5</libgdx.version>
     </properties>
 
+    <developers>
+        <developer>
+            <id>im-yuuki</id>
+            <name>Le Dang Ngo Dan</name>
+            <email>me@june8th.eu.org</email>
+            <url>https://github.com/im-yuuki</url>
+            <timezone>Asia/Ho_Chi_Minh</timezone>
+        </developer>
+        <developer>
+            <id>maaL6</id>
+            <name>Tran Duc Lam</name>
+            <url>https://github.com/maaL6</url>
+            <timezone>Asia/Ho_Chi_Minh</timezone>
+        </developer>
+        <developer>
+            <id>BakaAfk</id>
+            <name>Nguyen Xuan Bac</name>
+            <url>https://github.com/BakaAfk</url>
+            <timezone>Asia/Ho_Chi_Minh</timezone>
+        </developer>
+        <developer>
+            <id>ngocmai3438</id>
+            <name>Pham Ngoc Mai</name>
+            <url>https://github.com/ngocmai3438</url>
+            <timezone>Asia/Ho_Chi_Minh</timezone>
+        </developer>
+    </developers>
+
     <modules>
         <module>client</module>
         <module>server</module>
+        <module>mapper</module>
         <module>desktop</module>
     </modules>
 
@@ -29,7 +58,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.18</version>
+                <version>1.5.19</version>
                 <scope>compile</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->

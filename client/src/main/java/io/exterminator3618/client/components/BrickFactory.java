@@ -1,4 +1,6 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
+
+import io.exterminator3618.client.Constants;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -14,22 +14,20 @@ import java.util.Map;
  * Hỗ trợ phát hiệu ứng, nhạc nền và điều chỉnh âm lượng.
  */
 public class SoundManager {
+
     private static final Logger log = LoggerFactory.getLogger(SoundManager.class);
-    
+
     // Cache âm thanh
     private final Map<String, Sound> sounds = new HashMap<>();
     private final Map<String, Music> music = new HashMap<>();
-    
+
     // Âm lượng
     private float volume = 1.0f;
     private Music currentMusic;
-    
-    public SoundManager() {
-        log.info("init SoundManager");
-    }
-    
+
     /**
      * play sound.
+     *
      * @param path đường dẫn file âm thanh
      * @param loop true = nhạc nền, false = hiệu ứng
      */
@@ -40,13 +38,13 @@ public class SoundManager {
                 if (currentMusic != null) {
                     currentMusic.stop();
                 }
-                
+
                 Music music = this.music.get(path);
                 if (music == null) {
                     music = Gdx.audio.newMusic(Gdx.files.internal(path));
                     this.music.put(path, music);
                 }
-                
+
                 currentMusic = music;
                 music.setLooping(true);
                 music.setVolume(volume);
@@ -64,14 +62,14 @@ public class SoundManager {
             log.error("cant play: {}", path);
         }
     }
-    
+
     /**
      * play
      */
     public void play(String path) {
         play(path, false);
     }
-    
+
     /**
      * stop music.
      */
@@ -80,15 +78,15 @@ public class SoundManager {
             currentMusic.stop();
         }
     }
-    
-    //dừng nhạc
+
+    // dừng nhạc
     public void stopSound(String path) {
         Sound sound = sounds.get(path);
         if (sound != null) {
             sound.stop();
         }
     }
-    
+
     // set volume
     public void setVolume(float volume) {
         this.volume = Math.max(0.0f, Math.min(1.0f, volume));
@@ -96,12 +94,12 @@ public class SoundManager {
             currentMusic.setVolume(volume);
         }
     }
-    
+
     // getter
     public float getVolume() {
         return volume;
     }
-    
+
     // ~~
     public void dispose() {
         for (Sound sound : sounds.values()) {
@@ -114,5 +112,6 @@ public class SoundManager {
         music.clear();
         currentMusic = null;
     }
+
 }
 

@@ -1,10 +1,11 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
 
 /**
  * A GameObject that can move with a constant velocity.
  * Positions are updated every frame based on velocity without friction.
  */
 public abstract class MovableObject extends GameObject {
+
     /**
      * Current horizontal velocity.
      */
@@ -77,4 +78,5 @@ public abstract class MovableObject extends GameObject {
         int newY = getY() + (int) (velocityY * deltaTime);
         setPosition(newX, newY);
     }
+
 }

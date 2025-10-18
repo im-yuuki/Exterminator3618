@@ -1,10 +1,13 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
 
 import com.badlogic.gdx.Gdx;
- 
+import io.exterminator3618.client.Constants;
+
 
 public class Paddle extends MovableObject{
-    
+    //For PowerUpBrick
+    private float powerUpTimer; // Biến đếm thời gian hiệu ứng
+    private boolean isPoweredUp; // Trạng thái có hiệu ứng hay không
 
     /**
      * Creates a stationary movable object.
@@ -19,12 +22,35 @@ public class Paddle extends MovableObject{
         super(x, y, width, height, filepath);
     }
 
+
+    /**
+     * Kích hoạt hiệu ứng làm dài paddle.
+     * @param duration thời gian hiệu ứng (giây)
+     */
+    public void activateWidenPowerUp(float duration) {
+        if (!isPoweredUp) {
+            resize(getWidth() + 50, getHeight()); // Tăng chiều rộng thêm 50px
+            isPoweredUp = true;
+        }
+        this.powerUpTimer = duration; // Đặt lại hoặc cộng dồn thời gian
+    }
+
     /**
      * Update vị trí trên trục hoành của paddle, chỉ trục hoành, CHỈ TRỤC HOÀNH
      * hiêện đang dùng chuột, dùng phím đang bị phế
      */
     @Override
     public void update(float deltaTime) {
+        // Cập nhật bộ đếm thời gian hiệu ứng
+        if (isPoweredUp) {
+            powerUpTimer -= deltaTime;
+            if (powerUpTimer <= 0) {
+                // Hết thời gian, trả paddle về kích thước ban đầu
+                resize(Constants.PADDLE_WIDTH, getHeight());
+                isPoweredUp = false;
+            }
+        }
+
         int desiredX = (int) (Gdx.input.getX() - Constants.PADDLE_WIDTH / 2);
 
         //UPDATE TỪ BÀN PHÍM ĐANG BỊ TRÔN R`, ĐÉO DÙNG ĐƯỢC TẠI ĐANG CONFLICT VỚI CHUỘT, MÀ CỨ ĐỂ ĐÂY ĐI FIX SAU

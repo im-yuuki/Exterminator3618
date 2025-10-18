@@ -1,4 +1,6 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
+
+import io.exterminator3618.client.Constants;
 
 /**
  * StrongBrick represents a durable brick that requires multiple hits to destroy.
@@ -45,7 +47,8 @@ public class StrongBrick extends Brick {
      * @param y initial Y position in pixels
      */
     public StrongBrick(int x, int y) {
-        this(x, y, 64, 32, "strong_brick", DEFAULT_STRONG_BRICK_HITPOINTS);
+        //this(x, y, 64, 32, "strong_brick", DEFAULT_STRONG_BRICK_HITPOINTS);
+        this(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_ORANGE_BRICK, DEFAULT_STRONG_BRICK_HITPOINTS);
     }
 
     /**
