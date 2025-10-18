@@ -83,12 +83,12 @@
         <!-- Please add the GitHub Personal Access Token with at least read:packages scope to your Maven settings.xml -->
         <!-- to get this dependency from GitHub Packages. -->
         <!-- https://github.com/libgdx/packr/packages/394128 -->
-        <dependency>
-            <groupId>com.badlogicgames.packr</groupId>
-            <artifactId>packr-all</artifactId>
-            <version>3.0.0</version>
-            <optional>true</optional>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>com.badlogicgames.packr</groupId>-->
+        <!--    <artifactId>packr-all</artifactId>-->
+        <!--    <version>3.0.0</version>-->
+        <!--    <optional>true</optional>-->
+        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.github.Vatuu/discord-rpc -->
         <dependency>

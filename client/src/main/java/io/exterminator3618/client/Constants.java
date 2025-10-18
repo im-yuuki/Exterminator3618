@@ -9,9 +9,8 @@ public class Constants {
     /**
      * Window configuration.
      */
-    public static final int WINDOW_WIDTH = 1280;
-    public static final int WINDOW_HEIGHT = 720;
-    public static final String WINDOW_TITLE = "Exterminator3618";
+    public static final int WINDOW_WIDTH = 1920;
+    public static final int WINDOW_HEIGHT = 1080;
 
 
     /**

@@ -1,4 +1,4 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.utils;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;

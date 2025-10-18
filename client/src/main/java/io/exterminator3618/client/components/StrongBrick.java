@@ -1,4 +1,6 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
+
+import io.exterminator3618.client.Constants;
 
 /**
  * StrongBrick represents a durable brick that requires multiple hits to destroy.

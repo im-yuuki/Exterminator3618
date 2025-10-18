@@ -1,4 +1,4 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
 
 /**
  * Base type for anything that can be rendered by the client.

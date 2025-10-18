@@ -1,4 +1,4 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;

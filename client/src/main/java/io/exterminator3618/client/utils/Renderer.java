@@ -1,19 +1,15 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import io.exterminator3618.client.components.GameObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Wrapper around LibGDX SpriteBatch with a texture cache.
@@ -33,7 +29,6 @@ public class Renderer {
      */
     public Renderer() {
         batch = new SpriteBatch();
-
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Quicksand-Medium.ttf"));
         FreeTypeFontParameter param = new FreeTypeFontParameter();
         param.size = 24;

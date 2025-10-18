@@ -3,7 +3,7 @@ package io.exterminator3618.client.screens;
 import com.badlogic.gdx.Screen;
 import io.exterminator3618.client.Exterminator3618;
 
-public class SettingsScreen implements Screen {
+public final class SettingsScreen implements Screen {
 
     private final Exterminator3618 game;
 

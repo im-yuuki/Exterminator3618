@@ -3,7 +3,7 @@ package io.exterminator3618.client.screens;
 import com.badlogic.gdx.Screen;
 import io.exterminator3618.client.Exterminator3618;
 
-public class SplashScreen implements Screen {
+public final class SplashScreen implements Screen {
 
     private final Exterminator3618 game;
 
@@ -13,9 +13,7 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        // TODO: add splash screen implementation
-        // For now, i let it immediately switch to the main menu
-        game.setScreen(new MainMenuScreen(game));
+        game.replaceCurrentScreen(new MainMenuScreen(game));
     }
 
     @Override
