@@ -26,6 +26,7 @@ public class Constants {
      * Path to the ball texture.
      */
     public static final String BALL_REGION_NAME = "green_ball";
+    public static final String EXTRA_BALL_REGION_NAME = "blue_ball";
     /**
      * Default ball speed.
      */
@@ -67,6 +68,7 @@ public class Constants {
     public static final String THICK_RED_BRICK = "thick_red_brick";
     public static final String THICK_YELLOW_BRICK = "thick_yellow_brick";
 
+    public static final String MULTIBALL_BRICK = "normal_purple_brick";
     /**
      * Brick dimensions and layout.
      */

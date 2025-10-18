@@ -16,7 +16,7 @@ public class NormalBrick extends Brick {
      * @param regionName name of the texture region in the atlas
      */
     public NormalBrick(int x, int y, int width, int height, String regionName) {
-        super(x, y, width, height, regionName, 3, "normal");
+        super(x, y, width, height, regionName, 1, "normal");
     }
 
     /**
@@ -26,7 +26,8 @@ public class NormalBrick extends Brick {
      * @param y          initial Y position in pixels
      */
     public NormalBrick(int x, int y) {
-        this(x, y, 64, 32, "normal_brick"); // Default brick size and texture
+        //this(x, y, 64, 32, "normal_brick"); // Default brick size and texture
+        this(x,y,Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_GREEN_BRICK);
     }
 
     /**
