@@ -1,4 +1,6 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
+
+import io.exterminator3618.client.Constants;
 
 /**
  * Represents an indestructible brick that cannot be destroyed by the ball.

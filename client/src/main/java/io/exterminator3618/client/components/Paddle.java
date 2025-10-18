@@ -1,7 +1,8 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
 
 import com.badlogic.gdx.Gdx;
- 
+import io.exterminator3618.client.Constants;
+
 
 public class Paddle extends MovableObject{
     //For PowerUpBrick

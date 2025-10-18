@@ -1,4 +1,4 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.utils;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +14,7 @@ import static io.exterminator3618.client.Constants.ATLAS_PATH;
  * Loads assets from a texture atlas and provides access to texture regions.
  */
 public class Assets {
+
     private static final Logger log = LoggerFactory.getLogger(Assets.class);
     // Single AssetManager instance for the application.
     private static final AssetManager assetManager = new AssetManager();
@@ -76,4 +77,5 @@ public class Assets {
         assetManager.dispose();
         log.info("Disposed all assets");
     }
+
 }

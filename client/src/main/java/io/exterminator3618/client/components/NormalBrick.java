@@ -1,4 +1,6 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
+
+import io.exterminator3618.client.Constants;
 
 /**
  * NormalBrick represents a standard brick that is destroyed after one hit.
@@ -27,7 +29,7 @@ public class NormalBrick extends Brick {
      */
     public NormalBrick(int x, int y) {
         //this(x, y, 64, 32, "normal_brick"); // Default brick size and texture
-        this(x,y,Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_GREEN_BRICK);
+        this(x,y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_GREEN_BRICK);
     }
 
     /**

@@ -7,32 +7,33 @@ import com.badlogic.gdx.graphics.GL20;
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.utils.Renderer;
 
-public final class MainMenuScreen implements Screen {
+public final class GameOverScreen implements Screen {
 
     private final Exterminator3618 game;
     private final Renderer renderer;
 
-    public MainMenuScreen(Exterminator3618 game) {
+    public GameOverScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
     }
 
     @Override
     public void show() {
+
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        // Render game over screen
+        Gdx.gl.glClearColor(0.2f, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.begin();
-        // Draw text here
-        renderer.drawText("Day la Main Screen", 300, 300);
+        // Draw game over text here
+        renderer.drawText("Day la Game Over Screen", 250, 300);
         renderer.end();
 
-        // Transition to game screen on input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            game.launchScreen(new GameScreen(game));
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.backToPreviousScreen();
         }
     }
 
@@ -58,6 +59,7 @@ public final class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+
     }
 
 }
