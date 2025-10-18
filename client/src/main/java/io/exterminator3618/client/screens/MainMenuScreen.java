@@ -7,7 +7,7 @@ import io.exterminator3618.client.Exterminator3618;
 
 public class MainMenuScreen implements Screen {
 
-    private Stage stage;
+    // private Stage stage;
 
     private final Exterminator3618 game;
 
@@ -17,7 +17,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-         stage = new Stage(new ScreenViewport());
+         // stage = new Stage(new ScreenViewport());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 
 }

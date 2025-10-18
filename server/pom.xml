@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Exterminator3618-Server</name>
+    <!--<name>Exterminator3618-Server</name>-->
     <artifactId>server</artifactId>
     <version>0.1.0-dev</version>
     <packaging>jar</packaging>

@@ -9,7 +9,7 @@
         <version>mainline</version>
     </parent>
 
-    <name>Exterminator3618-DesktopPlatform</name>
+    <!--<name>Exterminator3618-DesktopPlatform</name>-->
     <artifactId>desktop</artifactId>
     <version>mainline</version>
     <packaging>jar</packaging>

@@ -6,6 +6,7 @@ package io.exterminator3618.client;
  * used for rendering. Subclasses define how the object updates over time.
  */
 public abstract class GameObject {
+
     /**
      * Name of the texture region in the atlas.
      */
@@ -22,10 +23,10 @@ public abstract class GameObject {
     /**
      * Creates a new game object.
      *
-     * @param x        initial X position in pixels
-     * @param y        initial Y position in pixels
-     * @param width    width in pixels
-     * @param height   height in pixels
+     * @param x          initial X position in pixels
+     * @param y          initial Y position in pixels
+     * @param width      width in pixels
+     * @param height     height in pixels
      * @param regionName name of the texture region in the atlas
      */
     public GameObject(int x, int y, int width, int height, String regionName) {
@@ -96,12 +97,13 @@ public abstract class GameObject {
     /**
      * @return name of the texture region in the atlas
      */
-    public String getRegionName(){
+    public String getRegionName() {
         return regionName;
     }
 
-    public void setRegionName(String regionName){
+    public void setRegionName(String regionName) {
         // do nothing, override in subclass if needed
         this.regionName = regionName;
     }
+
 }
