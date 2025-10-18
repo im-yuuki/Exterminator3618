@@ -208,23 +208,17 @@ public final class GameScreen implements Screen {
     private void spawnExtraBalls(int x, int y) {
         log.info("Spawning 3 extra balls!");
 
-        // Thời gian bất tử cho bóng mới, ví dụ 0.1 giây
-        final float INVULNERABLE_DURATION = 0.5f;
-
         // Vị trí spawn có thể đặt lại ở tâm viên gạch
         int spawnY = y + (BRICK_HEIGHT / 2);
 
         // Tạo 3 bóng với 3 góc khác nhau
         Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -45);
-        ball1.setInvulnerable(INVULNERABLE_DURATION);
         extraBalls.add(ball1);
 
         Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -90);
-        ball2.setInvulnerable(INVULNERABLE_DURATION);
         extraBalls.add(ball2);
 
         Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -135);
-        ball3.setInvulnerable(INVULNERABLE_DURATION);
         extraBalls.add(ball3);
     }
 
@@ -277,10 +271,6 @@ public final class GameScreen implements Screen {
             for (Ball currentBall : allBalls) {
                 if (currentBall.collidesWith(brick)) {
 
-                    // 0. Check xem bóng có invulnerable không
-                    if (currentBall.isInvulnerable()) {
-                        continue;
-                    }
                     // 1. Xử lý bóng nảy lại
                     currentBall.handleBrickCollision(brick);
 
