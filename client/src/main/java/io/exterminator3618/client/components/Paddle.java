@@ -5,9 +5,11 @@ import io.exterminator3618.client.Constants;
 
 
 public class Paddle extends MovableObject{
-    //For PowerUpBrick
-    private float powerUpTimer; // Biến đếm thời gian hiệu ứng
-    private boolean isPoweredUp; // Trạng thái có hiệu ứng hay không
+
+    // PowerUp timer system
+    private float widenPaddleTimer = 0f;
+    private boolean isWidened = false;
+    private int originalWidth;
 
     /**
      * Creates a stationary movable object.
@@ -20,19 +22,7 @@ public class Paddle extends MovableObject{
      */
     public Paddle(int x, int y, int width, int height, String filepath) {
         super(x, y, width, height, filepath);
-    }
-
-
-    /**
-     * Kích hoạt hiệu ứng làm dài paddle.
-     * @param duration thời gian hiệu ứng (giây)
-     */
-    public void activateWidenPowerUp(float duration) {
-        if (!isPoweredUp) {
-            resize(getWidth() + 50, getHeight()); // Tăng chiều rộng thêm 50px
-            isPoweredUp = true;
-        }
-        this.powerUpTimer = duration; // Đặt lại hoặc cộng dồn thời gian
+        this.originalWidth = width;
     }
 
     /**
@@ -41,16 +31,6 @@ public class Paddle extends MovableObject{
      */
     @Override
     public void update(float deltaTime) {
-        // Cập nhật bộ đếm thời gian hiệu ứng
-        if (isPoweredUp) {
-            powerUpTimer -= deltaTime;
-            if (powerUpTimer <= 0) {
-                // Hết thời gian, trả paddle về kích thước ban đầu
-                resize(Constants.PADDLE_WIDTH, getHeight());
-                isPoweredUp = false;
-            }
-        }
-
         int desiredX = (int) (Gdx.input.getX() - Constants.PADDLE_WIDTH / 2);
 
         //UPDATE TỪ BÀN PHÍM ĐANG BỊ TRÔN R`, ĐÉO DÙNG ĐƯỢC TẠI ĐANG CONFLICT VỚI CHUỘT, MÀ CỨ ĐỂ ĐÂY ĐI FIX SAU
@@ -68,5 +48,53 @@ public class Paddle extends MovableObject{
         //nhét paddle vào đúng trong màn hình
         int clampedX = Math.max(0, Math.min(desiredX, Constants.WINDOW_WIDTH - getWidth()));
         setPosition(clampedX, getY());
+
+        // Update powerup timer
+        updatePowerUpTimer(deltaTime);
+    }
+
+    /**
+     * Updates the powerup timer and handles powerup expiration
+     */
+    private void updatePowerUpTimer(float deltaTime) {
+        if (isWidened && widenPaddleTimer > 0) {
+            widenPaddleTimer -= deltaTime;
+            if (widenPaddleTimer <= 0) {
+                // Powerup expired, return to original size
+                resize(originalWidth, getHeight());
+                isWidened = false;
+                widenPaddleTimer = 0f;
+            }
+        }
+    }
+
+    /**
+     * Activates the widen paddle powerup for a specified duration
+     * @param duration Duration in seconds
+     */
+    public void activateWidenPowerUp(float duration) {
+        if (!isWidened) {
+            // Only widen if not already widened
+            resize(originalWidth + 100, getHeight());
+            isWidened = true;
+        }
+        // Reset timer to new duration (allows extending existing powerup)
+        widenPaddleTimer = duration;
+    }
+
+    /**
+     * Gets the remaining time for the current powerup
+     * @return Remaining time in seconds, or 0 if no active powerup
+     */
+    public float getPowerUpRemainingTime() {
+        return widenPaddleTimer;
+    }
+
+    /**
+     * Checks if paddle is currently widened by powerup
+     * @return true if paddle is widened
+     */
+    public boolean isWidened() {
+        return isWidened;
     }
 }

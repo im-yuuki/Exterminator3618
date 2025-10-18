@@ -1,9 +1,7 @@
 package io.exterminator3618.client;
 
-import io.exterminator3618.client.components.Ball;
-import io.exterminator3618.client.components.Brick;
-import io.exterminator3618.client.components.GameObject;
-import io.exterminator3618.client.components.Paddle;
+import io.exterminator3618.client.components.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Physics {
     private static final Logger log = LoggerFactory.getLogger(Physics.class);
-    
+
     /**
      * Checks if two game objects are colliding using AABB (Axis-Aligned Bounding Box) collision detection.
      * 
@@ -59,6 +57,10 @@ public class Physics {
         
         return checkAABBCollision(ball, brick);
     }
+
+    public static boolean checkPaddlePowerUpCollision(Paddle paddle, PowerUp powerUp) {
+        return checkAABBCollision(paddle, powerUp);
+    }
     
     /**
      * Precise collision detection: only center bottom of ball with top of paddle.
@@ -78,11 +80,11 @@ public class Physics {
         
         // Get paddle top surface
         int paddleTopY = paddle.getY() + paddle.getHeight();
-        int paddleLeft = paddle.getX();
-        int paddleRight = paddle.getX() + paddle.getWidth();
+        int paddleLeft = paddle.getX() - ball.getWidth();
+        int paddleRight = paddle.getX() + paddle.getWidth() + ball.getWidth();
         
         // Check if ball center bottom is horizontally within paddle bounds
-        if (ballCenterX < (paddleLeft - ball.getWidth()) || ballCenterX > (paddleRight + ball.getWidth())) {
+        if (ballCenterX < paddleLeft || ballCenterX > paddleRight) {
             return false;
         }
         
@@ -249,7 +251,11 @@ public class Physics {
         log.debug("Ball hit brick! New velocity: ({}, {})",
             String.format("%.1f", ball.getVelocityX()), String.format("%.1f", ball.getVelocityY()));
     }
-    
+
+    // public static void handleBallPowerUpCollision(Ball ball, PowerUp powerUp) {
+    //
+    // }
+
     /**
      * Normalizes ball velocity to maintain constant speed.
      * Uses the original speed from Constants.BALL_SPEED for consistency.
