@@ -1,5 +1,9 @@
 package io.exterminator3618.client;
 
+import io.exterminator3618.client.components.Ball;
+import io.exterminator3618.client.components.Brick;
+import io.exterminator3618.client.components.GameObject;
+import io.exterminator3618.client.components.Paddle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
