@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static io.exterminator3618.client.Constants.*;
+import static io.exterminator3618.client.Physics.*;
 
 import java.util.Random;
 
@@ -41,6 +42,7 @@ public final class GameScreen implements Screen {
     private int score;
     private int lives;
     private int currentLevel;
+    private PowerUp powerUp;
 
     public GameScreen(Exterminator3618 game) {
         this.game = game;
@@ -86,6 +88,8 @@ public final class GameScreen implements Screen {
         bricks = LevelLoader.load(getClass().getResourceAsStream(
                 String.format("/levels/level%d.dat", levelNumber)
         ));
+
+        powerUp = new WidenPaddlePowerUp(WINDOW_WIDTH/2, WINDOW_HEIGHT - 50);
     }
 
     @Override
@@ -103,6 +107,7 @@ public final class GameScreen implements Screen {
 
         ball.update(deltaTime);
         paddle.update(deltaTime);
+        powerUp.update(deltaTime);
 
         // Mạng
         if (ball.getY() <= 0 && extraBalls.isEmpty()) {
@@ -127,9 +132,10 @@ public final class GameScreen implements Screen {
         }
         checkBallBrickCollisions();
         ball.checkPaddleCollision(paddle);
+        powerUp.checkPaddleCollision(paddle);
 
         // KIỂM TRA VA CHẠM PADDLE CHO TẤT CẢ BÓNG
-        ball.checkPaddleCollision(paddle);
+        //ball.checkPaddleCollision(paddle); // vcl vibe code
         for (Ball extraBall : extraBalls) {
             extraBall.checkPaddleCollision(paddle);
         }
@@ -138,6 +144,7 @@ public final class GameScreen implements Screen {
         renderer.begin();
         renderer.draw(ball);
         renderer.draw(paddle);
+        renderer.draw(powerUp);
 
         // Vẽ bóng phụ
         for (Ball extraBall : extraBalls) {
@@ -148,9 +155,18 @@ public final class GameScreen implements Screen {
             renderer.draw(brick);
         }
 
+
+
         renderer.setFontSize(24);
         renderer.drawText("Score: " + score, 20, WINDOW_HEIGHT - 20);
         renderer.drawText("Lives: " + lives, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 20);
+        
+        // Display powerup timer if active
+        if (paddle.isWidened()) {
+            float remainingTime = paddle.getPowerUpRemainingTime();
+            renderer.drawText("Widen PowerUp: " + String.format("%.1f", remainingTime) + "s", 
+                            WINDOW_WIDTH / 2 - 100, WINDOW_HEIGHT - 20);
+        }
 
         renderer.end();
         // Pause game on input
@@ -284,7 +300,7 @@ public final class GameScreen implements Screen {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
                         } else if (brick instanceof PowerUpBrick) {
                             // KÍCH HOẠT HIỆU ỨNG Ở ĐÂY
-                            paddle.activateWidenPowerUp(15.0f); // 30 giây
+                            //paddle.activateWidenPowerUp(15.0f); // 30 giây
                         } else if (brick instanceof StrongBrick) {
                             score += 20;
                         }
