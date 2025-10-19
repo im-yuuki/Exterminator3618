@@ -1,4 +1,4 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
 
 /**
  * Brick class represents destructible blocks in the arkanoid game.

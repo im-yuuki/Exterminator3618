@@ -3,13 +3,20 @@ package io.exterminator3618.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.exterminator3618.client.components.Ball;
+import io.exterminator3618.client.components.Brick;
+import io.exterminator3618.client.components.GameObject;
+import io.exterminator3618.client.components.Paddle;
+import io.exterminator3618.client.components.PowerUp;
+import io.exterminator3618.client.components.SolidBrick;
+
 /**
  * Physics engine for handling all collision detection and response in the game.
  * Centralizes collision logic for better maintainability and performance.
  */
 public class Physics {
     private static final Logger log = LoggerFactory.getLogger(Physics.class);
-    
+
     /**
      * Checks if two game objects are colliding using AABB (Axis-Aligned Bounding Box) collision detection.
      * 
@@ -55,6 +62,10 @@ public class Physics {
         
         return checkAABBCollision(ball, brick);
     }
+
+    public static boolean checkPaddlePowerUpCollision(Paddle paddle, PowerUp powerUp) {
+        return checkAABBCollision(paddle, powerUp);
+    }
     
     /**
      * Precise collision detection: only center bottom of ball with top of paddle.
@@ -74,11 +85,11 @@ public class Physics {
         
         // Get paddle top surface
         int paddleTopY = paddle.getY() + paddle.getHeight();
-        int paddleLeft = paddle.getX();
-        int paddleRight = paddle.getX() + paddle.getWidth();
+        int paddleLeft = paddle.getX() - ball.getWidth();
+        int paddleRight = paddle.getX() + paddle.getWidth() + ball.getWidth();
         
         // Check if ball center bottom is horizontally within paddle bounds
-        if (ballCenterX < (paddleLeft - ball.getWidth()) || ballCenterX > (paddleRight + ball.getWidth())) {
+        if (ballCenterX < paddleLeft || ballCenterX > paddleRight) {
             return false;
         }
         
@@ -141,6 +152,7 @@ public class Physics {
     /**
      * Handles collision when ball center bottom hits paddle top.
      * Calculates bounce angle based on hit position on paddle.
+     * Handles sticky paddle behavior when enabled.
      * 
      * @param ball the ball that hit the paddle
      * @param paddle the paddle that was hit
@@ -151,6 +163,14 @@ public class Physics {
             // Position ball so its center bottom is exactly on paddle top
             int paddleTopY = paddle.getY() + paddle.getHeight();
             ball.setPosition(ball.getX(), paddleTopY);
+
+            // Check if paddle is sticky
+            if (paddle.isSticky()) {
+                // Ball sticks to paddle
+                ball.setStuckToPaddle(true);
+                ball.setVelocity(0, 0); // Stop the ball
+                return;
+            }
 
             // Calculate hit position relative to paddle center [-1, 1]
             double ballCenterX = ball.getX() + ball.getWidth() / 2.0;
@@ -188,11 +208,18 @@ public class Physics {
     /**
      * Handles collision with a brick by reversing appropriate velocity component.
      * Determines which side of the brick was hit and bounces accordingly.
+     * For heavy ball mode, the ball passes through bricks without bouncing.
      * 
      * @param ball the ball that hit the brick
      * @param brick the brick that was hit
      */
     public static void handleBallBrickCollision(Ball ball, Brick brick) {
+        // If ball is in heavy ball mode, only pass through breakable bricks.
+        // For unbreakable bricks (e.g., SolidBrick), still apply normal bounce.
+        if (ball.isHeavyBall() && !(brick instanceof SolidBrick)) {
+            return;
+        }
+
         // Current bounds
         int ballLeft = ball.getX();
         int ballRight = ballLeft + ball.getWidth();
@@ -245,7 +272,11 @@ public class Physics {
         log.debug("Ball hit brick! New velocity: ({}, {})",
             String.format("%.1f", ball.getVelocityX()), String.format("%.1f", ball.getVelocityY()));
     }
-    
+
+    // public static void handleBallPowerUpCollision(Ball ball, PowerUp powerUp) {
+    //
+    // }
+
     /**
      * Normalizes ball velocity to maintain constant speed.
      * Uses the original speed from Constants.BALL_SPEED for consistency.
@@ -279,5 +310,9 @@ public class Physics {
      */
     public static double getBallCurrentSpeed(Ball ball) {
         return Math.sqrt(ball.getVelocityX() * ball.getVelocityX() + ball.getVelocityY() * ball.getVelocityY());
+    }
+
+    public static boolean checkPowerUpCollision(PowerUp powerUp, Paddle paddle) {
+        return checkAABBCollision(powerUp, paddle);
     }
 }

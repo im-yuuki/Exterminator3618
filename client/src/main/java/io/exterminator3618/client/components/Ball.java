@@ -1,5 +1,8 @@
-package io.exterminator3618.client;
+package io.exterminator3618.client.components;
 
+
+import io.exterminator3618.client.Constants;
+import io.exterminator3618.client.Physics;
 
 /**
  * A simple moving ball that derives its velocity from a constant speed and an angle.
@@ -11,6 +14,8 @@ public class Ball extends MovableObject {
      */
     private double angle;
     private int previousY;
+    private boolean isHeavyBall = false;
+    private boolean isStuckToPaddle = false;
 
     /**
      * Creates a new ball with constant speed from Constants.BALL_SPEED.
@@ -47,8 +52,12 @@ public class Ball extends MovableObject {
     public void update(float deltaTime) {
         // prevY để kiểm tra nó có bị bounce 2 lần ko, chống bug
         previousY = getY();
-        super.update(deltaTime);
-        Physics.handleScreenCollision(this);
+
+        // If ball is stuck to paddle, don't update position
+        if (!isStuckToPaddle) {
+            super.update(deltaTime);
+            Physics.handleScreenCollision(this);
+        }
     }
 
     /**
@@ -133,6 +142,56 @@ public class Ball extends MovableObject {
      */
     public void handleBrickCollision(Brick brick) {
         Physics.handleBallBrickCollision(this, brick);
+    }
+
+    /**
+     * Sets the heavy ball mode for this ball.
+     * When heavy ball is active, the ball destroys bricks without bouncing.
+     *
+     * @param heavyBall true to enable heavy ball mode, false to disable
+     */
+    public void setHeavyBall(boolean heavyBall) {
+        this.isHeavyBall = heavyBall;
+    }
+
+    /**
+     * Gets whether this ball is in heavy ball mode.
+     *
+     * @return true if heavy ball mode is active, false otherwise
+     */
+    public boolean isHeavyBall() {
+        return isHeavyBall;
+    }
+
+    /**
+     * Sets whether this ball is stuck to the paddle.
+     *
+     * @param stuck true if stuck to paddle, false otherwise
+     */
+    public void setStuckToPaddle(boolean stuck) {
+        this.isStuckToPaddle = stuck;
+    }
+
+    /**
+     * Gets whether this ball is stuck to the paddle.
+     *
+     * @return true if stuck to paddle, false otherwise
+     */
+    public boolean isStuckToPaddle() {
+        return isStuckToPaddle;
+    }
+
+    /**
+     * Launches the ball from the paddle with a random angle between 45-130 degrees.
+     */
+    public void launchFromPaddle() {
+        if (isStuckToPaddle) {
+            // Generate random angle between 45-135 degrees
+            double randomAngle = 45 + Math.random() * (135 - 45);
+            this.angle = randomAngle;
+            updateVelocity();
+            setStuckToPaddle(false);
+        }
     }
 
 }

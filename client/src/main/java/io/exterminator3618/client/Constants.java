@@ -9,9 +9,8 @@ public class Constants {
     /**
      * Window configuration.
      */
-    public static final int WINDOW_WIDTH = 1280;
-    public static final int WINDOW_HEIGHT = 720;
-    public static final String WINDOW_TITLE = "Exterminator3618";
+    public static final int WINDOW_WIDTH = 1920;
+    public static final int WINDOW_HEIGHT = 1080;
 
 
     /**
@@ -26,6 +25,7 @@ public class Constants {
      * Path to the ball texture.
      */
     public static final String BALL_REGION_NAME = "green_ball";
+    public static final String EXTRA_BALL_REGION_NAME = "blue_ball";
     /**
      * Default ball speed.
      */
@@ -67,6 +67,7 @@ public class Constants {
     public static final String THICK_RED_BRICK = "thick_red_brick";
     public static final String THICK_YELLOW_BRICK = "thick_yellow_brick";
 
+    public static final String MULTIBALL_BRICK = "normal_purple_brick";
     /**
      * Brick dimensions and layout.
      */
@@ -95,4 +96,17 @@ public class Constants {
         VICTORY,
         LOSE
     }
+
+    /**
+     * FOR POWERUP
+     */
+    public static final int POWERUP_WIDTH = 32;
+    public static final int POWERUP_HEIGHT = 32;
+    public static final double POWERUP_FALL_SPEED = 1000.0;
+    // PowerUp texture regions
+    public static final String POWERUP_BALLS_FROM_PADDLE = "big_purple_ball"; //KHÔNG CÓ ASSET POWERUP, DÙNG TẠM
+    
+    // PowerUp duration constants
+    public static final float WIDEN_PADDLE_DURATION = 5.0f; // 5 seconds
+
 }
