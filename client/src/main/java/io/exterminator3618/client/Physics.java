@@ -1,5 +1,7 @@
 package io.exterminator3618.client;
 
+import io.exterminator3618.client.components.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

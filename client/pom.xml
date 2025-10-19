@@ -11,7 +11,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>Exterminator3618-Client</name>
+    <!--<name>Exterminator3618-Client</name>-->
     <artifactId>client</artifactId>
     <version>0.1.0-dev</version>
     <packaging>jar</packaging>
@@ -44,7 +44,7 @@
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-box2d</artifactId>
             <version>${libgdx.version}</version>
-        </dependency>
+        </dependency> 
         <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-freetype -->
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
@@ -56,6 +56,10 @@
             <groupId>com.badlogicgames.ashley</groupId>
             <artifactId>ashley</artifactId>
             <version>1.7.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
     </dependencies>
 
