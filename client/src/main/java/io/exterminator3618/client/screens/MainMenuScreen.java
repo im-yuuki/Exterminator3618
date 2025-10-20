@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.utils.Renderer;
 
@@ -33,6 +34,8 @@ public final class MainMenuScreen implements Screen {
         // Transition to game screen on input
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             game.launchScreen(new GameScreen(game));
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
         }
     }
 
