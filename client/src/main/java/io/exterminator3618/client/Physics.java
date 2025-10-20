@@ -5,6 +5,13 @@ import io.exterminator3618.client.components.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.exterminator3618.client.components.Ball;
+import io.exterminator3618.client.components.Brick;
+import io.exterminator3618.client.components.GameObject;
+import io.exterminator3618.client.components.Paddle;
+import io.exterminator3618.client.components.PowerUp;
+import io.exterminator3618.client.components.SolidBrick;
+
 /**
  * Physics engine for handling all collision detection and response in the game.
  * Centralizes collision logic for better maintainability and performance.
@@ -147,6 +154,7 @@ public class Physics {
     /**
      * Handles collision when ball center bottom hits paddle top.
      * Calculates bounce angle based on hit position on paddle.
+     * Handles sticky paddle behavior when enabled.
      * 
      * @param ball the ball that hit the paddle
      * @param paddle the paddle that was hit
@@ -157,6 +165,14 @@ public class Physics {
             // Position ball so its center bottom is exactly on paddle top
             int paddleTopY = paddle.getY() + paddle.getHeight();
             ball.setPosition(ball.getX(), paddleTopY);
+
+            // Check if paddle is sticky
+            if (paddle.isSticky()) {
+                // Ball sticks to paddle
+                ball.setStuckToPaddle(true);
+                ball.setVelocity(0, 0); // Stop the ball
+                return;
+            }
 
             // Calculate hit position relative to paddle center [-1, 1]
             double ballCenterX = ball.getX() + ball.getWidth() / 2.0;
@@ -194,11 +210,18 @@ public class Physics {
     /**
      * Handles collision with a brick by reversing appropriate velocity component.
      * Determines which side of the brick was hit and bounces accordingly.
+     * For heavy ball mode, the ball passes through bricks without bouncing.
      * 
      * @param ball the ball that hit the brick
      * @param brick the brick that was hit
      */
     public static void handleBallBrickCollision(Ball ball, Brick brick) {
+        // If ball is in heavy ball mode, only pass through breakable bricks.
+        // For unbreakable bricks (e.g., SolidBrick), still apply normal bounce.
+        if (ball.isHeavyBall() && !(brick instanceof SolidBrick)) {
+            return;
+        }
+
         // Current bounds
         int ballLeft = ball.getX();
         int ballRight = ballLeft + ball.getWidth();
@@ -289,5 +312,9 @@ public class Physics {
      */
     public static double getBallCurrentSpeed(Ball ball) {
         return Math.sqrt(ball.getVelocityX() * ball.getVelocityX() + ball.getVelocityY() * ball.getVelocityY());
+    }
+
+    public static boolean checkPowerUpCollision(PowerUp powerUp, Paddle paddle) {
+        return checkAABBCollision(powerUp, paddle);
     }
 }

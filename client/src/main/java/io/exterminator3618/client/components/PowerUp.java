@@ -1,52 +1,77 @@
 package io.exterminator3618.client.components;
 
-import io.exterminator3618.client.Constants;
-import io.exterminator3618.client.Physics;
+import static java.lang.Math.random;
+
+import io.exterminator3618.client.screens.GameScreen;
 
 public abstract class PowerUp extends MovableObject {
+    private String type;
+    private float duration;
+    private float remainingDuration;
+    private float fallSpeed = 200f;
 
-    /**
-     * Creates a power-up that falls down with constant speed.
-     *
-     * @param x        initial X position
-     * @param y        initial Y position
-     * @param width    width in pixels
-     * @param height   height in pixels
-     * @param filepath texture resource path
-     */
-    public PowerUp(int x, int y, int width, int height, String filepath) {
-        super(x, y, width, height, filepath);
-        // Set power-up to fall down with constant speed
-        setVelocity(0, -Constants.POWERUP_FALL_SPEED);
+    public PowerUp(String type, float duration, int x, int y, int width, int height, String regionName) {
+        super(x, y, width, height, regionName);
+        this.type = type;
+        this.duration = duration;
+        this.remainingDuration = duration;
+   }
+
+   public void decreaseDuration(float deltaTime) {
+        if (remainingDuration > 0.0f) {
+            remainingDuration -= deltaTime;
+        }
     }
+
+    public boolean isExpired() {
+        return remainingDuration <= 0.0f;
+    }
+
+    public boolean isInstant() {
+        return duration <= 0.0f;
+    }
+
+    public void resetRemainingDuration() {
+        this.remainingDuration = this.duration;
+    }
+
+    public float getRemainingDuration() {
+        return remainingDuration;
+    }
+
+    public float getDuration() {
+        return duration;
+    }
+
+    public abstract void applyEffect(GameScreen screen);
+    public abstract void removeEffect(GameScreen screen);
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
+        int newY = getY() - (int) (fallSpeed * deltaTime);
+        setPosition(getX(), newY);
     }
 
-    /**
-     * Check if power-up has fallen out of screen bounds.
-     *
-     * @return true if power-up is below screen
-     */
-    public boolean isOutOfBounds() {
-        return getY() < -getHeight();
-    }
-
-    /**
-     * to define what happens when power-up is collected.
-     * each power-up class must implement this.
-     */
-
-    public boolean checkPaddleCollision(Paddle paddle) {
-        boolean collision = Physics.checkPaddlePowerUpCollision(paddle, this);
-        if (collision) {
-            active(paddle);
+    public static PowerUp createRandomPowerUp(int x, int y){
+        switch ((int) (random() * 4)) {
+            case 0:
+                return new WidenPaddlePowerUp(x, y);
+            case 1:
+                return new HeavyBallPowerUp(x, y);
+            case 2:
+                return new StickyPaddlePowerUp(x, y);
+            case 3:
+                return new ExtraLifePowerUp(x, y);
+            default:
+                return null;
         }
-        return collision;
     }
 
-    public abstract void active(Paddle paddle);
+    public String getType() {
+        return type;
+    }
 
 }
+
+
+

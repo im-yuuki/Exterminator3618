@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.utils.Renderer;
 
@@ -41,8 +42,7 @@ public final class PauseScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             game.backToPreviousScreen();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            // TODO: quit pause screen, replace game over screen with game screen
-            game.backToPreviousScreen();
+            game.launchScreen(new GameOverScreen(game));
         }
     }
 

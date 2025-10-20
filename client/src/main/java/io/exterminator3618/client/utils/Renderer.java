@@ -1,15 +1,17 @@
 package io.exterminator3618.client.utils;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import io.exterminator3618.client.components.GameObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+
+import io.exterminator3618.client.components.GameObject;
 
 /**
  * Wrapper around LibGDX SpriteBatch with a texture cache.
@@ -66,6 +68,15 @@ public class Renderer {
         }
         batch.draw(region, obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
         // log.trace("Drew object '{}' at ({}, {}) with size {}x{}", obj.getFilepath(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
+    }
+
+    public void drawLives(int x, int y) {
+        String name = "heart_4";
+        TextureRegion region = Assets.getRegion(name);
+        if (region == null) {
+            return;
+        }
+        batch.draw(region, x, y, 20, 20);
     }
 
     /**

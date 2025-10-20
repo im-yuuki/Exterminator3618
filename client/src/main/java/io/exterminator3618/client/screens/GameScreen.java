@@ -1,25 +1,43 @@
 package io.exterminator3618.client.screens;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import io.exterminator3618.client.*;
-import io.exterminator3618.client.components.*;
+
+import io.exterminator3618.client.Constants;
+import static io.exterminator3618.client.Constants.BALL_HEIGHT;
+import static io.exterminator3618.client.Constants.BALL_REGION_NAME;
+import static io.exterminator3618.client.Constants.BALL_SPEED;
+import static io.exterminator3618.client.Constants.BALL_WIDTH;
+import static io.exterminator3618.client.Constants.BRICK_HEIGHT;
+import static io.exterminator3618.client.Constants.EXTRA_BALL_REGION_NAME;
+import static io.exterminator3618.client.Constants.PADDLE_HEIGHT;
+import static io.exterminator3618.client.Constants.PADDLE_REGION_NAME;
+import static io.exterminator3618.client.Constants.PADDLE_START_X;
+import static io.exterminator3618.client.Constants.PADDLE_START_Y;
+import static io.exterminator3618.client.Constants.PADDLE_WIDTH;
+import static io.exterminator3618.client.Constants.WINDOW_HEIGHT;
+import static io.exterminator3618.client.Constants.WINDOW_WIDTH;
+import io.exterminator3618.client.Exterminator3618;
+import static io.exterminator3618.client.Physics.checkPowerUpCollision;
+import io.exterminator3618.client.components.Ball;
+import io.exterminator3618.client.components.Brick;
+import io.exterminator3618.client.components.Paddle;
+import io.exterminator3618.client.components.PowerUp;
+import io.exterminator3618.client.components.PowerUpBrick;
+import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.LevelLoader;
 import io.exterminator3618.client.utils.Renderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static io.exterminator3618.client.Constants.*;
-import static io.exterminator3618.client.Physics.*;
-
-import java.util.Random;
 
 /**
  * Main LibGDX application for the Exterminator3618 client. It owns the renderer
@@ -42,7 +60,8 @@ public final class GameScreen implements Screen {
     private int score;
     private int lives;
     private int currentLevel;
-    private PowerUp powerUp;
+    private List<PowerUp> powerUps;
+        private List<PowerUp> activePowerUps;
 
     public GameScreen(Exterminator3618 game) {
         this.game = game;
@@ -54,7 +73,7 @@ public final class GameScreen implements Screen {
     public void loadLevel(int levelNumber) {
         log.info("Loading level {}", levelNumber);
         score = 0;
-        lives = 10;
+        lives = 5;
         // Initialize ball
         ball = new Ball(
                 WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
@@ -68,6 +87,11 @@ public final class GameScreen implements Screen {
 
         // Initialize extra balls list
         extraBalls = new ArrayList<>();
+
+        // Initialize powerups list
+        powerUps = new ArrayList<>();
+        // Active power-ups (timed)
+        activePowerUps = new ArrayList<>();
 
         // Initialize paddle
         paddle = new Paddle(
@@ -89,7 +113,6 @@ public final class GameScreen implements Screen {
                 String.format("/levels/level%d.dat", levelNumber)
         ));
 
-        powerUp = new WidenPaddlePowerUp(WINDOW_WIDTH/2, WINDOW_HEIGHT - 50);
     }
 
     @Override
@@ -107,7 +130,20 @@ public final class GameScreen implements Screen {
 
         ball.update(deltaTime);
         paddle.update(deltaTime);
-        powerUp.update(deltaTime);
+
+        // Make stuck balls follow the paddle position
+        if (ball.isStuckToPaddle()) {
+            int followX = paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2;
+            int followY = paddle.getY() + paddle.getHeight();
+            ball.setPosition(followX, followY);
+        }
+        for (Ball extraBall : extraBalls) {
+            if (extraBall.isStuckToPaddle()) {
+                int followX = paddle.getX() + paddle.getWidth() / 2 - extraBall.getWidth() / 2;
+                int followY = paddle.getY() + paddle.getHeight();
+                extraBall.setPosition(followX, followY);
+            }
+        }
 
         // Mạng
         if (ball.getY() <= 0 && extraBalls.isEmpty()) {
@@ -130,9 +166,11 @@ public final class GameScreen implements Screen {
         for (Brick brick : bricks) {
             brick.update(deltaTime);
         }
+
+        updatePowerUps(deltaTime);
+        updateActivePowerUps(deltaTime);
         checkBallBrickCollisions();
         ball.checkPaddleCollision(paddle);
-        powerUp.checkPaddleCollision(paddle);
 
         // KIỂM TRA VA CHẠM PADDLE CHO TẤT CẢ BÓNG
         //ball.checkPaddleCollision(paddle); // vcl vibe code
@@ -144,7 +182,9 @@ public final class GameScreen implements Screen {
         renderer.begin();
         renderer.draw(ball);
         renderer.draw(paddle);
-        renderer.draw(powerUp);
+        for (PowerUp powerUp : powerUps) {
+            renderer.draw(powerUp);
+        }
 
         // Vẽ bóng phụ
         for (Ball extraBall : extraBalls) {
@@ -159,16 +199,28 @@ public final class GameScreen implements Screen {
 
         renderer.setFontSize(24);
         renderer.drawText("Score: " + score, 20, WINDOW_HEIGHT - 20);
-        renderer.drawText("Lives: " + lives, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 20);
-        
-        // Display powerup timer if active
-        if (paddle.isWidened()) {
-            float remainingTime = paddle.getPowerUpRemainingTime();
-            renderer.drawText("Widen PowerUp: " + String.format("%.1f", remainingTime) + "s", 
-                            WINDOW_WIDTH / 2 - 100, WINDOW_HEIGHT - 20);
+        for (int i = 0; i < lives; i++) {
+            renderer.drawLives(WINDOW_WIDTH - 40 - (i * 20), WINDOW_HEIGHT - 40);
         }
+        
+        // (Optional) Could display active power-up timers here if desired
 
         renderer.end();
+        // Handle sticky paddle space key input
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (ball.isStuckToPaddle()) {
+                ball.launchFromPaddle();
+                log.debug("Ball launched from sticky paddle!");
+            }
+            // Also check extra balls
+            for (Ball extraBall : extraBalls) {
+                if (extraBall.isStuckToPaddle()) {
+                    extraBall.launchFromPaddle();
+                    log.debug("Extra ball launched from sticky paddle!");
+                }
+            }
+        }
+
         // Pause game on input
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             game.launchScreen(new PauseScreen(game, this));
@@ -256,6 +308,64 @@ public final class GameScreen implements Screen {
         }
     }
 
+    private void updatePowerUps(float deltaTime) {
+        // Update falling power-ups and handle collection
+        Iterator<PowerUp> iterator = powerUps.iterator();
+        while (iterator.hasNext()) {
+            PowerUp powerUp = iterator.next();
+            powerUp.update(deltaTime);
+
+            // Remove if it falls off-screen
+            if (powerUp.getY() + powerUp.getHeight() < 0) {
+                iterator.remove();
+                continue;
+            }
+
+            // Collect on paddle collision
+            if (checkPowerUpCollision(powerUp, paddle)) {
+                // If instant power-up (e.g., extra life or sticky if designed instant), apply and discard
+                if (powerUp.isInstant()) {
+                    // Avoid re-applying Sticky if already active
+                    if (!("sticky_paddle_power_up".equals(powerUp.getType()) && paddle.isSticky())) {
+                        powerUp.applyEffect(this);
+                    }
+                } else {
+                    // Timed power-up: enforce single active per type
+                    PowerUp existing = null;
+                    for (PowerUp apu : activePowerUps) {
+                        if (apu.getType().equals(powerUp.getType())) {
+                            existing = apu;
+                            break;
+                        }
+                    }
+                    if (existing != null) {
+                        // refresh remaining duration only
+                        existing.resetRemainingDuration();
+                    } else {
+                        // Activate new timed power-up
+                        powerUp.applyEffect(this);
+                        powerUp.resetRemainingDuration();
+                        activePowerUps.add(powerUp);
+                    }
+                }
+                // Remove the falling item regardless
+                iterator.remove();
+            }
+        }
+    }
+
+    private void updateActivePowerUps(float deltaTime) {
+        if (activePowerUps == null || activePowerUps.isEmpty()) return;
+        Iterator<PowerUp> it = activePowerUps.iterator();
+        while (it.hasNext()) {
+            PowerUp apu = it.next();
+            apu.decreaseDuration(deltaTime);
+            if (apu.isExpired()) {
+                apu.removeEffect(this);
+                it.remove();
+            }
+        }
+    }
 
     /**
      * Checks for collisions between any ball and all bricks.
@@ -299,8 +409,11 @@ public final class GameScreen implements Screen {
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
                         } else if (brick instanceof PowerUpBrick) {
-                            // KÍCH HOẠT HIỆU ỨNG Ở ĐÂY
-                            //paddle.activateWidenPowerUp(15.0f); // 30 giây
+                            PowerUp powerUp = PowerUp.createRandomPowerUp(brick.getX() + brick.getWidth() / 2 - Constants.POWERUP_WIDTH / 2,
+                                    brick.getY() + brick.getHeight() / 2 - Constants.POWERUP_HEIGHT / 2);
+                            powerUps.add(powerUp);
+                            log.debug("PowerUp created at position ({}, {})", powerUp.getX(), powerUp.getY());
+
                         } else if (brick instanceof StrongBrick) {
                             score += 20;
                         }
@@ -335,6 +448,39 @@ public final class GameScreen implements Screen {
                 }
             }
         }
+    }
+
+    public Paddle getPaddle(){
+        return paddle;
+    }
+
+    public Ball getBall(){
+        return ball;
+    }
+
+    public int getLives(){
+        return lives;
+    }
+
+    public void setLives(int lives){
+        if (lives > 5) {
+            this.lives = 5;
+        } else {
+            this.lives = lives;
+        }
+    }
+
+    public List<Ball> getExtraBalls() {
+        return extraBalls;
+    }
+
+    public boolean isPowerUpTypeExist(String type) {
+        for (PowerUp powerUp : powerUps) {
+            if (powerUp.getType().equals(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
