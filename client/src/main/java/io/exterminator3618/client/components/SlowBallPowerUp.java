@@ -12,14 +12,16 @@ public class SlowBallPowerUp extends PowerUp {
     @Override
     public void applyEffect(GameScreen gameScreen) {
         if (gameScreen != null) {
-            gameScreen.getBall().setSpeedMultiplier(0.5f);
+            //gameScreen.getBall().setSpeedMultiplier(0.5f);
+            gameScreen.getBall().setBallSpeed(0.5f);
             gameScreen.getBall().updateVelocity();
         }
     }
     @Override
     public void removeEffect (GameScreen gameScreen){
         if (gameScreen != null) {
-            gameScreen.getBall().setSpeedMultiplier(1.0f);
+            //gameScreen.getBall().setSpeedMultiplier(1.0f);
+            gameScreen.getBall().setBallSpeed(2f);
             gameScreen.getBall().updateVelocity();
         }
     }

@@ -209,4 +209,9 @@ public class Ball extends MovableObject {
         this.speedMultiplier = speedMultiplier;
         updateVelocity();
     }
+    public void setBallSpeed(float speedMultiplier) {
+        Constants.BALL_SPEED *= speedMultiplier;
+        //updateVelocity();
+    }
+
 }
