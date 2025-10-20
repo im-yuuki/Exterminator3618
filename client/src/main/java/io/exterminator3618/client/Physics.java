@@ -133,11 +133,7 @@ public class Physics {
         }
         
         // Check top and bottom walls
-        if (ball.getY() <= 0) {
-            // Bottom wall
-            ball.setPosition(ball.getX(), 0);
-            ball.velocityY = Math.abs(ball.velocityY);
-            bounced = true;
+        if (ball.getY() <= 0) {// Bottom wall
         } else if (ball.getY() + ball.getHeight() >= screenHeight) {
             // Top wall
             ball.setPosition(ball.getX(), screenHeight - ball.getHeight());

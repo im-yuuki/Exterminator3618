@@ -57,33 +57,36 @@ public final class GameScreen implements Screen {
     private List<Brick> bricks;
     private List<Ball> extraBalls;
     private Paddle paddle;
-    private int score;
-    private int lives;
+    private int score = 0;
+    private int lives = 5;
     private int currentLevel;
     private List<PowerUp> powerUps;
-        private List<PowerUp> activePowerUps;
+    private List<PowerUp> activePowerUps;
 
     public GameScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
         this.currentLevel = 1;
-        loadLevel(currentLevel);
+        loadLevel(currentLevel, null);
     }
 
-    public void loadLevel(int levelNumber) {
+    public void loadLevel(int levelNumber, Ball oldball) {
         log.info("Loading level {}", levelNumber);
-        score = 0;
-        lives = 5;
         // Initialize ball
-        ball = new Ball(
-                WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
-                WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
-                BALL_WIDTH,
-                BALL_HEIGHT,
-                BALL_REGION_NAME, // object name
-                BALL_SPEED,
-                67
-        );
+        if (ball != null){
+            this.ball = oldball;
+            log.debug("Create newball as oldball - Combo:" + ball.getComboCount() + " / " + oldball.getComboCount());
+        } else {
+            this.ball = new Ball(
+                    WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
+                    WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
+                    BALL_WIDTH,
+                    BALL_HEIGHT,
+                    BALL_REGION_NAME, // object name
+                    BALL_SPEED,
+                    67
+            );
+        }
 
         // Initialize extra balls list
         extraBalls = new ArrayList<>();
@@ -102,13 +105,13 @@ public final class GameScreen implements Screen {
                 PADDLE_REGION_NAME
         );
 
-        // Initialize random bricks for testing
+        /*
+
         bricks = new ArrayList<>();
         int rows = 5;
         int cols = 17;
         int startX = 50;
-        int startY = WINDOW_HEIGHT - 100;
-
+        int startY = WINDOW_HEIGHT - 100;*/
         bricks = LevelLoader.load(getClass().getResourceAsStream(
                 String.format("/levels/level%d.dat", levelNumber)
         ));
@@ -153,7 +156,7 @@ public final class GameScreen implements Screen {
                 gotoGameOverScreen();
             } else {
                 // Reset lại vị trí bóng và paddle để chơi tiếp màn hiện tại
-                ball.resetToCenter();
+                ball.resetToCenter(paddle);
             }
         }
 
@@ -199,8 +202,9 @@ public final class GameScreen implements Screen {
 
         renderer.setFontSize(24);
         renderer.drawText("Score: " + score, 20, WINDOW_HEIGHT - 20);
+        renderer.drawText("Combo: " + ball.getComboCount(), 20, 30);
         for (int i = 0; i < lives; i++) {
-            renderer.drawLives(WINDOW_WIDTH - 40 - (i * 20), WINDOW_HEIGHT - 40);
+            renderer.drawLives(20 + i * 30, WINDOW_HEIGHT - 70);
         }
         
         // (Optional) Could display active power-up timers here if desired
@@ -222,7 +226,7 @@ public final class GameScreen implements Screen {
         }
 
         // Pause game on input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.launchScreen(new PauseScreen(game, this));
         }
     }
@@ -323,14 +327,10 @@ public final class GameScreen implements Screen {
 
             // Collect on paddle collision
             if (checkPowerUpCollision(powerUp, paddle)) {
-                // If instant power-up (e.g., extra life or sticky if designed instant), apply and discard
+                // If this is an instant power-up, apply immediately and do not track
                 if (powerUp.isInstant()) {
-                    // Avoid re-applying Sticky if already active
-                    if (!("sticky_paddle_power_up".equals(powerUp.getType()) && paddle.isSticky())) {
-                        powerUp.applyEffect(this);
-                    }
+                    powerUp.applyEffect(this);
                 } else {
-                    // Timed power-up: enforce single active per type
                     PowerUp existing = null;
                     for (PowerUp apu : activePowerUps) {
                         if (apu.getType().equals(powerUp.getType())) {
@@ -339,10 +339,8 @@ public final class GameScreen implements Screen {
                         }
                     }
                     if (existing != null) {
-                        // refresh remaining duration only
                         existing.resetRemainingDuration();
                     } else {
-                        // Activate new timed power-up
                         powerUp.applyEffect(this);
                         powerUp.resetRemainingDuration();
                         activePowerUps.add(powerUp);
@@ -404,7 +402,8 @@ public final class GameScreen implements Screen {
                     boolean wasDestroyed = brick.takeHit();
 
                     if (wasDestroyed) {
-                        score += 10;
+                        ball.incrementCombo();
+                        score += 10 * ball.getComboCount();
                         // Nếu gạch bị phá hủy, kiểm tra xem có phải loại đặc biệt không
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
@@ -415,7 +414,7 @@ public final class GameScreen implements Screen {
                             log.debug("PowerUp created at position ({}, {})", powerUp.getX(), powerUp.getY());
 
                         } else if (brick instanceof StrongBrick) {
-                            score += 20;
+                            score += 10 * ball.getComboCount();
                         }
 
                         // Xóa gạch khỏi danh sách
@@ -424,12 +423,13 @@ public final class GameScreen implements Screen {
                         // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
                         if (bricks.isEmpty()) {
                             currentLevel++;
+                            ball.resetToCenter(paddle);
                             // Giả sử bạn có 2 level, đánh số 1 và 2
                             if (currentLevel > 2) {
                                 gotoVictoryScreen();
                             } else {
                                 // Tải màn chơi tiếp theo
-                                loadLevel(currentLevel);
+                                loadLevel(currentLevel, ball);
                             }
                         }
 

@@ -106,4 +106,8 @@ public class Renderer {
         batch.dispose();
         log.info("Disposed of renderer resources");
     }
+
+    public BitmapFont getFont(){
+        return font;
+    }
 }

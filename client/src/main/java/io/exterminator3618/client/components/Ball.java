@@ -16,7 +16,7 @@ public class Ball extends MovableObject {
     private int previousY;
     private boolean isHeavyBall = false;
     private boolean isStuckToPaddle = false;
-
+    private int comboCount = 0;
     /**
      * Creates a new ball with constant speed from Constants.BALL_SPEED.
      *
@@ -61,14 +61,12 @@ public class Ball extends MovableObject {
     }
 
     /**
-     * Resets the ball to the center of the screen with the original speed and angle.
+     * Resets the ball to the middle of the paddle.
      */
-    public void resetToCenter() {
-        int centerX = Constants.WINDOW_WIDTH / 2 - getWidth() / 2;
-        int centerY = Constants.WINDOW_HEIGHT / 2 - getHeight() / 2;
-        setPosition(centerX, centerY);
-        updateVelocity(); // Reset to original speed and angle
-        // log.info("Ball reset to center at ({}, {})", centerX, centerY);
+    public void resetToCenter(Paddle paddle) {
+        setPosition(paddle.getX() + paddle.getWidth() / 2, paddle.getY() + getWidth() / 2);
+        isStuckToPaddle = true;
+        setVelocity(0,0);
     }
 
     /**
@@ -192,6 +190,14 @@ public class Ball extends MovableObject {
             updateVelocity();
             setStuckToPaddle(false);
         }
+    }
+
+    public void incrementCombo() {
+        comboCount++;
+    }
+
+    public int getComboCount() {
+        return comboCount;
     }
 
 }
