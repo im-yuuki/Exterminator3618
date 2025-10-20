@@ -30,6 +30,11 @@ public class Constants {
      * Default ball speed.
      */
     public static final double BALL_SPEED = 1000.0;
+    /**
+     * Ball collision tolerance.
+     */
+    public static final double MAX_BOUNCE_ANGLE = 65;
+    public static final double BALL_EPSILON = 50;
 
     /**
      * Audio file paths.

@@ -1,7 +1,5 @@
 package io.exterminator3618.client;
 
-import io.exterminator3618.client.components.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +92,7 @@ public class Physics {
         if (ballCenterX < paddleLeft || ballCenterX > paddleRight) {
             return false;
         }
-        
+
         // Swept collision: did the ball center bottom cross the paddle top this frame?
         if (previousBallY >= paddleTopY && ballBottomY <= paddleTopY) {
             return true;
@@ -111,6 +109,7 @@ public class Physics {
     /**
      * Handles collision between ball and screen boundaries.
      * Makes the ball bounce and maintains constant speed.
+     * Adds small random deviation to prevent infinite 90-degree bouncing.
      * 
      * @param ball the ball to handle screen collision for
      */
@@ -118,6 +117,7 @@ public class Physics {
         int screenWidth = Constants.WINDOW_WIDTH;
         int screenHeight = Constants.WINDOW_HEIGHT;
         boolean bounced = false;
+        //double epsilon = Constants.BALL_EPSILON;
         
         // Check wall collisions
         if (ball.getX() <= 0) {
@@ -141,9 +141,19 @@ public class Physics {
             bounced = true;
         }
         
-        // Maintain constant speed after collision
+        // Add small random deviation to prevent infinite 90-degree bouncing
         if (bounced) {
+            // không cần
+            // double randomDeviationX = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+            // double randomDeviationY = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+            //
+            // // Apply deviation to velocity components
+            // ball.velocityX += randomDeviationX;
+            // ball.velocityY += randomDeviationY;
+            //
+            // Maintain constant speed after collision
             normalizeBallVelocity(ball);
+
         }
     }
     
@@ -151,6 +161,7 @@ public class Physics {
      * Handles collision when ball center bottom hits paddle top.
      * Calculates bounce angle based on hit position on paddle.
      * Handles sticky paddle behavior when enabled.
+     * Adds small random deviation to prevent infinite 90-degree bouncing.
      * 
      * @param ball the ball that hit the paddle
      * @param paddle the paddle that was hit
@@ -179,10 +190,18 @@ public class Physics {
             // Clamp offset to valid range
             offset = Math.max(-1.0, Math.min(1.0, offset));
 
+            // Add small random deviation to prevent infinite 90-degree bouncing
+            //ĐANG NỔ
+            // double epsilon = Constants.BALL_EPSILON;
+            // double randomDeviation = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+            // offset += randomDeviation;
+            //
+            // // Re-clamp after adding deviation
+            // offset = Math.max(-1.0, Math.min(1.0, offset));
+
             // Map offset to bounce angle
             // 0 => straight up, -1 => max left, 1 => max right
-            double maxBounceFromVerticalDeg = 75.0; // cap to avoid too-horizontal
-            double angleFromVertical = offset * maxBounceFromVerticalDeg;
+            double angleFromVertical = offset * Constants.MAX_BOUNCE_ANGLE;
 
             // Calculate new velocity
             double radiansFromVertical = Math.toRadians(angleFromVertical);
@@ -197,9 +216,10 @@ public class Physics {
             normalizeBallVelocity(ball);
 
             double newAngle = Math.toDegrees(Math.atan2(ball.getVelocityY(), ball.getVelocityX()));
-            log.debug("Ball center bottom hit paddle top! Offset: {}, Angle: {}°, Velocity: ({}, {})",
-                String.format("%.2f", offset), String.format("%.1f", newAngle),
-                String.format("%.1f", ball.getVelocityX()), String.format("%.1f", ball.getVelocityY()));
+            // log.debug("Ball center bottom hit paddle top! Offset: {}, Deviation: {}, Angle: {}°, Velocity: ({}, {})",
+            //     String.format("%.2f", offset - randomDeviation), String.format("%.2f", randomDeviation),
+            //     String.format("%.1f", newAngle), String.format("%.1f", ball.getVelocityX()),
+            //     String.format("%.1f", ball.getVelocityY()));
         }
     }
     
@@ -207,6 +227,7 @@ public class Physics {
      * Handles collision with a brick by reversing appropriate velocity component.
      * Determines which side of the brick was hit and bounces accordingly.
      * For heavy ball mode, the ball passes through bricks without bouncing.
+     * Adds small random deviation to prevent infinite 90-degree bouncing.
      * 
      * @param ball the ball that hit the brick
      * @param brick the brick that was hit
@@ -264,10 +285,20 @@ public class Physics {
             }
         }
 
+        // Add small random deviation to prevent infinite 90-degree bouncing
+        // double epsilon = Constants.BALL_EPSILON;
+        // double randomDeviationX = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+        // double randomDeviationY = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+
+        // Apply deviation to velocity components
+        ball.velocityX += (Math.random() + 0.5) * Constants.BALL_EPSILON * 2;
+        //ball.velocityY += epsilon;
+
         // Maintain constant speed after collision
         normalizeBallVelocity(ball);
 
-        log.debug("Ball hit brick! New velocity: ({}, {})",
+        log.debug("Ball hit brick! Deviation: ({}, {}), New velocity: ({}, {})",
+            //String.format("%.2f", randomDeviationX), String.format("%.2f", randomDeviationY),
             String.format("%.1f", ball.getVelocityX()), String.format("%.1f", ball.getVelocityY()));
     }
 
