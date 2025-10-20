@@ -151,6 +151,7 @@ public final class GameScreen implements Screen {
         // Mạng
         if (ball.getY() <= 0 && extraBalls.isEmpty()) {
             lives--; // Trừ 1 mạng
+            ball.resetCombo();
 
             if (lives <= 0) {
                 gotoGameOverScreen();
@@ -206,7 +207,7 @@ public final class GameScreen implements Screen {
         for (int i = 0; i < lives; i++) {
             renderer.drawLives(20 + i * 30, WINDOW_HEIGHT - 70);
         }
-        
+
         // (Optional) Could display active power-up timers here if desired
 
         renderer.end();
@@ -277,20 +278,20 @@ public final class GameScreen implements Screen {
      * @param x The x-coordinate of the spawn location.
      * @param y The y-coordinate of the spawn location.
      */
-    private void spawnExtraBalls(int x, int y) {
+    public void spawnExtraBalls(int x, int y) {
         log.info("Spawning 3 extra balls!");
 
         // Vị trí spawn có thể đặt lại ở tâm viên gạch
         int spawnY = y + (BRICK_HEIGHT / 2);
 
         // Tạo 3 bóng với 3 góc khác nhau
-        Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -45);
+        Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, 45);
         extraBalls.add(ball1);
 
-        Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -90);
+        Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, 90);
         extraBalls.add(ball2);
 
-        Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -135);
+        Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, 135);
         extraBalls.add(ball3);
     }
 
@@ -412,7 +413,6 @@ public final class GameScreen implements Screen {
                                     brick.getY() + brick.getHeight() / 2 - Constants.POWERUP_HEIGHT / 2);
                             powerUps.add(powerUp);
                             log.debug("PowerUp created at position ({}, {})", powerUp.getX(), powerUp.getY());
-
                         } else if (brick instanceof StrongBrick) {
                             score += 10 * ball.getComboCount();
                         }
@@ -421,7 +421,7 @@ public final class GameScreen implements Screen {
                         brickIterator.remove();
 
                         // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
-                        if (bricks.isEmpty()) {
+                        if (levelClear()) {
                             currentLevel++;
                             ball.resetToCenter(paddle);
                             // Giả sử bạn có 2 level, đánh số 1 và 2
@@ -481,6 +481,22 @@ public final class GameScreen implements Screen {
             }
         }
         return false;
+    }
+
+    public boolean levelClear() {
+        if (bricks.isEmpty()) {
+            return true;
+        }
+        for (Brick brick : bricks) {
+            if (!brick.getType().equals("solid_brick")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Ball> getExtraBall(){
+        return extraBalls;
     }
 
 }

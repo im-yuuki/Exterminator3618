@@ -17,6 +17,7 @@ public class Ball extends MovableObject {
     private boolean isHeavyBall = false;
     private boolean isStuckToPaddle = false;
     private int comboCount = 0;
+    private float speedMultiplier = 1.0f;
     /**
      * Creates a new ball with constant speed from Constants.BALL_SPEED.
      *
@@ -36,10 +37,10 @@ public class Ball extends MovableObject {
     /**
      * Recomputes velocity components based on current speed and angle.
      */
-    private void updateVelocity() {
+    public void updateVelocity() {
         double radians = Math.toRadians(angle);
-        double vx = Constants.BALL_SPEED * Math.cos(radians);
-        double vy = Constants.BALL_SPEED * Math.sin(radians);
+        double vx = Constants.BALL_SPEED * Math.cos(radians) * speedMultiplier;
+        double vy = Constants.BALL_SPEED * Math.sin(radians) * speedMultiplier;
         setVelocity(vx, vy);
     }
 
@@ -200,4 +201,12 @@ public class Ball extends MovableObject {
         return comboCount;
     }
 
+    public void resetCombo() {
+        comboCount = 0;
+    }
+
+    public void setSpeedMultiplier(float speedMultiplier) {
+        this.speedMultiplier = speedMultiplier;
+        updateVelocity();
+    }
 }
