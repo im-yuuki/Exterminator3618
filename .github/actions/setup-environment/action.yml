@@ -4,9 +4,6 @@ description: Sets up the Java development environment with JDK 21 and caches the
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
-
     - name: Set MAVEN_OPTS to use local Maven repo
       run: |
         echo "MAVEN_OPTS=-Dmaven.repo.local=${HOME}/.m2/repository" >> $GITHUB_ENV

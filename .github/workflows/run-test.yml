@@ -9,6 +9,9 @@ jobs:
     name: Run all tests
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
@@ -21,4 +24,4 @@ jobs:
         with:
           name: unit-tests
           path: ./*/target/surefire-reports/*.xml
-          reporter: junit
+          reporter: java-junit

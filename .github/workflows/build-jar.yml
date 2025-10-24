@@ -13,6 +13,9 @@ jobs:
     name: Build Client JAR
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
@@ -27,9 +30,14 @@ jobs:
 
   build_server_jar:
     name: Build Server JAR
-    needs: build_client_jar
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
       - name: Build Server JAR
         run: mvn -B -f ./server/pom.xml clean package
 
