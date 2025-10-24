@@ -6,11 +6,13 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "gamemodes")
 public class GameMode {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
     private int id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
+
 }

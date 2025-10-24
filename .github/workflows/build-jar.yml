@@ -6,11 +6,16 @@ on:
   pull_request:
     branches:
       - master
+  release:
+    types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build_client_jar:
-    name: Build Client JAR
+  build-desktop-jar:
+    name: Build Desktop JAR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,16 +24,29 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
-      - name: Build Client JAR
-        run: mvn -B -f ./client/pom.xml clean package
+      - name: Build Desktop JAR
+        run: |
+          mvn -B -f ./pom.xml clean install
+          mvn -B -f ./desktop/pom.xml package
 
-      - name: Upload Client JAR artifact
+      - name: Upload Desktop JAR artifact
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: client-jar
-          path: "./client/target/*.jar"
+          name: desktop-jar
+          path: |
+            "./desktop/target/*.jar"
+            !./desktop/target/original-*.jar
 
-  build_server_jar:
+      - name: Upload Desktop JAR to GitHub Releases
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          find ./desktop/target -maxdepth 1 -type f -name 'original-*.jar' -delete
+          gh release upload ${{ github.event.release.tag_name }} ./desktop/target/*.jar --clobber
+
+  build-server-jar:
     name: Build Server JAR
     runs-on: ubuntu-latest
     steps:
@@ -39,10 +57,20 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Build Server JAR
-        run: mvn -B -f ./server/pom.xml clean package
+        run: |
+          mvn -B -f ./server/pom.xml clean package spring-boot:repackage
 
       - name: Upload Server JAR artifact
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
           name: server-jar
-          path: "./server/target/*.jar"
+          path: |
+            "./server/target/*.jar"
+
+      - name: Upload Server JAR to GitHub Releases
+        if: github.event_name == 'release'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            gh release upload ${{ github.event.release.tag_name }} ./server/target/*.jar --clobber
