@@ -48,7 +48,6 @@
     <modules>
         <module>client</module>
         <module>server</module>
-        <module>mapper</module>
         <module>desktop</module>
     </modules>
 
@@ -79,12 +78,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.42</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
-            <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>26.0.2</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>
