@@ -13,6 +13,7 @@
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <libgdx.version>1.13.5</libgdx.version>
     </properties>
@@ -48,7 +49,6 @@
     <modules>
         <module>client</module>
         <module>server</module>
-        <module>mapper</module>
         <module>desktop</module>
     </modules>
 
@@ -79,12 +79,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.42</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
-            <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>26.0.2</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>

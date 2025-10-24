@@ -1,5 +1,4 @@
-name: Build Client JAR executable
-
+name: Build JAR executable
 on:
   push:
     branches:
@@ -10,4 +9,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  build_client_jar:
+    name: Build Client JAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
 
+      - name: Build Client JAR
+        run: mvn -B -f ./client/pom.xml clean package
+
+      - name: Upload Client JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-jar
+          path: "./client/target/*.jar"
+
+  build_server_jar:
+    name: Build Server JAR
+    needs: build_client_jar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Server JAR
+        run: mvn -B -f ./server/pom.xml clean package
+
+      - name: Upload Server JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-jar
+          path: "./server/target/*.jar"
