@@ -7,7 +7,7 @@
     <name>Exterminator3618</name>
     <groupId>io.exterminator3618</groupId>
     <artifactId>common</artifactId>
-    <version>mainline</version>
+    <version>0.1.0-dev</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -79,6 +79,7 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.42</version>
+                <scope>provided</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>

@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test_all:
+  test-all:
     name: Run all tests
     runs-on: ubuntu-latest
     steps:
