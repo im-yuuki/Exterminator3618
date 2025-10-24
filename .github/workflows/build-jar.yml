@@ -26,8 +26,8 @@ jobs:
 
       - name: Build Desktop JAR
         run: |
-          mvn -B -f ./client/pom.xml clean install
-          mvn -B -f ./desktop/pom.xml clean package
+          mvn -B -f ./pom.xml clean install
+          mvn -B -f ./desktop/pom.xml package
 
       - name: Upload Desktop JAR artifact
         if: github.event_name != 'release'
@@ -57,7 +57,8 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Build Server JAR
-        run: mvn -B -f ./server/pom.xml clean package spring-boot:repackage
+        run: |
+          mvn -B -f ./server/pom.xml clean package spring-boot:repackage
 
       - name: Upload Server JAR artifact
         if: github.event_name != 'release'
