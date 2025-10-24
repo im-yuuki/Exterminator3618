@@ -9,7 +9,7 @@
         <version>0.1.0-dev</version>
     </parent>
 
-    <!--<name>Exterminator3618-DesktopPlatform</name>-->
+    <!--<name>Exterminator3618-Desktop</name>-->
     <artifactId>desktop</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
@@ -32,7 +32,6 @@
         <dependency>
             <groupId>io.exterminator3618</groupId>
             <artifactId>client</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- LibGDX Platform -->
@@ -86,34 +85,6 @@
 
     <build>
         <plugins>
-
-            <!-- copy core assets into desktop resources so they end up in the jar -->
-            <!--<plugin>-->
-            <!--    <groupId>org.apache.maven.plugins</groupId>-->
-            <!--    <artifactId>maven-resources-plugin</artifactId>-->
-            <!--    <version>3.3.1</version>-->
-            <!--    <executions>-->
-            <!--        <execution>-->
-            <!--            <id>copy-assets</id>-->
-            <!--            <phase>process-resources</phase>-->
-            <!--            <goals>-->
-            <!--                <goal>copy-resources</goal>-->
-            <!--            </goals>-->
-            <!--            <configuration>-->
-            <!--                <outputDirectory>${project.build.outputDirectory}/assets-->
-            <!--                </outputDirectory>-->
-            <!--                <resources>-->
-            <!--                    <resource>-->
-            <!--                        <directory>${project.basedir}/../core/assets</directory>-->
-            <!--                        <filtering>false</filtering>-->
-            <!--                    </resource>-->
-            <!--                </resources>-->
-            <!--            </configuration>-->
-            <!--        </execution>-->
-            <!--    </executions>-->
-            <!--</plugin>-->
-
-            <!-- produce a single runnable jar (uber-jar) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -127,19 +98,9 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
-                                <!-- set your main class -->
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>io.exterminator3618.desktop.Launcher</mainClass>
                                 </transformer>
-                                <!-- merge service providers if any -->
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <!-- append text resources (optional) -->
-                                <!--<transformer-->
-                                <!--        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">-->
-                                <!--    <resource>META-INF/spring.handlers</resource>-->
-                                <!--</transformer>-->
                             </transformers>
                         </configuration>
                     </execution>
