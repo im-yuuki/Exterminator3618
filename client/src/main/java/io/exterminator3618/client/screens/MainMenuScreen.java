@@ -18,27 +18,30 @@ public final class MainMenuScreen implements Screen {
     private final Exterminator3618 game;
     private final Renderer renderer;
     private final SoundManager soundManager;
-    private OrthographicCamera camera;
-    private Vector3 touchPos = new Vector3();
+    private final OrthographicCamera camera;
+    private final Vector3 touchPos;
 
-    private TextButton startButton;
-    private TextButton settingsButton;
+    private final TextButton startButton;
+    private final TextButton settingsButton;
+
     public MainMenuScreen(Exterminator3618 game) {
         this.game = game;
-        this.renderer = game.getRenderer();
-        this.soundManager = game.getSoundManager();
-        soundManager.setVolume(0.1f);
-        soundManager.play("sound/main_menu.mp3", true);
-    }
+        renderer = game.getRenderer();
+        soundManager = game.getSoundManager();
 
-    @Override
-    public void show() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         touchPos = new Vector3();
         startButton = new TextButton("Start Game", 100, 300, 200, 50);
         settingsButton = new TextButton("Options", 100, 240, 200, 50);
+    }
+
+    @Override
+    public void show() {
+        soundManager.setVolume(0.1f);
+        soundManager.play("sound/main_menu.mp3", true);
+
     }
 
     @Override
@@ -51,19 +54,18 @@ public final class MainMenuScreen implements Screen {
         // Draw text here
         renderer.drawLogo(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 50);
         renderer.drawTextMiddle("Day la Main Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        startButton.draw(renderer);
+        settingsButton.draw(renderer);
+
         renderer.end();
 
-        // Transition to game screen on input
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             soundManager.stop(); // Stop main menu music
             game.launchScreen(new GameScreen(game));
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
-        renderer.drawText("Day la Main Screen", 300, 300);
-        startButton.draw(renderer);
-        settingsButton.draw(renderer);
+        }
 
-        renderer.end();
         // 3. Xử lý Input (Logic)
         if (Gdx.input.justTouched()) { // Chỉ kiểm tra khi người dùng vừa nhấp
             // Lấy tọa độ nhấp chuột trên màn hình
@@ -73,11 +75,8 @@ public final class MainMenuScreen implements Screen {
             camera.unproject(touchPos);
 
             // Transition to game screen on input
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                game.launchScreen(new GameScreen(game));
-            } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                Gdx.app.exit();
-            } else if (startButton.isClicked(touchPos.x, touchPos.y)) {
+            if (startButton.isClicked(touchPos.x, touchPos.y)) {
+                soundManager.stop(); // Stop main menu music
                 game.launchScreen(new GameScreen(game));
             }
 
