@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -70,6 +71,14 @@ public class Renderer {
         // log.trace("Drew object '{}' at ({}, {}) with size {}x{}", obj.getFilepath(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
     }
 
+    public void draw(String regionName, int x, int y, int width, int height){
+        TextureRegion region = Assets.getRegion(regionName);
+        if (region == null) {
+            return;
+        }
+        batch.draw(region, x, y, width, height);
+    }
+
     public void drawLives(int x, int y) {
         String name = "heart_4";
         TextureRegion region = Assets.getRegion(name);
@@ -78,6 +87,14 @@ public class Renderer {
         }
         batch.draw(region, x, y, 20, 20);
     }
+
+    public void drawLogo(int x, int y) {
+        TextureRegion region = Assets.getRegion("logo");
+        if (region == null) {
+            return;
+        }
+        batch.draw(region, x - region.getRegionWidth() / 2, y + region.getRegionHeight() / 2, region.getRegionWidth(), region.getRegionHeight());
+    } 
 
     /**
      * Draws text at the specified position using the default font.
@@ -90,6 +107,20 @@ public class Renderer {
         font.draw(batch, text, x, y);
     }
 
+    public void drawTextMiddle(String text, int x, int y) {
+        GlyphLayout layout = new GlyphLayout(font, text);
+        float textWidth = layout.width;
+        float textHeight = layout.height;
+        
+        // Center horizontally: subtract half the text width from the center X
+        float drawX = x - textWidth / 2;
+        
+        // Center vertically: add half the text height to the center Y (since LibGDX draws from baseline)
+        float drawY = y + textHeight / 2;
+        
+        font.draw(batch, text, drawX, drawY);
+    }
+    
     public void setFontColor(Color color) {
         font.setColor(color);
     }

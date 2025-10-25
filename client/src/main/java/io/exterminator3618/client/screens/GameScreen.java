@@ -35,6 +35,7 @@ import io.exterminator3618.client.components.Paddle;
 import io.exterminator3618.client.components.PowerUp;
 import io.exterminator3618.client.components.PowerUpBrick;
 import io.exterminator3618.client.components.StrongBrick;
+import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.LevelLoader;
 import io.exterminator3618.client.utils.Renderer;
@@ -52,6 +53,7 @@ public final class GameScreen implements Screen {
 
     private final Exterminator3618 game;
     private final Renderer renderer;
+    private final SoundManager soundManager;
 
     private Ball ball;
     private List<Brick> bricks;
@@ -68,7 +70,11 @@ public final class GameScreen implements Screen {
         this.renderer = game.getRenderer();
         this.currentLevel = 1;
         loadLevel(currentLevel, null);
+        soundManager = game.getSoundManager();
+        soundManager.setVolume(0.05f);
+        soundManager.play("sound/gameplay_bgm.mp3", true);
     }
+
 
     public void loadLevel(int levelNumber, Ball oldball) {
         log.info("Loading level {}", levelNumber);
@@ -151,9 +157,11 @@ public final class GameScreen implements Screen {
         // Mạng
         if (ball.getY() <= 0 && extraBalls.isEmpty()) {
             lives--; // Trừ 1 mạng
+            soundManager.play("sound/lose_heart.wav", false);
             ball.resetCombo();
 
             if (lives <= 0) {
+                soundManager.play("sound/gameover_sfx.wav", false);
                 gotoGameOverScreen();
             } else {
                 // Reset lại vị trí bóng và paddle để chơi tiếp màn hiện tại
@@ -268,6 +276,7 @@ public final class GameScreen implements Screen {
     }
 
     private void gotoGameOverScreen() {
+        soundManager.dispose();  
         game.launchScreen(new GameOverScreen(game));
     }
 
@@ -329,6 +338,7 @@ public final class GameScreen implements Screen {
             // Collect on paddle collision
             if (checkPowerUpCollision(powerUp, paddle)) {
                 // If this is an instant power-up, apply immediately and do not track
+                soundManager.play("sound/collected_and_level.wav");
                 if (powerUp.isInstant()) {
                     powerUp.applyEffect(this);
                 } else {
@@ -423,6 +433,7 @@ public final class GameScreen implements Screen {
                         // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
                         if (levelClear()) {
                             currentLevel++;
+                            soundManager.play("sound/collected_and_level.wav");
                             ball.resetToCenter(paddle);
                             // Giả sử bạn có 2 level, đánh số 1 và 2
                             if (currentLevel > 2) {
@@ -472,6 +483,10 @@ public final class GameScreen implements Screen {
 
     public List<Ball> getExtraBalls() {
         return extraBalls;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 
     public boolean isPowerUpTypeExist(String type) {
