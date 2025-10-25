@@ -35,6 +35,7 @@ import io.exterminator3618.client.components.Paddle;
 import io.exterminator3618.client.components.PowerUp;
 import io.exterminator3618.client.components.PowerUpBrick;
 import io.exterminator3618.client.components.StrongBrick;
+import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.LevelLoader;
 import io.exterminator3618.client.utils.Renderer;
@@ -52,38 +53,46 @@ public final class GameScreen implements Screen {
 
     private final Exterminator3618 game;
     private final Renderer renderer;
+    private final SoundManager soundManager;
 
     private Ball ball;
     private List<Brick> bricks;
     private List<Ball> extraBalls;
     private Paddle paddle;
-    private int score;
-    private int lives;
+    private int score = 0;
+    private int lives = 5;
     private int currentLevel;
     private List<PowerUp> powerUps;
-        private List<PowerUp> activePowerUps;
+    private List<PowerUp> activePowerUps;
 
     public GameScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
         this.currentLevel = 1;
-        loadLevel(currentLevel);
+        loadLevel(currentLevel, null);
+        soundManager = game.getSoundManager();
+        soundManager.setVolume(0.05f);
+        soundManager.play("sound/gameplay_bgm.mp3", true);
     }
 
-    public void loadLevel(int levelNumber) {
+
+    public void loadLevel(int levelNumber, Ball oldball) {
         log.info("Loading level {}", levelNumber);
-        score = 0;
-        lives = 5;
         // Initialize ball
-        ball = new Ball(
-                WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
-                WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
-                BALL_WIDTH,
-                BALL_HEIGHT,
-                BALL_REGION_NAME, // object name
-                BALL_SPEED,
-                67
-        );
+        if (ball != null){
+            this.ball = oldball;
+            log.debug("Create newball as oldball - Combo:" + ball.getComboCount() + " / " + oldball.getComboCount());
+        } else {
+            this.ball = new Ball(
+                    WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
+                    WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
+                    BALL_WIDTH,
+                    BALL_HEIGHT,
+                    BALL_REGION_NAME, // object name
+                    BALL_SPEED,
+                    67
+            );
+        }
 
         // Initialize extra balls list
         extraBalls = new ArrayList<>();
@@ -102,13 +111,13 @@ public final class GameScreen implements Screen {
                 PADDLE_REGION_NAME
         );
 
-        // Initialize random bricks for testing
+        /*
+
         bricks = new ArrayList<>();
         int rows = 5;
         int cols = 17;
         int startX = 50;
-        int startY = WINDOW_HEIGHT - 100;
-
+        int startY = WINDOW_HEIGHT - 100;*/
         bricks = LevelLoader.load(getClass().getResourceAsStream(
                 String.format("/levels/level%d.dat", levelNumber)
         ));
@@ -148,12 +157,15 @@ public final class GameScreen implements Screen {
         // Mạng
         if (ball.getY() <= 0 && extraBalls.isEmpty()) {
             lives--; // Trừ 1 mạng
+            soundManager.play("sound/lose_heart.wav", false);
+            ball.resetCombo();
 
             if (lives <= 0) {
+                soundManager.play("sound/gameover_sfx.wav", false);
                 gotoGameOverScreen();
             } else {
                 // Reset lại vị trí bóng và paddle để chơi tiếp màn hiện tại
-                ball.resetToCenter();
+                ball.resetToCenter(paddle);
             }
         }
 
@@ -199,10 +211,11 @@ public final class GameScreen implements Screen {
 
         renderer.setFontSize(24);
         renderer.drawText("Score: " + score, 20, WINDOW_HEIGHT - 20);
+        renderer.drawText("Combo: " + ball.getComboCount(), 20, 30);
         for (int i = 0; i < lives; i++) {
-            renderer.drawLives(WINDOW_WIDTH - 40 - (i * 20), WINDOW_HEIGHT - 40);
+            renderer.drawLives(20 + i * 30, WINDOW_HEIGHT - 70);
         }
-        
+
         // (Optional) Could display active power-up timers here if desired
 
         renderer.end();
@@ -222,7 +235,7 @@ public final class GameScreen implements Screen {
         }
 
         // Pause game on input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.launchScreen(new PauseScreen(game, this));
         }
     }
@@ -263,6 +276,7 @@ public final class GameScreen implements Screen {
     }
 
     private void gotoGameOverScreen() {
+        soundManager.dispose();  
         game.launchScreen(new GameOverScreen(game));
     }
 
@@ -273,20 +287,20 @@ public final class GameScreen implements Screen {
      * @param x The x-coordinate of the spawn location.
      * @param y The y-coordinate of the spawn location.
      */
-    private void spawnExtraBalls(int x, int y) {
+    public void spawnExtraBalls(int x, int y) {
         log.info("Spawning 3 extra balls!");
 
         // Vị trí spawn có thể đặt lại ở tâm viên gạch
         int spawnY = y + (BRICK_HEIGHT / 2);
 
         // Tạo 3 bóng với 3 góc khác nhau
-        Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -45);
+        Ball ball1 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, 45);
         extraBalls.add(ball1);
 
-        Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -90);
+        Ball ball2 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, 90);
         extraBalls.add(ball2);
 
-        Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, -135);
+        Ball ball3 = new Ball(x, spawnY, BALL_WIDTH, BALL_HEIGHT, EXTRA_BALL_REGION_NAME, BALL_SPEED, 135);
         extraBalls.add(ball3);
     }
 
@@ -323,14 +337,11 @@ public final class GameScreen implements Screen {
 
             // Collect on paddle collision
             if (checkPowerUpCollision(powerUp, paddle)) {
-                // If instant power-up (e.g., extra life or sticky if designed instant), apply and discard
+                // If this is an instant power-up, apply immediately and do not track
+                soundManager.play("sound/collected_and_level.wav");
                 if (powerUp.isInstant()) {
-                    // Avoid re-applying Sticky if already active
-                    if (!("sticky_paddle_power_up".equals(powerUp.getType()) && paddle.isSticky())) {
-                        powerUp.applyEffect(this);
-                    }
+                    powerUp.applyEffect(this);
                 } else {
-                    // Timed power-up: enforce single active per type
                     PowerUp existing = null;
                     for (PowerUp apu : activePowerUps) {
                         if (apu.getType().equals(powerUp.getType())) {
@@ -339,10 +350,8 @@ public final class GameScreen implements Screen {
                         }
                     }
                     if (existing != null) {
-                        // refresh remaining duration only
                         existing.resetRemainingDuration();
                     } else {
-                        // Activate new timed power-up
                         powerUp.applyEffect(this);
                         powerUp.resetRemainingDuration();
                         activePowerUps.add(powerUp);
@@ -404,7 +413,8 @@ public final class GameScreen implements Screen {
                     boolean wasDestroyed = brick.takeHit();
 
                     if (wasDestroyed) {
-                        score += 10;
+                        ball.incrementCombo();
+                        score += 10 * ball.getComboCount();
                         // Nếu gạch bị phá hủy, kiểm tra xem có phải loại đặc biệt không
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
@@ -413,23 +423,24 @@ public final class GameScreen implements Screen {
                                     brick.getY() + brick.getHeight() / 2 - Constants.POWERUP_HEIGHT / 2);
                             powerUps.add(powerUp);
                             log.debug("PowerUp created at position ({}, {})", powerUp.getX(), powerUp.getY());
-
                         } else if (brick instanceof StrongBrick) {
-                            score += 20;
+                            score += 10 * ball.getComboCount();
                         }
 
                         // Xóa gạch khỏi danh sách
                         brickIterator.remove();
 
                         // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
-                        if (bricks.isEmpty()) {
+                        if (levelClear()) {
                             currentLevel++;
+                            soundManager.play("sound/collected_and_level.wav");
+                            ball.resetToCenter(paddle);
                             // Giả sử bạn có 2 level, đánh số 1 và 2
                             if (currentLevel > 2) {
                                 gotoVictoryScreen();
                             } else {
                                 // Tải màn chơi tiếp theo
-                                loadLevel(currentLevel);
+                                loadLevel(currentLevel, ball);
                             }
                         }
 
@@ -474,6 +485,10 @@ public final class GameScreen implements Screen {
         return extraBalls;
     }
 
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
     public boolean isPowerUpTypeExist(String type) {
         for (PowerUp powerUp : powerUps) {
             if (powerUp.getType().equals(type)) {
@@ -481,6 +496,22 @@ public final class GameScreen implements Screen {
             }
         }
         return false;
+    }
+
+    public boolean levelClear() {
+        if (bricks.isEmpty()) {
+            return true;
+        }
+        for (Brick brick : bricks) {
+            if (!brick.getType().equals("solid_brick")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Ball> getExtraBall(){
+        return extraBalls;
     }
 
 }

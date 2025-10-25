@@ -6,22 +6,25 @@
     <parent>
         <groupId>io.exterminator3618</groupId>
         <artifactId>common</artifactId>
-        <version>0.1.0-dev</version>
+        <version>mainline</version>
     </parent>
 
-    <!--<name>Exterminator3618-Desktop</name>-->
+    <!--<name>Exterminator3618-DesktopPlatform</name>-->
     <artifactId>desktop</artifactId>
-    <version>${project.parent.version}</version>
+    <version>mainline</version>
     <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
+        <repository>
+            <id>github-packages-libgdx-packr</id>
+            <url>https://maven.pkg.github.com/libgdx/packr</url>
+        </repository>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -32,6 +35,8 @@
         <dependency>
             <groupId>io.exterminator3618</groupId>
             <artifactId>client</artifactId>
+            <version>0.1.0-dev</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- LibGDX Platform -->
@@ -75,6 +80,16 @@
             </exclusions>
         </dependency>
 
+        <!-- Please add the GitHub Personal Access Token with at least read:packages scope to your Maven settings.xml -->
+        <!-- to get this dependency from GitHub Packages. -->
+        <!-- https://github.com/libgdx/packr/packages/394128 -->
+        <!--<dependency>-->
+        <!--    <groupId>com.badlogicgames.packr</groupId>-->
+        <!--    <artifactId>packr-all</artifactId>-->
+        <!--    <version>3.0.0</version>-->
+        <!--    <optional>true</optional>-->
+        <!--</dependency>-->
+
         <!-- https://mvnrepository.com/artifact/com.github.Vatuu/discord-rpc -->
         <dependency>
             <groupId>com.github.Vatuu</groupId>
@@ -82,32 +97,5 @@
             <version>1.6.2</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>io.exterminator3618.desktop.Launcher</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-    </build>
 
 </project>

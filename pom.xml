@@ -7,13 +7,12 @@
     <name>Exterminator3618</name>
     <groupId>io.exterminator3618</groupId>
     <artifactId>common</artifactId>
-    <version>0.1.0-dev</version>
+    <version>mainline</version>
     <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <libgdx.version>1.13.5</libgdx.version>
     </properties>
@@ -49,23 +48,12 @@
     <modules>
         <module>client</module>
         <module>server</module>
+        <module>mapper</module>
         <module>desktop</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-            <!-- local modules -->
-            <dependency>
-                <groupId>io.exterminator3618</groupId>
-                <artifactId>client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.exterminator3618</groupId>
-                <artifactId>server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -91,7 +79,12 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.42</version>
-                <scope>provided</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>26.0.2</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>

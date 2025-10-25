@@ -34,7 +34,7 @@ public final class PauseScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.begin();
         // Draw paused text here
-        renderer.drawText("Day la Pause Screen", 250, 300);
+        renderer.drawTextMiddle("Day la Pause Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         renderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
@@ -42,6 +42,8 @@ public final class PauseScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             game.backToPreviousScreen();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            // Stop gameplay background music before transitioning to game over
+            gameScreen.getSoundManager().stop();
             game.launchScreen(new GameOverScreen(game));
         }
     }

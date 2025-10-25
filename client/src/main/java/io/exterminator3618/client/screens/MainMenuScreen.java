@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.exterminator3618.client.Exterminator3618;
+import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Renderer;
 
@@ -16,6 +17,7 @@ public final class MainMenuScreen implements Screen {
 
     private final Exterminator3618 game;
     private final Renderer renderer;
+    private final SoundManager soundManager;
     private OrthographicCamera camera;
     private Vector3 touchPos = new Vector3();
 
@@ -24,6 +26,9 @@ public final class MainMenuScreen implements Screen {
     public MainMenuScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
+        this.soundManager = game.getSoundManager();
+        soundManager.setVolume(0.1f);
+        soundManager.play("sound/main_menu.mp3", true);
     }
 
     @Override
@@ -44,6 +49,16 @@ public final class MainMenuScreen implements Screen {
         camera.update();
         renderer.begin(camera);
         // Draw text here
+        renderer.drawLogo(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 50);
+        renderer.drawTextMiddle("Day la Main Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        renderer.end();
+
+        // Transition to game screen on input
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            soundManager.stop(); // Stop main menu music
+            game.launchScreen(new GameScreen(game));
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
         renderer.drawText("Day la Main Screen", 300, 300);
         startButton.draw(renderer);
         settingsButton.draw(renderer);

@@ -7,36 +7,31 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "records")
 public class Record {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
+    // bỏ unique = true để 1 account có nhiều record phục vụ cho matchHistory
+    @JoinColumn(name = "account", referencedColumnName ="id", nullable = false)
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "gamemode", referencedColumnName = "id",nullable = false)
     private GameMode gamemode;
 
-    @Column(nullable = false)
+    @Column(name = "datetime", nullable = false)
     private LocalDateTime datetime;
 
-    @Column(nullable = false)
+    @Column(name = "score", nullable = false)
     private Integer score;
 
-    @Column(nullable = true)
+    @Column(name = "highestCombo", nullable = true)
     private Integer highestCombo;
 
     @Lob
-    @Column(nullable = true)
+    @Column(name = "data", nullable = true)
     private byte[] data;
-
-    @PrePersist
-    protected void onCreate() {
-        datetime = LocalDateTime.now();
-    }
 
 }

@@ -1,6 +1,6 @@
 package io.exterminator3618.server.data;
 
-import io.exterminator3618.server.utils.FriendshipId;
+import io.exterminator3618.server.data.Account;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,25 +12,18 @@ import java.time.LocalDateTime;
 @IdClass(FriendshipId.class)
 
 public class Friendship {
-
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "account1", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account1;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "account2", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account2;
 
-    @Column(nullable = false)
+    @Column(name = "since", nullable = false)
     private LocalDateTime since;
-
-    @PrePersist
-    protected void onCreate() {
-        since = LocalDateTime.now();
-    }
-
 }
