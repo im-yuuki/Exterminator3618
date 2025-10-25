@@ -1,5 +1,6 @@
 package io.exterminator3618.client.utils;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,10 @@ public class Renderer {
         batch.begin();
     }
 
+    public void begin(OrthographicCamera camera) {
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+    }
     /**
      * Ends a batch. Must be called after draw calls.
      */
