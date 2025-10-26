@@ -64,7 +64,7 @@ public class Exterminator3618 extends Game {
         screenStack.push(screen);
         super.setScreen(screen);
     }
-
+/**
     public void backToPreviousScreen() {
         super.getScreen().dispose();
         if (screenStack.isEmpty()) {
@@ -75,10 +75,30 @@ public class Exterminator3618 extends Game {
             super.setScreen(screenStack.pop());
         }
     }
+*/
+    public void backToPreviousScreen () {
+        super.getScreen().dispose();
+        if (screenStack.isEmpty()) {
+            log.warn("Screen stack is empty, cannot go back.");
+            Gdx.app.exit();
+            return;
+        }
+        screenStack.pop();
+        if (screenStack.isEmpty()) {
+            log.warn("Popped the last screen, quiting game.");
+            Gdx.app.exit();
+        } else {
+            log.info("Returning to screen: {}", screenStack.peek().getClass().getSimpleName());
+            super.setScreen(screenStack.peek());
+        }
+    }
 
     public void replaceCurrentScreen(@NotNull Screen screen) {
         super.getScreen().dispose();
-        launchScreen(screen);
+        screenStack.pop();
+        screenStack.push(screen);
+        super.setScreen(screen);
+        //launchScreen(screen);
     }
 
     @Override
