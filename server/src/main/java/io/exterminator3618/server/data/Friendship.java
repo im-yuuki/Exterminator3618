@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "friendship")
+@Table(name = "friendships")
 @IdClass(FriendshipId.class)
 
 public class Friendship {

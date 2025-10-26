@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "gamemodes")
+@Table(name = "modes")
 public class GameMode {
 
     @Id
