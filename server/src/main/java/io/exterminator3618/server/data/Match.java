@@ -1,12 +1,14 @@
 package io.exterminator3618.server.data;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "matchhistory")
-public class MatchHistory {
+@Table(name = "matches")
+@Data
+public class Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,13 +18,8 @@ public class MatchHistory {
     @Column(nullable = false)
     private LocalDateTime datetime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
-    private Record record1;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
-    private Record record2;
+    @Column(nullable = false)
+    private boolean isDailyRankingGame;
 
     @PrePersist
     protected void onCreate() {

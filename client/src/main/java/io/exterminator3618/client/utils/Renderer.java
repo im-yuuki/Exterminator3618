@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.Texture;
 
 import io.exterminator3618.client.components.GameObject;
 
@@ -28,17 +29,20 @@ public class Renderer {
 
     private final BitmapFont font;
 
+    private final Texture backgroundTexture;
     /**
      * Creates a renderer and its SpriteBatch.
      */
     public Renderer() {
         batch = new SpriteBatch();
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Quicksand-Medium.ttf"));
+        this.backgroundTexture = new Texture(Gdx.files.internal("Backround_Tiles.png"));
+        //this.backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/RetroGaming.ttf"));
         FreeTypeFontParameter param = new FreeTypeFontParameter();
         param.size = 24;
-        param.color = Color.WHITE;
+        param.color = Color.BLACK;
         param.borderWidth = 2;
-        param.borderColor = Color.BLACK;
+        param.borderColor = Color.WHITE;
         font = generator.generateFont(param);
         generator.dispose();
     }
@@ -53,6 +57,11 @@ public class Renderer {
     public void begin(OrthographicCamera camera) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        batch.draw(backgroundTexture, 0, 0, screenWidth, screenHeight);
     }
     /**
      * Ends a batch. Must be called after draw calls.
@@ -140,6 +149,7 @@ public class Renderer {
      */
     public void dispose() {
         batch.dispose();
+        backgroundTexture.dispose();
         log.info("Disposed of renderer resources");
     }
 

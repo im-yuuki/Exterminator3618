@@ -7,7 +7,7 @@
     <name>Exterminator3618</name>
     <groupId>io.exterminator3618</groupId>
     <artifactId>common</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -54,18 +54,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- local modules -->
-            <dependency>
-                <groupId>io.exterminator3618</groupId>
-                <artifactId>client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.exterminator3618</groupId>
-                <artifactId>server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -80,24 +68,12 @@
                 <version>5.13.4</version>
                 <scope>test</scope>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.2.6.Final</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.42</version>
                 <scope>provided</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
-            <dependency>
-                <groupId>com.google.protobuf</groupId>
-                <artifactId>protobuf-java</artifactId>
-                <version>4.32.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
