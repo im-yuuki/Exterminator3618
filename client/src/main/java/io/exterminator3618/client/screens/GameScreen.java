@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.math.Vector3;
+import io.exterminator3618.client.components.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +29,7 @@ import io.exterminator3618.client.components.PowerUp;
 import io.exterminator3618.client.components.PowerUpBrick;
 import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.managers.SoundManager;
+
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.LevelLoader;
 import io.exterminator3618.client.utils.Renderer;
@@ -53,6 +59,13 @@ public final class GameScreen implements Screen {
     private List<PowerUp> powerUps;
     private List<PowerUp> activePowerUps;
 
+    private OrthographicCamera camera;
+    private Viewport viewport;
+    private Vector3 touchPos = new Vector3();
+
+    private TextButton pauseButton;
+
+
     public GameScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
@@ -62,7 +75,6 @@ public final class GameScreen implements Screen {
         soundManager.setVolume(0.05f);
         soundManager.play("sound/gameplay_bgm.mp3", true);
     }
-
 
     public void loadLevel(int levelNumber, Ball oldball) {
         log.info("Loading level {}", levelNumber);
@@ -99,13 +111,6 @@ public final class GameScreen implements Screen {
                 PADDLE_REGION_NAME
         );
 
-        /*
-
-        bricks = new ArrayList<>();
-        int rows = 5;
-        int cols = 17;
-        int startX = 50;
-        int startY = WINDOW_HEIGHT - 100;*/
         bricks = LevelLoader.load(getClass().getResourceAsStream(
                 String.format("/levels/level%d.dat", levelNumber)
         ));
@@ -114,6 +119,11 @@ public final class GameScreen implements Screen {
 
     @Override
     public void show() {
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
+        camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
+        touchPos = new Vector3();
+        pauseButton = new TextButton("Pause", 100, 300, 200, 50);
     }
 
     /**
@@ -179,7 +189,7 @@ public final class GameScreen implements Screen {
         }
 
         // Render game objects
-        renderer.begin();
+        renderer.begin(camera);
         renderer.draw(ball);
         renderer.draw(paddle);
         for (PowerUp powerUp : powerUps) {
@@ -203,7 +213,9 @@ public final class GameScreen implements Screen {
         for (int i = 0; i < lives; i++) {
             renderer.drawLives(20 + i * 30, WINDOW_HEIGHT - 70);
         }
-
+        camera.update();
+        viewport.apply();
+        pauseButton.draw(renderer);
         // (Optional) Could display active power-up timers here if desired
 
         renderer.end();
@@ -226,11 +238,21 @@ public final class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.launchScreen(new PauseScreen(game, this));
         }
+
+        if (Gdx.input.justTouched()) {
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            viewport.unproject(touchPos);
+
+            if (pauseButton.isClicked(touchPos.x, touchPos.y)) {
+                game.launchScreen(new PauseScreen(game, this));
+            }
+        }
+
     }
 
     @Override
     public void resize(int width, int height) {
-
+        viewport.update(width, height);
     }
 
     @Override
@@ -255,7 +277,7 @@ public final class GameScreen implements Screen {
     public void dispose() {
         bricks.clear();
         extraBalls.clear();
-        Assets.dispose();
+        //Assets.dispose();
         log.info("Game disposed");
     }
 
@@ -264,8 +286,9 @@ public final class GameScreen implements Screen {
     }
 
     private void gotoGameOverScreen() {
-        soundManager.dispose();  
-        game.launchScreen(new GameOverScreen(game));
+        //game.launchScreen(new GameOverScreen(game));
+        soundManager.dispose();
+        game.replaceCurrentScreen(new GameOverScreen(game));
     }
 
     /**
