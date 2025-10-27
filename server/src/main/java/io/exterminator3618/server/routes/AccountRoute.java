@@ -1,13 +1,17 @@
 package io.exterminator3618.server.routes;
 
 import io.exterminator3618.server.data.Account;
-import io.exterminator3618.server.models.AccountOperationResponse;
+import io.exterminator3618.server.data.Ban;
+import io.exterminator3618.server.models.OperationWithSessionTokenResponse;
 import io.exterminator3618.server.models.LoginRequest;
 import io.exterminator3618.server.models.RecoverRequest;
 import io.exterminator3618.server.models.RegisterRequest;
 import io.exterminator3618.server.repositories.AccountRepository;
+import io.exterminator3618.server.services.SessionService;
 import io.exterminator3618.server.utils.PasswordHash;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,66 +21,106 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/account")
+@Slf4j
 @RequiredArgsConstructor
 public class AccountRoute {
 
     private final AccountRepository accountRepository;
+    private final SessionService sessionService;
 
     @PostMapping("/login")
-    public AccountOperationResponse login(@RequestBody LoginRequest req) {
+    @Transactional
+    public OperationWithSessionTokenResponse login(@RequestBody LoginRequest req) {
         Account account =  accountRepository.findAccountByUsername(req.username());
         if (account == null) {
-            return new AccountOperationResponse(false, "Account not found");
+            log.debug("Username \"{}\" not found", req.username());
+            return new OperationWithSessionTokenResponse(false, "Account not found");
         } else if (!PasswordHash.verifyPassword(req.password(), account.getPwdHash())) {
-            return new AccountOperationResponse(false, "Invalid password");
+            log.debug("Login attempt for \"{}\" failed: invalid password", req.username());
+            return new OperationWithSessionTokenResponse(false, "Invalid password");
         }
-        var bans = account.getBans();
-        for (var ban : bans) {
-            if (ban.getValidTo() == null || ban.getValidTo().isAfter(LocalDateTime.now())) {
-                StringBuilder banMessage = new StringBuilder("Account is banned");
-                if (ban.getValidTo() != null) {
-                    banMessage.append(" until ").append(ban.getValidTo().toString());
-                }
-                if (ban.getReason() != null && !ban.getReason().isEmpty()) {
-                    banMessage.append(". Reason: ").append(ban.getReason());
-                }
-                return new AccountOperationResponse(false, banMessage.toString());
-            }
+        String banMessage = isBannedAccount(account);
+        if (banMessage != null) {
+            log.debug("Login attempt for \"{}\" failed: {}", req.username(), banMessage);
+            return new OperationWithSessionTokenResponse(false, banMessage);
         }
-        var res = new AccountOperationResponse(true, "Login successful");
+        var res = new OperationWithSessionTokenResponse(true, "Login successful");
         res.setAccountId(account.getId());
         res.setAccountName(account.getName());
         res.setLastLoginAt(account.getLastLoginAt());
-        res.setSessionToken("");
+        res.setSessionToken(
+                sessionService.generateSessionToken(res.getAccountId())
+        );
         // Update last login time
         account.setLastLoginAt(LocalDateTime.now());
         accountRepository.save(account);
+        log.debug("User \"{}\" logged in successfully", req.username());
         return res;
     }
 
     @PostMapping("/register")
-    public AccountOperationResponse register(@RequestBody RegisterRequest req) {
+    public OperationWithSessionTokenResponse register(@RequestBody RegisterRequest req) {
         var existingAccount = accountRepository.findAccountByUsername(req.username());
         if (existingAccount != null) {
-            return new AccountOperationResponse(false, "Username already taken");
+            return new OperationWithSessionTokenResponse(false, "Username already taken");
         }
-        // Create new account
         Account newAccount = new Account();
         newAccount.setUsername(req.username());
         newAccount.setName(req.name());
         newAccount.setPwdHash(PasswordHash.hashPassword(req.password()));
         accountRepository.save(newAccount);
-        var res = new AccountOperationResponse(true, "Account registered successfully");
+        var res = new OperationWithSessionTokenResponse(true, "Account registered successfully");
         res.setAccountId(newAccount.getId());
         res.setAccountName(newAccount.getName());
         res.setLastLoginAt(newAccount.getLastLoginAt());
-        res.setSessionToken("");
+        res.setSessionToken(
+                sessionService.generateSessionToken(res.getAccountId())
+        );
+        log.debug("New account registered: \"{}\" ({}), ID: {}", newAccount.getUsername(), newAccount.getName(), newAccount.getId());
         return res;
     }
 
     @PostMapping("/recover")
-    public AccountOperationResponse recover(@RequestBody RecoverRequest req) {
-        return new AccountOperationResponse(false, "Account recovery not implemented");
+    public OperationWithSessionTokenResponse recover(@RequestBody RecoverRequest req) {
+        return new OperationWithSessionTokenResponse(false, "Account recovery not implemented");
+    }
+
+    /**
+     * Check if the provided account is banned.
+     *
+     * @param account the account entity
+     * @return banned message of the ban which have the longest remaining time, or null if not banned
+     */
+    private static String isBannedAccount(Account account) {
+        var bans = account.getBans();
+        Ban longestBan = null;
+        for (var ban : bans) {
+            if (ban.getValidTo() == null) {
+                // this is a permanent ban
+                longestBan = ban;
+                break;
+            }
+            if (ban.getValidTo().isAfter(LocalDateTime.now())) {
+                if (longestBan == null) {
+                    longestBan = ban;
+                } else if (ban.getValidTo().isAfter(longestBan.getValidTo())) {
+                    longestBan = ban;
+                }
+            }
+        }
+        if (longestBan == null) {
+            return null;
+        }
+        StringBuilder banMessage = new StringBuilder("Account is banned");
+        if (longestBan.getValidTo() != null) {
+            banMessage.append(" until ").append(longestBan.getValidTo().toString());
+        } else {
+            banMessage.append(" permanently");
+        }
+        if (longestBan.getReason() != null && !longestBan.getReason().isEmpty()) {
+            banMessage.append(". Reason: ").append(longestBan.getReason());
+        }
+        return banMessage.toString();
     }
 
 }

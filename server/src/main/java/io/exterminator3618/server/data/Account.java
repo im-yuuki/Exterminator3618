@@ -25,9 +25,6 @@ public class Account {
     @Column(nullable = false)
     private String name;
 
-    @Column( nullable = false)
-    private int xp = 0;
-
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

@@ -1,11 +1,13 @@
 package io.exterminator3618.server.data;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "records")
+@Data
 public class Record {
 
     @Id
@@ -17,12 +19,12 @@ public class Record {
     @JoinColumn(referencedColumnName = "id", nullable = false)
     private Account account;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "id", nullable = false)
-    private GameMode gamemode;
-
     @Column(nullable = false)
     private LocalDateTime datetime;
+
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id", nullable = true)
+    private Match match;
 
     @Column(nullable = false)
     private Integer score;

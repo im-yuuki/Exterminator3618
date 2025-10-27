@@ -35,7 +35,7 @@ jobs:
         with:
           name: desktop-jar
           path: |
-            "./desktop/target/*.jar"
+            ./desktop/target/*.jar
             !./desktop/target/original-*.jar
 
       - name: Upload Desktop JAR to GitHub Releases
@@ -66,7 +66,7 @@ jobs:
         with:
           name: server-jar
           path: |
-            "./server/target/*.jar"
+            ./server/target/*.jar
 
       - name: Upload Server JAR to GitHub Releases
         if: github.event_name == 'release'
