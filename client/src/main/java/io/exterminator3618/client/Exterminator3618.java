@@ -1,6 +1,7 @@
 package io.exterminator3618.client;
 
 import com.badlogic.gdx.*;
+import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.screens.SplashScreen;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
@@ -20,6 +21,7 @@ public class Exterminator3618 extends Game {
     private final Stack<Screen> screenStack = new Stack<>();
     private Preferences preferences = null;
     private Renderer renderer = null;
+    private SoundManager soundManager = null;
 
     @Override
     public void create() {
@@ -36,7 +38,12 @@ public class Exterminator3618 extends Game {
             preferences.flush();
         }
         log.debug("Disposing object");
-        renderer.dispose();
+        if (renderer != null) {
+            renderer.dispose();
+        }
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
         Assets.dispose();
         super.dispose();
     }
@@ -57,6 +64,15 @@ public class Exterminator3618 extends Game {
             renderer = new Renderer();
         }
         return renderer;
+    }
+
+    @NotNull
+    public SoundManager getSoundManager() {
+        if (soundManager == null) {
+            log.info("Creating sound manager");
+            soundManager = SoundManager.getInstance();
+        }
+        return soundManager;
     }
 
     public void launchScreen(@NotNull Screen screen) {

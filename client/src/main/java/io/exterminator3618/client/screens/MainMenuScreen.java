@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.math.Vector3;
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
+import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Renderer;
 
@@ -18,9 +19,10 @@ public final class MainMenuScreen implements Screen {
 
     private final Exterminator3618 game;
     private final Renderer renderer;
-    private OrthographicCamera camera;
+    private final SoundManager soundManager;
+    private final OrthographicCamera camera;
+    private final Vector3 touchPos;
     private Viewport viewport;
-    private Vector3 touchPos = new Vector3();
 
     private TextButton startButton;
     private TextButton settingsButton;
@@ -30,30 +32,30 @@ public final class MainMenuScreen implements Screen {
     final int BUTTON_HEIGHT = 50;
     final int PADDING = 20;
 
-    final int TITLE_FONT_SIZE = 100;
-    final int BUTTON_FONT_SIZE = 24;
-
     public MainMenuScreen(Exterminator3618 game) {
         this.game = game;
-        this.renderer = game.getRenderer();
-    }
+        renderer = game.getRenderer();
+        soundManager = game.getSoundManager();
 
-    @Override
-    public void show() {
         camera = new OrthographicCamera();
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
-        camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
-
         touchPos = new Vector3();
 
         final int CENTER_X = (Constants.WINDOW_WIDTH / 2) - (BUTTON_WIDTH / 2);
-        final int TITLE_Y = Constants.WINDOW_HEIGHT - 100;
         final int START_Y = (Constants.WINDOW_HEIGHT / 2) + BUTTON_HEIGHT + PADDING;
         final int SETTINGS_Y = START_Y - BUTTON_HEIGHT - PADDING;
         final int EXIT_Y = SETTINGS_Y - BUTTON_HEIGHT - PADDING;
         startButton = new TextButton("Start Game", CENTER_X, START_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
         settingsButton = new TextButton("Options", CENTER_X, SETTINGS_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
-        //exitButton = new TextButton("Exit", CENTER_X, EXIT_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        // exitButton = new TextButton("Exit", CENTER_X, EXIT_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+    }
+
+    @Override
+    public void show() {
+        camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
+        soundManager.setVolume(0.1f);
+        soundManager.play("sound/main_menu.mp3", true);
+
     }
 
     @Override
@@ -65,15 +67,19 @@ public final class MainMenuScreen implements Screen {
         viewport.apply();
         renderer.begin(camera);
         // Draw text here
-        renderer.setFontSize(TITLE_FONT_SIZE);
-        final int TITLE_X = (Constants.WINDOW_WIDTH / 2) - 140;
-        renderer.drawText("ARKANOID", TITLE_X, Constants.WINDOW_HEIGHT - 100);
-
-        renderer.setFontSize(BUTTON_FONT_SIZE);
+        renderer.drawLogo(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2 + 50);
         startButton.draw(renderer);
         settingsButton.draw(renderer);
 
         renderer.end();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            soundManager.stop(); // Stop main menu music
+            game.launchScreen(new GameScreen(game));
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
+
         // 3. Xử lý Input (Logic)
         if (Gdx.input.justTouched()) { // Chỉ kiểm tra khi người dùng vừa nhấp
             // Lấy tọa độ nhấp chuột trên màn hình
@@ -81,6 +87,7 @@ public final class MainMenuScreen implements Screen {
             viewport.unproject(touchPos);
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                soundManager.stop(); // Stop main menu music
                 game.launchScreen(new GameScreen(game));
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                 Gdx.app.exit();

@@ -32,21 +32,21 @@ public final class PauseScreen implements Screen {
         this.game = game;
         this.gameScreen = gameScreen;
         this.renderer = game.getRenderer();
-    }
+        touchPos = new Vector3();
 
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
+
+        backButton = new TextButton("Main Menu", 100, 300, 200, 50);
+        playButton = new TextButton("Continue", 100, 400, 200, 50);
+        settingButton = new TextButton("Settings", 100, 240, 200, 50);
+    }
 
     @Override
     public void show() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
-        touchPos = new Vector3();
-        backButton = new TextButton("Main Menu", 100, 300, 200, 50);
-        playButton = new TextButton("Continue", 100, 400, 200, 50);
-        settingButton = new TextButton("Settings", 100, 240, 200, 50);
     }
 
     @Override
@@ -55,10 +55,10 @@ public final class PauseScreen implements Screen {
 
         Gdx.gl.glClearColor(0, 0, 0, 0.5f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //renderer.begin();
+        // renderer.begin();
         // Draw paused text here
         renderer.begin(camera);
-        renderer.drawText("Day la Pause Screen", 250, 300);
+        renderer.drawTextMiddle("Day la Pause Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         camera.update();
         viewport.apply();
         playButton.draw(renderer);
@@ -71,6 +71,8 @@ public final class PauseScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             game.backToPreviousScreen();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            // Stop gameplay background music before transitioning to game over
+            gameScreen.getSoundManager().stop();
             game.launchScreen(new GameOverScreen(game));
         }
 

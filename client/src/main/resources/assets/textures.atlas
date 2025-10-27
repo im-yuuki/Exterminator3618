@@ -1,177 +1,179 @@
 textures.png
-size: 128, 204
+size: 954, 209
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
 pma: false
 big_blue_ball
-  bounds: 55, 97, 11, 11
+  bounds: 471, 9, 11, 11
 big_green_ball
-  bounds: 66, 97, 11, 11
+  bounds: 482, 9, 11, 11
 big_orange_ball
-  bounds: 77, 97, 11, 11
+  bounds: 493, 9, 11, 11
 big_purple_ball
-  bounds: 88, 97, 11, 11
+  bounds: 504, 9, 11, 11
 big_red_ball
-  bounds: 99, 97, 11, 11
+  bounds: 515, 9, 11, 11
 big_yellow_ball
-  bounds: 110, 97, 11, 11
+  bounds: 526, 9, 11, 11
 blue_ball
-  bounds: 0, 7, 8, 8
+  bounds: 126, 0, 8, 8
 blue_paddle
-  bounds: 80, 7, 32, 9
+  bounds: 206, 0, 32, 9
   index: 1
 blue_paddle
-  bounds: 0, 16, 32, 9
+  bounds: 238, 0, 32, 9
   index: 2
 blue_paddle
-  bounds: 32, 16, 32, 9
+  bounds: 270, 0, 32, 9
   index: 3
 expand_paddle_power_up
   bounds: 30, 0, 16, 7
 extra_live_power_up
   bounds: 46, 0, 16, 7
 green_ball
-  bounds: 8, 7, 8, 8
+  bounds: 134, 0, 8, 8
 green_paddle
-  bounds: 64, 16, 32, 9
+  bounds: 302, 0, 32, 9
   index: 1
 green_paddle
-  bounds: 96, 16, 32, 9
+  bounds: 334, 0, 32, 9
   index: 2
 green_paddle
-  bounds: 0, 25, 32, 9
+  bounds: 366, 0, 32, 9
   index: 3
 green_paddle_end
-  bounds: 32, 25, 7, 9
+  bounds: 398, 0, 7, 9
   index: 1
 green_paddle_end
-  bounds: 39, 25, 6, 9
+  bounds: 405, 0, 6, 9
   index: 2
 green_paddle_end
-  bounds: 45, 25, 4, 9
+  bounds: 411, 0, 4, 9
   index: 3
 green_paddle_head
-  bounds: 49, 25, 7, 9
+  bounds: 415, 0, 7, 9
   index: 1
 green_paddle_head
-  bounds: 56, 25, 6, 9
+  bounds: 422, 0, 6, 9
   index: 2
 green_paddle_head
-  bounds: 62, 25, 4, 9
+  bounds: 428, 0, 4, 9
   index: 3
 green_paddle_mid
-  bounds: 66, 25, 4, 9
+  bounds: 432, 0, 4, 9
   index: 1
 green_paddle_mid
-  bounds: 70, 25, 3, 9
+  bounds: 436, 0, 3, 9
   index: 2
 green_paddle_mid
-  bounds: 73, 25, 3, 9
+  bounds: 439, 0, 3, 9
   index: 3
 heart
-  bounds: 0, 97, 11, 10
+  bounds: 416, 9, 11, 10
   index: 0
 heart
-  bounds: 11, 97, 11, 10
+  bounds: 427, 9, 11, 10
   index: 1
 heart
-  bounds: 22, 97, 11, 10
+  bounds: 438, 9, 11, 10
   index: 2
 heart
-  bounds: 33, 97, 11, 10
+  bounds: 449, 9, 11, 10
   index: 3
 heart
-  bounds: 44, 97, 11, 10
+  bounds: 460, 9, 11, 10
   index: 4
 heavy_ball_power_up
   bounds: 62, 0, 16, 7
+logo
+  bounds: 352, 25, 578, 184
 normal_blue_brick
-  bounds: 76, 25, 32, 9
+  bounds: 442, 0, 32, 9
   index: 1
 normal_blue_brick
-  bounds: 0, 34, 32, 9
+  bounds: 474, 0, 32, 9
   index: 2
 normal_blue_brick
-  bounds: 32, 34, 32, 9
+  bounds: 506, 0, 32, 9
   index: 3
 normal_green_brick
-  bounds: 64, 34, 32, 9
+  bounds: 538, 0, 32, 9
   index: 1
 normal_green_brick
-  bounds: 96, 34, 32, 9
+  bounds: 570, 0, 32, 9
   index: 2
 normal_green_brick
-  bounds: 0, 43, 32, 9
+  bounds: 602, 0, 32, 9
   index: 3
 normal_orange_brick
-  bounds: 32, 43, 32, 9
+  bounds: 634, 0, 32, 9
   index: 1
 normal_orange_brick
-  bounds: 64, 43, 32, 9
+  bounds: 666, 0, 32, 9
   index: 2
 normal_orange_brick
-  bounds: 96, 43, 32, 9
+  bounds: 698, 0, 32, 9
   index: 3
 normal_purple_brick
-  bounds: 0, 52, 32, 9
+  bounds: 730, 0, 32, 9
   index: 1
 normal_purple_brick
-  bounds: 32, 52, 32, 9
+  bounds: 762, 0, 32, 9
   index: 2
 normal_purple_brick
-  bounds: 64, 52, 32, 9
+  bounds: 794, 0, 32, 9
   index: 3
 normal_red_brick
-  bounds: 96, 52, 32, 9
+  bounds: 826, 0, 32, 9
   index: 1
 normal_red_brick
-  bounds: 0, 61, 32, 9
+  bounds: 858, 0, 32, 9
   index: 2
 normal_red_brick
-  bounds: 32, 61, 32, 9
+  bounds: 890, 0, 32, 9
   index: 3
 normal_yellow_brick
-  bounds: 64, 61, 32, 9
+  bounds: 922, 0, 32, 9
   index: 1
 normal_yellow_brick
-  bounds: 96, 61, 32, 9
+  bounds: 0, 9, 32, 9
   index: 2
 normal_yellow_brick
-  bounds: 0, 70, 32, 9
+  bounds: 32, 9, 32, 9
   index: 3
 orange_ball
-  bounds: 16, 7, 8, 8
+  bounds: 142, 0, 8, 8
 orange_paddle
-  bounds: 32, 70, 32, 9
+  bounds: 64, 9, 32, 9
   index: 1
 orange_paddle
-  bounds: 64, 70, 32, 9
+  bounds: 96, 9, 32, 9
   index: 2
 orange_paddle
-  bounds: 96, 70, 32, 9
+  bounds: 128, 9, 32, 9
   index: 3
 purple_ball
-  bounds: 24, 7, 8, 8
+  bounds: 150, 0, 8, 8
 purple_paddle
-  bounds: 0, 79, 32, 9
+  bounds: 160, 9, 32, 9
   index: 1
 purple_paddle
-  bounds: 32, 79, 32, 9
+  bounds: 192, 9, 32, 9
   index: 2
 purple_paddle
-  bounds: 64, 79, 32, 9
+  bounds: 224, 9, 32, 9
   index: 3
 red_ball
-  bounds: 32, 7, 8, 8
+  bounds: 158, 0, 8, 8
 red_paddle
-  bounds: 96, 79, 32, 9
+  bounds: 256, 9, 32, 9
   index: 1
 red_paddle
-  bounds: 0, 88, 32, 9
+  bounds: 288, 9, 32, 9
   index: 2
 red_paddle
-  bounds: 32, 88, 32, 9
+  bounds: 320, 9, 32, 9
   index: 3
 slow_ball_power_up
   bounds: 78, 0, 16, 7
@@ -190,105 +192,105 @@ small_yellow_ball
 split_ball_power_up
   bounds: 94, 0, 16, 7
 square_blue_brick
-  bounds: 0, 108, 16, 16
+  bounds: 537, 9, 16, 16
   index: 1
 square_blue_brick
-  bounds: 16, 108, 16, 16
+  bounds: 553, 9, 16, 16
   index: 2
 square_green_brick
-  bounds: 32, 108, 16, 16
+  bounds: 569, 9, 16, 16
   index: 1
 square_green_brick
-  bounds: 48, 108, 16, 16
+  bounds: 585, 9, 16, 16
   index: 2
 square_orange_brick
-  bounds: 64, 108, 16, 16
+  bounds: 601, 9, 16, 16
   index: 1
 square_orange_brick
-  bounds: 80, 108, 16, 16
+  bounds: 617, 9, 16, 16
   index: 2
 square_purple_brick
-  bounds: 96, 108, 16, 16
+  bounds: 633, 9, 16, 16
   index: 1
 square_purple_brick
-  bounds: 112, 108, 16, 16
+  bounds: 649, 9, 16, 16
   index: 2
 square_red_brick
-  bounds: 0, 124, 16, 16
+  bounds: 665, 9, 16, 16
   index: 1
 square_red_brick
-  bounds: 16, 124, 16, 16
+  bounds: 681, 9, 16, 16
   index: 2
 square_yellow_brick
-  bounds: 32, 124, 16, 16
+  bounds: 697, 9, 16, 16
   index: 1
 square_yellow_brick
-  bounds: 48, 124, 16, 16
+  bounds: 713, 9, 16, 16
   index: 2
 sticky_paddle_power_up
   bounds: 110, 0, 16, 7
 thick_blue_brick
-  bounds: 64, 124, 32, 16
+  bounds: 729, 9, 32, 16
   index: 1
 thick_blue_brick
-  bounds: 96, 124, 32, 16
+  bounds: 761, 9, 32, 16
   index: 2
 thick_blue_brick
-  bounds: 0, 140, 32, 16
+  bounds: 793, 9, 32, 16
   index: 3
 thick_green_brick
-  bounds: 32, 140, 32, 16
+  bounds: 825, 9, 32, 16
   index: 1
 thick_green_brick
-  bounds: 64, 140, 32, 16
+  bounds: 857, 9, 32, 16
   index: 2
 thick_green_brick
-  bounds: 96, 140, 32, 16
+  bounds: 889, 9, 32, 16
   index: 3
 thick_orange_brick
-  bounds: 0, 156, 32, 16
+  bounds: 921, 9, 32, 16
   index: 1
 thick_orange_brick
-  bounds: 32, 156, 32, 16
+  bounds: 0, 25, 32, 16
   index: 2
 thick_orange_brick
-  bounds: 64, 156, 32, 16
+  bounds: 32, 25, 32, 16
   index: 3
 thick_purple_brick
-  bounds: 96, 156, 32, 16
+  bounds: 64, 25, 32, 16
   index: 1
 thick_purple_brick
-  bounds: 0, 172, 32, 16
+  bounds: 96, 25, 32, 16
   index: 2
 thick_purple_brick
-  bounds: 32, 172, 32, 16
+  bounds: 128, 25, 32, 16
   index: 3
 thick_red_brick
-  bounds: 64, 172, 32, 16
+  bounds: 160, 25, 32, 16
   index: 1
 thick_red_brick
-  bounds: 96, 172, 32, 16
+  bounds: 192, 25, 32, 16
   index: 2
 thick_red_brick
-  bounds: 0, 188, 32, 16
+  bounds: 224, 25, 32, 16
   index: 3
 thick_yellow_brick
-  bounds: 32, 188, 32, 16
+  bounds: 256, 25, 32, 16
   index: 1
 thick_yellow_brick
-  bounds: 64, 188, 32, 16
+  bounds: 288, 25, 32, 16
   index: 2
 thick_yellow_brick
-  bounds: 96, 188, 32, 16
+  bounds: 320, 25, 32, 16
   index: 3
 yellow_ball
-  bounds: 40, 7, 8, 8
+  bounds: 166, 0, 8, 8
 yellow_paddle
-  bounds: 64, 88, 32, 9
+  bounds: 352, 9, 32, 9
   index: 1
 yellow_paddle
-  bounds: 96, 88, 32, 9
+  bounds: 384, 9, 32, 9
   index: 2
 yellow_paddle
-  bounds: 48, 7, 32, 8
+  bounds: 174, 0, 32, 8
   index: 3

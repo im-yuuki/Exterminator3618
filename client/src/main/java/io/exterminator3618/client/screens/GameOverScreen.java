@@ -24,22 +24,19 @@ public final class GameOverScreen implements Screen {
 
     private TextButton playAgainButton;
     private TextButton backButton;
+
     public GameOverScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
-
-
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
+        backButton = new TextButton("Main Menu", 100, 300, 200, 50);
+        playAgainButton = new TextButton("Play Again", 100, 240, 200, 50);
     }
 
     @Override
     public void show() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
-
-        touchPos = new Vector3();
-        backButton = new TextButton("Main Menu", 100, 300, 200, 50);
-        playAgainButton = new TextButton("Play Again", 100, 240, 200, 50);
     }
 
     @Override
@@ -49,7 +46,7 @@ public final class GameOverScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.begin(camera);
         // Draw game over text here
-        renderer.drawText("Day la Game Over Screen", 250, 300);
+        renderer.drawTextMiddle("Day la Game Over Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         camera.update();
         viewport.apply();
         //renderer.begin(camera);
@@ -71,10 +68,9 @@ public final class GameOverScreen implements Screen {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.getSoundManager().stop(); // Stop any playing music
             game.launchScreen(new MainMenuScreen(game));
         }
-
-
     }
 
     @Override

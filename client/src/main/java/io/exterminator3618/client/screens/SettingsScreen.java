@@ -24,15 +24,15 @@ public final class SettingsScreen implements Screen {
         this.game = game;
         this.renderer = new Renderer();
         this.camera = new OrthographicCamera();
+
+        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
+        touchPos = new Vector3();
+        backButton = new TextButton("Back", 100, 300, 200, 50);
     }
 
     @Override
     public void show() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
-        touchPos = new Vector3();
-        backButton = new TextButton("Back", 100, 300, 200, 50);
     }
 
     @Override
