@@ -16,6 +16,7 @@ public class Ball extends MovableObject {
     private int previousY;
     private boolean isHeavyBall = false;
     private boolean isStuckToPaddle = false;
+    private int stuckOffsetX = 0; // Offset từ giữa paddle đến vị trí dính
     private int comboCount = 0;
     private float speedMultiplier = 1.0f;
     /**
@@ -67,6 +68,7 @@ public class Ball extends MovableObject {
     public void resetToCenter(Paddle paddle) {
         setPosition(paddle.getX() + paddle.getWidth() / 2, paddle.getY() + getWidth() / 2);
         isStuckToPaddle = true;
+        stuckOffsetX = 0; // Reset offset to center
         setVelocity(0,0);
     }
 
@@ -172,6 +174,24 @@ public class Ball extends MovableObject {
     }
 
     /**
+     * Sets the offset from paddle center where the ball is stuck.
+     *
+     * @param offsetX offset in pixels from paddle center
+     */
+    public void setStuckOffsetX(int offsetX) {
+        this.stuckOffsetX = offsetX;
+    }
+
+    /**
+     * Gets the offset from paddle center where the ball is stuck.
+     *
+     * @return offset in pixels from paddle center
+     */
+    public int getStuckOffsetX() {
+        return stuckOffsetX;
+    }
+
+    /**
      * Gets whether this ball is stuck to the paddle.
      *
      * @return true if stuck to paddle, false otherwise
@@ -181,13 +201,32 @@ public class Ball extends MovableObject {
     }
 
     /**
-     * Launches the ball from the paddle with a random angle between 45-130 degrees.
+     * Launches the ball from the paddle with angle based on stuck position.
      */
     public void launchFromPaddle() {
         if (isStuckToPaddle) {
-            // Generate random angle between 45-135 degrees
-            double randomAngle = 45 + Math.random() * (135 - 45);
-            this.angle = randomAngle;
+            // Calculate angle based on stuck position (similar to bounce logic)
+            double offset = (double) stuckOffsetX / (Constants.PADDLE_WIDTH / 2.0);
+            
+            // Clamp offset to valid range [-1, 1]
+            offset = Math.max(-1.0, Math.min(1.0, offset));
+            
+            // Map offset to bounce angle (same as Physics.handleBallPaddleCollision)
+            double angleFromVertical = offset * Constants.MAX_BOUNCE_ANGLE;
+            
+            // Convert to standard angle (0 = right, 90 = up, 180 = left, 270 = down)
+            // We want upward direction, so we need to adjust the angle
+            double radiansFromVertical = Math.toRadians(angleFromVertical);
+            double vx = Constants.BALL_SPEED * Math.sin(radiansFromVertical);
+            double vy = Constants.BALL_SPEED * Math.cos(radiansFromVertical);
+            
+            // Ensure ball always goes upward
+            if (vy < 0) vy = -vy;
+            
+            // Calculate angle from standard coordinate system
+            this.angle = Math.toDegrees(Math.atan2(vy, vx));
+            if (this.angle < 0) this.angle += 360;
+            
             updateVelocity();
             setStuckToPaddle(false);
         }
