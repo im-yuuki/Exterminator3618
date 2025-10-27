@@ -175,8 +175,13 @@ public class Physics {
 
             // Check if paddle is sticky
             if (paddle.isSticky()) {
-                // Ball sticks to paddle
+                // Calculate offset
+                double ballCenterX = ball.getX() + ball.getWidth() / 2.0;
+                double paddleCenterX = paddle.getX() + paddle.getWidth() / 2.0;
+                int offsetX = (int) (ballCenterX - paddleCenterX);
+                
                 ball.setStuckToPaddle(true);
+                ball.setStuckOffsetX(offsetX);
                 ball.setVelocity(0, 0); // Stop the ball
                 return;
             }

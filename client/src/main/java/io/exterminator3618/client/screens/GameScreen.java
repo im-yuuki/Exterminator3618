@@ -128,15 +128,15 @@ public final class GameScreen implements Screen {
         ball.update(deltaTime);
         paddle.update(deltaTime);
 
-        // Make stuck balls follow the paddle position
+        // Make stuck balls follow the paddle position at their stuck offset
         if (ball.isStuckToPaddle()) {
-            int followX = paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2;
+            int followX = paddle.getX() + paddle.getWidth() / 2 + ball.getStuckOffsetX() - ball.getWidth() / 2;
             int followY = paddle.getY() + paddle.getHeight();
             ball.setPosition(followX, followY);
         }
         for (Ball extraBall : extraBalls) {
             if (extraBall.isStuckToPaddle()) {
-                int followX = paddle.getX() + paddle.getWidth() / 2 - extraBall.getWidth() / 2;
+                int followX = paddle.getX() + paddle.getWidth() / 2 + extraBall.getStuckOffsetX() - extraBall.getWidth() / 2;
                 int followY = paddle.getY() + paddle.getHeight();
                 extraBall.setPosition(followX, followY);
             }
