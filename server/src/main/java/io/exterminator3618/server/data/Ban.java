@@ -9,21 +9,28 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "bans")
 public class Ban {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account", referencedColumnName = "id", nullable = false)
+    @ManyToOne()
+    @JoinColumn(referencedColumnName = "id", nullable = false)
     private Account account;
 
-    @Column(name = "validFrom", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime validFrom;
 
-    @Column(name = "validTo", nullable = true)
+    @Column(nullable = true)
     private LocalDateTime validTo;
 
-    @Column(name = "reason", nullable = true)
+    @Column(nullable = true)
     private String reason;
+
+    @PrePersist
+    protected void onCreate() {
+        validFrom = LocalDateTime.now();
+    }
+
 }

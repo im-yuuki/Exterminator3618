@@ -53,7 +53,7 @@ public abstract class PowerUp extends MovableObject {
     }
 
     public static PowerUp createRandomPowerUp(int x, int y){
-        switch ((int) (random() * 4)) {
+        switch ((int) (random() * 6)) {
             case 0:
                 return new WidenPaddlePowerUp(x, y);
             case 1:
@@ -62,6 +62,10 @@ public abstract class PowerUp extends MovableObject {
                 return new StickyPaddlePowerUp(x, y);
             case 3:
                 return new ExtraLifePowerUp(x, y);
+            case 4:
+                return new SplitBallPowerUp(x, y);
+            case 5:
+                return new SlowBallPowerUp(x, y);
             default:
                 return null;
         }

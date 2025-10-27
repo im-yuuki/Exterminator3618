@@ -17,6 +17,8 @@ public class SoundManager {
 
     private static final Logger log = LoggerFactory.getLogger(SoundManager.class);
 
+    private static SoundManager instance;
+
     // Cache âm thanh
     private final Map<String, Sound> sounds = new HashMap<>();
     private final Map<String, Music> music = new HashMap<>();
@@ -24,6 +26,17 @@ public class SoundManager {
     // Âm lượng
     private float volume = 1.0f;
     private Music currentMusic;
+    
+    private SoundManager() {
+        log.info("SoundManager singleton instance created");
+    }
+    
+    public static SoundManager getInstance() {
+        if (instance == null) {
+            instance = new SoundManager();
+        }
+        return instance;
+    }
 
     /**
      * play sound.
@@ -100,7 +113,17 @@ public class SoundManager {
         return volume;
     }
 
-    // ~~
+    public static void resetInstance() {
+        if (instance != null) {
+            instance.dispose();
+            instance = null;
+            log.info("SoundManager singleton instance reset");
+        }
+    }
+
+    /**
+     * Dispose of all cached sounds and music.
+     */
     public void dispose() {
         for (Sound sound : sounds.values()) {
             sound.dispose();
@@ -111,6 +134,7 @@ public class SoundManager {
         sounds.clear();
         music.clear();
         currentMusic = null;
+        log.info("SoundManager resources disposed");
     }
 
 }

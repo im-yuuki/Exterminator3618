@@ -41,7 +41,7 @@ public class LevelLoader {
         }
 
         // Vị trí bắt đầu vẽ lưới gạch từ trên xuống
-        int startY = Constants.WINDOW_HEIGHT - 100;
+        int startY = Constants.WINDOW_HEIGHT - 120;
 
         for (int row = 0; row < lines.size(); row++) {
             String line = lines.get(row);

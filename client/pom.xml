@@ -7,18 +7,18 @@
     <parent>
         <groupId>io.exterminator3618</groupId>
         <artifactId>common</artifactId>
-        <version>mainline</version>
+        <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!--<name>Exterminator3618-Client</name>-->
     <artifactId>client</artifactId>
-    <version>0.1.0-dev</version>
-    <packaging>jar</packaging>
+    <version>${project.parent.version}</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -57,9 +57,11 @@
             <artifactId>ashley</artifactId>
             <version>1.7.4</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
+            <version>26.0.2</version>
         </dependency>
     </dependencies>
 

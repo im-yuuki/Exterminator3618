@@ -29,10 +29,11 @@ public final class GameOverScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.begin();
         // Draw game over text here
-        renderer.drawText("Day la Game Over Screen", 250, 300);
+        renderer.drawTextMiddle("Day la Game Over Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         renderer.end();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.getSoundManager().stop(); // Stop any playing music
             game.launchScreen(new MainMenuScreen(game));
         }
     }
