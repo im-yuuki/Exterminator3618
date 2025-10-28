@@ -3,11 +3,13 @@ package io.exterminator3618.server.data;
 import io.exterminator3618.server.data.Account;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bans")
+@Data
 public class Ban {
 
     @Id
@@ -22,7 +24,7 @@ public class Ban {
     @Column(nullable = false)
     private LocalDateTime validFrom;
 
-    @Column(nullable = true)
+    @Column()
     private LocalDateTime validTo;
 
     @Column(nullable = true)
