@@ -29,7 +29,7 @@ public class Constants {
     /**
      * Default ball speed.
      */
-    public static double BALL_SPEED = 2000.0;
+    public static double BALL_SPEED = 1000.0;
     /**
      * Ball collision tolerance.
      */

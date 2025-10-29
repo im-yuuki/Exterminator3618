@@ -5,11 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.math.Vector3;
-import io.exterminator3618.client.components.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +12,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.exterminator3618.client.Constants;
-import static io.exterminator3618.client.Constants.*;
+import static io.exterminator3618.client.Constants.BALL_HEIGHT;
+import static io.exterminator3618.client.Constants.BALL_REGION_NAME;
+import static io.exterminator3618.client.Constants.BALL_SPEED;
+import static io.exterminator3618.client.Constants.BALL_WIDTH;
+import static io.exterminator3618.client.Constants.BRICK_HEIGHT;
+import static io.exterminator3618.client.Constants.EXTRA_BALL_REGION_NAME;
+import static io.exterminator3618.client.Constants.PADDLE_HEIGHT;
+import static io.exterminator3618.client.Constants.PADDLE_REGION_NAME;
+import static io.exterminator3618.client.Constants.PADDLE_START_X;
+import static io.exterminator3618.client.Constants.PADDLE_START_Y;
+import static io.exterminator3618.client.Constants.PADDLE_WIDTH;
+import static io.exterminator3618.client.Constants.WINDOW_HEIGHT;
+import static io.exterminator3618.client.Constants.WINDOW_WIDTH;
 import io.exterminator3618.client.Exterminator3618;
 import static io.exterminator3618.client.Physics.checkPowerUpCollision;
 import io.exterminator3618.client.components.Ball;
@@ -28,8 +39,8 @@ import io.exterminator3618.client.components.Paddle;
 import io.exterminator3618.client.components.PowerUp;
 import io.exterminator3618.client.components.PowerUpBrick;
 import io.exterminator3618.client.components.StrongBrick;
+import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.managers.SoundManager;
-
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.LevelLoader;
 import io.exterminator3618.client.utils.Renderer;
@@ -72,7 +83,6 @@ public final class GameScreen implements Screen {
         this.currentLevel = 1;
         loadLevel(currentLevel, null);
         soundManager = game.getSoundManager();
-        soundManager.setVolume(0.05f);
         soundManager.play("sound/gameplay_bgm.mp3", true);
     }
 
@@ -115,6 +125,7 @@ public final class GameScreen implements Screen {
                 String.format("/levels/level%d.dat", levelNumber)
         ));
 
+        ball.setStuckToPaddle(true);
     }
 
     @Override
@@ -135,57 +146,60 @@ public final class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        ball.update(deltaTime);
-        paddle.update(deltaTime);
+        // deltaTime > 0 (not paused)
+        if (deltaTime > 0) {
+            ball.update(deltaTime);
+            paddle.update(deltaTime);
 
-        // Make stuck balls follow the paddle position at their stuck offset
-        if (ball.isStuckToPaddle()) {
-            int followX = paddle.getX() + paddle.getWidth() / 2 + ball.getStuckOffsetX() - ball.getWidth() / 2;
-            int followY = paddle.getY() + paddle.getHeight();
-            ball.setPosition(followX, followY);
-        }
-        for (Ball extraBall : extraBalls) {
-            if (extraBall.isStuckToPaddle()) {
-                int followX = paddle.getX() + paddle.getWidth() / 2 + extraBall.getStuckOffsetX() - extraBall.getWidth() / 2;
+            // Make stuck balls follow the paddle position at their stuck offset
+            if (ball.isStuckToPaddle()) {
+                int followX = paddle.getX() + paddle.getWidth() / 2 + ball.getStuckOffsetX() - ball.getWidth() / 2;
                 int followY = paddle.getY() + paddle.getHeight();
-                extraBall.setPosition(followX, followY);
+                ball.setPosition(followX, followY);
             }
-        }
-
-        // Mạng
-        if (ball.getY() <= 0 && extraBalls.isEmpty()) {
-            lives--; // Trừ 1 mạng
-            soundManager.play("sound/lose_heart.wav", false);
-            ball.resetCombo();
-
-            if (lives <= 0) {
-                soundManager.play("sound/gameover_sfx.wav", false);
-                gotoGameOverScreen();
-            } else {
-                // Reset lại vị trí bóng và paddle để chơi tiếp màn hiện tại
-                ball.resetToCenter(paddle);
+            for (Ball extraBall : extraBalls) {
+                if (extraBall.isStuckToPaddle()) {
+                    int followX = paddle.getX() + paddle.getWidth() / 2 + extraBall.getStuckOffsetX() - extraBall.getWidth() / 2;
+                    int followY = paddle.getY() + paddle.getHeight();
+                    extraBall.setPosition(followX, followY);
+                }
             }
-        }
 
-        // CẬP NHẬT TẤT CẢ BÓNG PHỤ
-        for (Ball extraBall : extraBalls) {
-            extraBall.update(deltaTime);
-        }
-        updateExtraBalls(deltaTime);
+            // Mạng
+            if (ball.getY() <= 0 && extraBalls.isEmpty()) {
+                lives--; // Trừ 1 mạng
+                soundManager.play("sound/lose_heart.wav", false);
+                ball.resetCombo();
 
-        for (Brick brick : bricks) {
-            brick.update(deltaTime);
-        }
+                if (lives <= 0) {
+                    soundManager.play("sound/gameover_sfx.wav", false);
+                    gotoGameOverScreen();
+                } else {
+                    // Reset lại vị trí bóng và paddle để chơi tiếp màn hiện tại
+                    ball.resetToCenter(paddle);
+                }
+            }
 
-        updatePowerUps(deltaTime);
-        updateActivePowerUps(deltaTime);
-        checkBallBrickCollisions();
-        ball.checkPaddleCollision(paddle);
+            // CẬP NHẬT TẤT CẢ BÓNG PHỤ
+            for (Ball extraBall : extraBalls) {
+                extraBall.update(deltaTime);
+            }
+            updateExtraBalls(deltaTime);
 
-        // KIỂM TRA VA CHẠM PADDLE CHO TẤT CẢ BÓNG
-        //ball.checkPaddleCollision(paddle); // vcl vibe code
-        for (Ball extraBall : extraBalls) {
-            extraBall.checkPaddleCollision(paddle);
+            for (Brick brick : bricks) {
+                brick.update(deltaTime);
+            }
+
+            updatePowerUps(deltaTime);
+            updateActivePowerUps(deltaTime);
+            checkBallBrickCollisions();
+            ball.checkPaddleCollision(paddle);
+
+            // KIỂM TRA VA CHẠM PADDLE CHO TẤT CẢ BÓNG
+            //ball.checkPaddleCollision(paddle); // vcl vibe code
+            for (Ball extraBall : extraBalls) {
+                extraBall.checkPaddleCollision(paddle);
+            }
         }
 
         // Render game objects
@@ -212,6 +226,11 @@ public final class GameScreen implements Screen {
         renderer.drawTextMiddle("SCORE: " + score, 1680, WINDOW_HEIGHT - 600);
         renderer.drawTextMiddle("COMBO: " + ball.getComboCount(), 1680, WINDOW_HEIGHT - 460);
         renderer.drawTextMiddle("POWER UP", 1680, WINDOW_HEIGHT - 750);
+        renderer.setFontSize(24);
+        for (int i = 0; i < activePowerUps.size(); i++) {
+            PowerUp p = activePowerUps.get(i);
+            renderer.drawTextMiddle(String.format("%s: %.2f", p.getType(), p.getRemainingDuration()), 1680, WINDOW_HEIGHT - 750 - 40 * (i + 1));
+        }
         renderer.setFontSize(40);
         renderer.drawTextMiddle("LIVES", 1680, WINDOW_HEIGHT - 290);
         for (int i = 0; i < lives; i++) {
@@ -224,32 +243,35 @@ public final class GameScreen implements Screen {
 
         renderer.setFontSize(36);
         renderer.end();
-        // Handle sticky paddle space key input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (ball.isStuckToPaddle()) {
-                ball.launchFromPaddle();
-                log.debug("Ball launched from sticky paddle!");
-            }
-            // Also check extra balls
-            for (Ball extraBall : extraBalls) {
-                if (extraBall.isStuckToPaddle()) {
-                    extraBall.launchFromPaddle();
-                    log.debug("Extra ball launched from sticky paddle!");
+
+        if (deltaTime > 0) {
+            // Handle sticky paddle space key input
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if (ball.isStuckToPaddle()) {
+                    ball.launchFromPaddle();
+                    log.debug("Ball launched from sticky paddle!");
+                }
+                // Also check extra balls
+                for (Ball extraBall : extraBalls) {
+                    if (extraBall.isStuckToPaddle()) {
+                        extraBall.launchFromPaddle();
+                        log.debug("Extra ball launched from sticky paddle!");
+                    }
                 }
             }
-        }
 
-        // Pause game on input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.launchScreen(new PauseScreen(game, this));
-        }
-
-        if (Gdx.input.justTouched()) {
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            viewport.unproject(touchPos);
-
-            if (pauseButton.isClicked(touchPos.x, touchPos.y)) {
+            // Pause game on input
+            if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                 game.launchScreen(new PauseScreen(game, this));
+            }
+
+            if (Gdx.input.justTouched()) {
+                touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+                viewport.unproject(touchPos);
+
+                if (pauseButton.isClicked(touchPos.x, touchPos.y)) {
+                    game.launchScreen(new PauseScreen(game, this));
+                }
             }
         }
 

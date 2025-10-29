@@ -15,6 +15,7 @@ import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
+import io.exterminator3618.client.Settings;
 
 public final class MainMenuScreen implements Screen {
 
@@ -52,9 +53,7 @@ public final class MainMenuScreen implements Screen {
     @Override
     public void show() {
         camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
-        soundManager.setVolume(0.1f);
         soundManager.play("sound/main_menu.mp3", true);
-
     }
 
     @Override
@@ -63,6 +62,8 @@ public final class MainMenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         viewport.apply();
         camera.update();
+
+        
 
         renderer.begin(camera);
         renderer.drawBackground(Assets.menuBackground);
@@ -86,13 +87,6 @@ public final class MainMenuScreen implements Screen {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             viewport.unproject(touchPos);
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                soundManager.stop(); // Stop main menu music
-                game.launchScreen(new GameScreen(game));
-            } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                Gdx.app.exit();
-            }
-
             if (startButton.isClicked(touchPos.x, touchPos.y)) {
                 game.launchScreen(new GameScreen(game));
             }
@@ -100,6 +94,10 @@ public final class MainMenuScreen implements Screen {
             // Transition to setting screen on input
             if (settingsButton.isClicked(touchPos.x, touchPos.y)) {
                 game.launchScreen(new SettingsScreen(game, this));
+            }
+
+            if (exitButton.isClicked(touchPos.x, touchPos.y)) {
+                Gdx.app.exit();
             }
         }
     }

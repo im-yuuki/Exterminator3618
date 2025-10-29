@@ -10,7 +10,7 @@ import io.exterminator3618.client.screens.GameScreen;
 public class HeavyBallPowerUp extends PowerUp {
 
     public HeavyBallPowerUp(int x, int y) {
-        super("heavy_ball_power_up", 5.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "heavy_ball_power_up");
+        super("Heavy Ball", 5.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "heavy_ball_power_up");
     }
 
     @Override

@@ -100,6 +100,7 @@ public class Exterminator3618 extends Game {
             return;
         }
         screenStack.pop();
+        screenStack.peek().show();
         if (screenStack.isEmpty()) {
             log.warn("Popped the last screen, quiting game.");
             Gdx.app.exit();

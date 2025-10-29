@@ -9,7 +9,7 @@ import io.exterminator3618.client.screens.GameScreen;
 public class SplitBallPowerUp extends PowerUp {
 
     public SplitBallPowerUp(int x, int y) {
-        super("split_ball_power_up", 0.0f , x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "split_ball_power_up");
+        super("Split Ball", 0.0f , x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "split_ball_power_up");
     }
 
     @Override
@@ -30,5 +30,7 @@ public class SplitBallPowerUp extends PowerUp {
     public void removeEffect(GameScreen gameScreen) {
         // No-op: this is an instant effect power-up
     }
+
+
 
 }

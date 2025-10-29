@@ -6,7 +6,7 @@ import io.exterminator3618.client.screens.GameScreen;
 public class SlowBallPowerUp extends PowerUp {
 
     public SlowBallPowerUp(int x, int y) {
-        super("slow_ball_power_up", 20.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "slow_ball_power_up");
+        super("Slow Ball", 20.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "slow_ball_power_up");
     }
 
     @Override
@@ -25,4 +25,5 @@ public class SlowBallPowerUp extends PowerUp {
             gameScreen.getBall().updateVelocity();
         }
     }
+
 }
