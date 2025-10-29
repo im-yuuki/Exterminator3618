@@ -113,12 +113,13 @@ public class Physics {
      * 
      * @param ball the ball to handle screen collision for
      */
+/**
     public static void handleScreenCollision(Ball ball) {
         int screenWidth = Constants.WINDOW_WIDTH;
         int screenHeight = Constants.WINDOW_HEIGHT;
         boolean bounced = false;
         //double epsilon = Constants.BALL_EPSILON;
-        
+
         // Check wall collisions
         if (ball.getX() <= 0) {
             // Left wall
@@ -131,12 +132,55 @@ public class Physics {
             ball.velocityX = -Math.abs(ball.velocityX);
             bounced = true;
         }
-        
+
         // Check top and bottom walls
         if (ball.getY() <= 0) {// Bottom wall
         } else if (ball.getY() + ball.getHeight() >= screenHeight) {
             // Top wall
             ball.setPosition(ball.getX(), screenHeight - ball.getHeight());
+            ball.velocityY = -Math.abs(ball.velocityY);
+            bounced = true;
+        }
+
+        // Add small random deviation to prevent infinite 90-degree bouncing
+        if (bounced) {
+            // không cần
+            // double randomDeviationX = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+            // double randomDeviationY = (Math.random() - 0.5) * epsilon * 2; // Range: [-epsilon, epsilon]
+            //
+            // // Apply deviation to velocity components
+            // ball.velocityX += randomDeviationX;
+            // ball.velocityY += randomDeviationY;
+            //
+            // Maintain constant speed after collision
+            normalizeBallVelocity(ball);
+
+        }
+    }
+ */
+    public static void handleScreenCollision(Ball ball) {
+        int screenWidth = Constants.WINDOW_WIDTH;
+        int screenHeight = Constants.WINDOW_HEIGHT;
+        boolean bounced = false;
+        //double epsilon = Constants.BALL_EPSILON;
+        
+        // Check wall collisions
+        if (ball.getX() <= Constants.PLAY_AREA_X_MIN) {
+            // Left wall
+            ball.setPosition(Constants.PLAY_AREA_X_MIN, ball.getY());
+            ball.velocityX = Math.abs(ball.velocityX);
+            bounced = true;
+        } else if (ball.getX() + ball.getWidth() >= Constants.PLAY_AREA_X_MAX) {
+            // Right wall
+            ball.setPosition(Constants.PLAY_AREA_X_MAX - ball.getWidth(), ball.getY());ball.velocityX = -Math.abs(ball.velocityX);
+            bounced = true;
+        }
+        
+        // Check top and bottom walls
+        if (ball.getY() <= Constants.PLAY_AREA_Y_MIN) {// Bottom wall
+        } else if (ball.getY() + ball.getHeight() >= Constants.PLAY_AREA_Y_MAX) {
+            // Top wall
+            ball.setPosition(ball.getX(), Constants.PLAY_AREA_Y_MAX - ball.getHeight());
             ball.velocityY = -Math.abs(ball.velocityY);
             bounced = true;
         }

@@ -123,7 +123,7 @@ public final class GameScreen implements Screen {
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
         touchPos = new Vector3();
-        pauseButton = new TextButton("Pause", 100, 300, 200, 50);
+        pauseButton = new TextButton("Pause", 1545, 900, 300, 75, true);
     }
 
     /**
@@ -189,7 +189,10 @@ public final class GameScreen implements Screen {
         }
 
         // Render game objects
+        viewport.apply();
+        camera.update();
         renderer.begin(camera);
+        renderer.drawBackground(Assets.gameBackground);
         renderer.draw(ball);
         renderer.draw(paddle);
         for (PowerUp powerUp : powerUps) {
@@ -205,19 +208,21 @@ public final class GameScreen implements Screen {
             renderer.draw(brick);
         }
 
-
-
-        renderer.setFontSize(24);
-        renderer.drawText("Score: " + score, 20, WINDOW_HEIGHT - 20);
-        renderer.drawText("Combo: " + ball.getComboCount(), 20, 30);
+        renderer.setFontSize(50);
+        renderer.drawTextMiddle("SCORE: " + score, 1680, WINDOW_HEIGHT - 600);
+        renderer.drawTextMiddle("COMBO: " + ball.getComboCount(), 1680, WINDOW_HEIGHT - 460);
+        renderer.drawTextMiddle("POWER UP", 1680, WINDOW_HEIGHT - 750);
+        renderer.setFontSize(40);
+        renderer.drawTextMiddle("LIVES", 1680, WINDOW_HEIGHT - 290);
         for (int i = 0; i < lives; i++) {
-            renderer.drawLives(20 + i * 30, WINDOW_HEIGHT - 70);
+            renderer.drawLives(1600 + i * 30, WINDOW_HEIGHT - 350);
         }
-        camera.update();
-        viewport.apply();
+
+
         pauseButton.draw(renderer);
         // (Optional) Could display active power-up timers here if desired
 
+        renderer.setFontSize(36);
         renderer.end();
         // Handle sticky paddle space key input
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -286,9 +291,9 @@ public final class GameScreen implements Screen {
     }
 
     private void gotoGameOverScreen() {
-        //game.launchScreen(new GameOverScreen(game));
+        game.launchScreen(new GameOverScreen(game));
         soundManager.dispose();
-        game.replaceCurrentScreen(new GameOverScreen(game));
+        //game.replaceCurrentScreen(new GameOverScreen(game));
     }
 
     /**

@@ -10,7 +10,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.math.Vector3;
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
+import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
+import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
 
 public final class GameOverScreen implements Screen {
@@ -25,13 +27,21 @@ public final class GameOverScreen implements Screen {
     private TextButton playAgainButton;
     private TextButton backButton;
 
+    private Box box;
+
     public GameOverScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
-        backButton = new TextButton("Main Menu", 100, 300, 200, 50);
-        playAgainButton = new TextButton("Play Again", 100, 240, 200, 50);
+
+        final int CENTER_X = (Constants.WINDOW_WIDTH / 2) - (Constants.BUTTON_WIDTH / 2);
+        final int BACK_Y = (Constants.WINDOW_HEIGHT / 2) + Constants.BUTTON_HEIGHT - 20;
+        final int PLAY_Y = BACK_Y - Constants.BUTTON_HEIGHT - 20;
+
+        backButton = new TextButton("Main Menu", CENTER_X, BACK_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        playAgainButton = new TextButton("Play Again", CENTER_X, PLAY_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        box = new Box(800,500,"GAME OVER:(");
     }
 
     @Override
@@ -44,11 +54,13 @@ public final class GameOverScreen implements Screen {
         // Render game over screen
         Gdx.gl.glClearColor(0.2f, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderer.begin(camera);
-        // Draw game over text here
-        renderer.drawTextMiddle("Day la Game Over Screen", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        camera.update();
         viewport.apply();
+        camera.update();
+        renderer.begin(camera);
+        renderer.drawBackground(Assets.menuBackground);
+        // Draw game over text here
+        box.draw(renderer);
+
         //renderer.begin(camera);
         playAgainButton.draw(renderer);
         backButton.draw(renderer);

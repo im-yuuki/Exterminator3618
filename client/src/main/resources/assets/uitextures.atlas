@@ -1,0 +1,198 @@
+uitextures.png
+size: 32, 1789
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+tile
+  bounds: 0, 0, 32, 32
+  index: 0
+tile
+  bounds: 0, 32, 32, 32
+  index: 1
+tile
+  bounds: 0, 64, 32, 32
+  index: 2
+tile
+  bounds: 0, 96, 32, 32
+  index: 3
+tile
+  bounds: 0, 128, 32, 32
+  index: 4
+tile
+  bounds: 0, 160, 32, 32
+  index: 5
+tile
+  bounds: 0, 192, 32, 32
+  index: 6
+tile
+  bounds: 0, 224, 32, 32
+  index: 7
+tile
+  bounds: 0, 256, 32, 32
+  index: 8
+tile
+  bounds: 0, 288, 32, 32
+  index: 9
+tile
+  bounds: 0, 320, 32, 32
+  index: 13
+tile
+  bounds: 0, 352, 32, 32
+  index: 14
+tile
+  bounds: 0, 384, 32, 32
+  index: 15
+tile
+  bounds: 0, 416, 32, 32
+  index: 16
+tile
+  bounds: 0, 448, 32, 32
+  index: 17
+tile
+  bounds: 0, 480, 32, 32
+  index: 18
+tile
+  bounds: 0, 512, 32, 32
+  index: 19
+tile
+  bounds: 0, 544, 32, 32
+  index: 20
+tile
+  bounds: 0, 576, 32, 32
+  index: 21
+tile
+  bounds: 0, 608, 32, 32
+  index: 22
+tile
+  bounds: 0, 640, 32, 32
+  index: 26
+tile
+  bounds: 0, 672, 32, 32
+  index: 27
+tile
+  bounds: 0, 704, 32, 32
+  index: 28
+tile
+  bounds: 0, 736, 32, 32
+  index: 29
+tile
+  bounds: 0, 768, 32, 32
+  index: 30
+tile
+  bounds: 0, 800, 32, 32
+  index: 31
+tile
+  bounds: 0, 832, 32, 32
+  index: 32
+tile
+  bounds: 0, 864, 32, 32
+  index: 33
+tile
+  bounds: 0, 896, 32, 32
+  index: 34
+tile
+  bounds: 0, 928, 32, 32
+  index: 35
+tile
+  bounds: 0, 1549, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 39
+tile
+  bounds: 0, 1579, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 40
+tile
+  bounds: 0, 1609, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 41
+tile
+  bounds: 0, 1639, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 42
+tile
+  bounds: 0, 1280, 32, 31
+  offsets: 0, 1, 32, 32
+  index: 43
+tile
+  bounds: 0, 1522, 32, 27
+  offsets: 0, 0, 32, 32
+  index: 44
+tile
+  bounds: 0, 1311, 32, 31
+  offsets: 0, 1, 32, 32
+  index: 45
+tile
+  bounds: 0, 1669, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 52
+tile
+  bounds: 0, 1699, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 53
+tile
+  bounds: 0, 1729, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 54
+tile
+  bounds: 0, 1759, 30, 30
+  offsets: 1, 1, 32, 32
+  index: 55
+tile
+  bounds: 0, 960, 32, 32
+  index: 56
+tile
+  bounds: 0, 1522, 32, 27
+  offsets: 0, 3, 32, 32
+  index: 57
+tile
+  bounds: 0, 992, 32, 32
+  index: 58
+tile
+  bounds: 0, 1024, 32, 32
+  index: 65
+tile
+  bounds: 0, 1056, 32, 32
+  index: 66
+tile
+  bounds: 0, 1088, 32, 32
+  index: 67
+tile
+  bounds: 0, 1120, 32, 32
+  index: 68
+tile
+  bounds: 0, 1342, 32, 30
+  offsets: 0, 1, 32, 32
+  index: 69
+tile
+  bounds: 0, 1372, 32, 30
+  offsets: 0, 1, 32, 32
+  index: 70
+tile
+  bounds: 0, 1402, 32, 30
+  offsets: 0, 1, 32, 32
+  index: 71
+tile
+  bounds: 0, 1152, 32, 32
+  index: 78
+tile
+  bounds: 0, 1184, 32, 32
+  index: 79
+tile
+  bounds: 0, 1216, 32, 32
+  index: 80
+tile
+  bounds: 0, 1248, 32, 32
+  index: 81
+tile
+  bounds: 0, 1432, 32, 30
+  offsets: 0, 1, 32, 32
+  index: 82
+tile
+  bounds: 0, 1462, 32, 30
+  offsets: 0, 1, 32, 32
+  index: 83
+tile
+  bounds: 0, 1492, 32, 30
+  offsets: 0, 1, 32, 32
+  index: 84

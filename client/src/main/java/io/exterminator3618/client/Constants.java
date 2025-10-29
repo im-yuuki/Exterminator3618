@@ -44,10 +44,15 @@ public class Constants {
     public static final String BUFF_SOUND = "sound/buff_sound.mp3";
 
     /**
+     * Path to backgounds
+     */
+    public static final String MENU_BACKGROUND_PATH = "assets/Background_Tiles.png";
+    public static final String GAME_BACKGROUND_PATH = "assets/gameScreen.png";
+    /**
      * Path to the texture atlas file.
      */
     public static final String ATLAS_PATH = "assets/textures.atlas";
-
+    public static final String UI_PATH = "assets/uitextures.atlas";
     /**
      * Brick texture region names.
      */
@@ -79,7 +84,7 @@ public class Constants {
     public static final int BRICK_WIDTH = 64;
     public static final int BRICK_HEIGHT = 32;
     public static final int BRICK_SPACING = 5;
-    public static final int BRICK_START_X = 100;
+    public static final int BRICK_START_X = 80;
     public static final int BRICK_START_Y = 100;
     public static final int BRICK_ROW_HEIGHT = BRICK_HEIGHT;
 
@@ -114,4 +119,21 @@ public class Constants {
     // PowerUp duration constants
     public static final float WIDEN_PADDLE_DURATION = 5.0f; // 5 seconds
 
+    public static final String BUTTON_LEFT_REGION = "tile_82";
+    public static final String BUTTON_MIDDLE_REGION = "tile_83";
+    public static final String BUTTON_RIGHT_REGION = "tile_84";
+
+    public static final String HEADER_LEFT_REGION = "tile_43";
+    public static final String HEADER_MIDDLE_REGION = "tile_44";
+    public static final String HEADER_RIGHT_REGION = "tile_45";
+
+    public static int BUTTON_WIDTH = 300;
+    public static int BUTTON_HEIGHT = 75;
+    /**
+     * game borders
+     */
+    public static final int PLAY_AREA_X_MAX = 1410;
+    public static final int PLAY_AREA_X_MIN = 55;
+    public static final int PLAY_AREA_Y_MAX = 985;
+    public static final int PLAY_AREA_Y_MIN = 85;
 }
