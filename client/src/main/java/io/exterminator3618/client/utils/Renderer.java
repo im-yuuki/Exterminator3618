@@ -1,6 +1,8 @@
 package io.exterminator3618.client.utils;
 
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import io.exterminator3618.client.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import io.exterminator3618.client.components.GameObject;
 
@@ -29,17 +33,18 @@ public class Renderer {
 
     private final BitmapFont font;
 
-    private final Texture backgroundTexture;
+    private ShapeRenderer shapeRenderer;
     /**
      * Creates a renderer and its SpriteBatch.
      */
     public Renderer() {
         batch = new SpriteBatch();
-        this.backgroundTexture = new Texture(Gdx.files.internal("Backround_Tiles.png"));
+        shapeRenderer = new ShapeRenderer();
+        //this.backgroundTexture = new Texture(Gdx.files.internal("Background_Tiles.png"));
         //this.backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/RetroGaming.ttf"));
         FreeTypeFontParameter param = new FreeTypeFontParameter();
-        param.size = 24;
+        param.size = 36;
         param.color = Color.BLACK;
         param.borderWidth = 2;
         param.borderColor = Color.WHITE;
@@ -57,11 +62,6 @@ public class Renderer {
     public void begin(OrthographicCamera camera) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
-        float screenWidth = Gdx.graphics.getWidth();
-        float screenHeight = Gdx.graphics.getHeight();
-
-        batch.draw(backgroundTexture, 0, 0, screenWidth, screenHeight);
     }
     /**
      * Ends a batch. Must be called after draw calls.
@@ -93,13 +93,29 @@ public class Renderer {
         batch.draw(region, x, y, width, height);
     }
 
+    public void drawUi(String regionName, int x, int y, int width, int height){
+        TextureRegion region = Assets.getUiRegion(regionName);
+        if (region == null) {
+            log.warn("UI TextureRegion not found: {}", regionName);
+            return;
+        }
+        batch.draw(region, x, y, width, height);
+    }
+
+    public void drawBackground(Texture bgTexture) {
+        if (bgTexture == null) return;
+        float screenWidth = Constants.WINDOW_WIDTH;
+        float screenHeight = Constants.WINDOW_HEIGHT;
+        batch.draw(bgTexture, 0, 0, screenWidth, screenHeight);
+    }
+
     public void drawLives(int x, int y) {
         String name = "heart_4";
         TextureRegion region = Assets.getRegion(name);
         if (region == null) {
             return;
         }
-        batch.draw(region, x, y, 20, 20);
+        batch.draw(region, x, y, 30, 30);
     }
 
     public void drawLogo(int x, int y) {
@@ -107,7 +123,7 @@ public class Renderer {
         if (region == null) {
             return;
         }
-        batch.draw(region, x - region.getRegionWidth() / 2, y + region.getRegionHeight() / 2, region.getRegionWidth(), region.getRegionHeight());
+        batch.draw(region, x - region.getRegionWidth() , y + 200 - region.getRegionHeight(), 2*region.getRegionWidth(), 2*region.getRegionHeight());
     } 
 
     /**
@@ -140,7 +156,7 @@ public class Renderer {
     }
 
     public void setFontSize(int size) {
-        font.getData().setScale(size / 24f);
+        font.getData().setScale(size / 36f);
     }
 
     /**
@@ -149,11 +165,69 @@ public class Renderer {
      */
     public void dispose() {
         batch.dispose();
-        backgroundTexture.dispose();
+        //backgroundTexture.dispose();
+        shapeRenderer.dispose();
         log.info("Disposed of renderer resources");
     }
 
     public BitmapFont getFont(){
         return font;
     }
+
+    /**
+     * Draw button background
+     */
+    public void drawUiTiledX(String regionName, int x, int y, int totalWidth, int height) {
+        TextureRegion region = Assets.getUiRegion(regionName);
+        if (region == null) {
+            log.warn("UI Tiled TextureRegion not found: {}", regionName);
+            return;
+        }
+
+        float originalWidth = region.getRegionWidth();
+        if (originalWidth == 0) return; // Tránh lỗi chia cho 0
+
+        float currentX = x;
+        float remainingWidth = totalWidth;
+
+        float oldU2 = region.getU2();
+
+        while (remainingWidth > 0) {
+            float drawWidth = Math.min(originalWidth, remainingWidth);
+
+            if (drawWidth < originalWidth) {
+                float newU2 = region.getU() + (region.getU2() - region.getU()) * (drawWidth / originalWidth);
+                region.setU2(newU2);
+
+                batch.draw(region, currentX, y, drawWidth, height);
+
+                region.setU2(oldU2);
+            } else {
+                batch.draw(region, currentX, y, originalWidth, height);
+            }
+
+            remainingWidth -= drawWidth;
+            currentX += drawWidth;
+        }
+    }
+
+    /**
+     * Draw overlay
+     */
+    public void drawOverlay(OrthographicCamera camera, float alpha) {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeType.Filled);
+
+        shapeRenderer.setColor(0, 0, 0, alpha);
+
+        shapeRenderer.rect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+
+        shapeRenderer.end();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
 }

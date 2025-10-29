@@ -47,7 +47,7 @@ public class LevelLoader {
             String line = lines.get(row);
             char[] chars = line.toCharArray();
             // Vị trí bắt đầu vẽ lưới gạch từ trái qua
-            int startX = 50;
+            int startX = Constants.BRICK_START_X;
 
             for (int col = 0; col < chars.length; col++) {
                 char brickType = chars[col];
