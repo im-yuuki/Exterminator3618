@@ -4,18 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.math.Vector3;
+
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
-import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.components.TextButton;
+import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
-import io.exterminator3618.client.Settings;
 
 public final class MainMenuScreen implements Screen {
 
@@ -43,7 +42,7 @@ public final class MainMenuScreen implements Screen {
 
         final int CENTER_X = (Constants.WINDOW_WIDTH / 2) - (Constants.BUTTON_WIDTH / 2);
         final int START_Y = (Constants.WINDOW_HEIGHT / 2) + Constants.BUTTON_HEIGHT + PADDING - 200;
-        final int SETTINGS_Y = START_Y - Constants.BUTTON_HEIGHT - PADDING;
+        final int SETTINGS_Y = CONTINUE_Y - Constants.BUTTON_HEIGHT - PADDING;
         final int EXIT_Y = SETTINGS_Y - Constants.BUTTON_HEIGHT - PADDING;
         startButton = new TextButton("Start Game",CENTER_X, START_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         settingsButton = new TextButton("Options", CENTER_X, SETTINGS_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);

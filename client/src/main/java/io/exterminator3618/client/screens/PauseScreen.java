@@ -85,6 +85,7 @@ public final class PauseScreen implements Screen {
             // Stop gameplay background music before transitioning to game over
             gameScreen.getSoundManager().stop();
             game.launchScreen(new GameOverScreen(game));
+            game.replaceCurrentScreen(new MainMenuScreen(game));
         }
 
 
@@ -104,6 +105,10 @@ public final class PauseScreen implements Screen {
             }
         }
 
+    }
+
+    public GameScreen getGameScreen(){
+        return this.gameScreen;
     }
 
     @Override

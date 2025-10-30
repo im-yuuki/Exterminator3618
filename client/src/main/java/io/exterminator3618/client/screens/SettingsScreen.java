@@ -4,16 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.math.Vector3;
+
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
+import io.exterminator3618.client.Settings;
 import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
-import io.exterminator3618.client.utils.Renderer;
-import io.exterminator3618.client.Settings;
 import io.exterminator3618.client.managers.SoundManager;
+import io.exterminator3618.client.utils.Renderer;
 
 public final class SettingsScreen implements Screen {
 
@@ -67,7 +68,12 @@ public final class SettingsScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        previousScreen.render(0);
+        // Only render game screen if previous screen is PauseScreen
+        if (previousScreen instanceof PauseScreen) {
+            ((PauseScreen) previousScreen).getGameScreen().render(0);
+        } else {
+            previousScreen.render(0);
+        }
         renderer.drawOverlay(camera, 0.7f);
         viewport.apply();
         camera.update();
@@ -94,7 +100,7 @@ public final class SettingsScreen implements Screen {
             if (enableMusicButton.isClicked(touchPos.x, touchPos.y)) {
                 Settings.enableMusic = !Settings.enableMusic;
                 if (Settings.enableMusic) {
-                    soundManager.setVolume(0.1f);
+                    soundManager.setVolume(1f);
                 } else {
                     soundManager.setVolume(0f);
                 }
