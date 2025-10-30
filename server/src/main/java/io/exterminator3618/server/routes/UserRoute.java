@@ -10,6 +10,8 @@ import io.exterminator3618.server.services.SessionService;
 import io.exterminator3618.server.utils.InvalidRequestException;
 import io.exterminator3618.server.utils.PasswordHash;
 import io.exterminator3618.server.utils.UsernameRequirementsCheck;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -83,15 +85,16 @@ public class UserRoute {
     }
 
     @PostMapping("/logout")
-    public OperationResponse logout(@RequestHeader Map<String, String> headers) {
-        String authorization = headers.get("Authorization");
-        if (authorization == null || authorization.isEmpty()) {
-            log.warn("Logout attempt without Authorization header");
-            return new OperationResponse(false, "Authorization header is missing");
-        } else {
-            sessionService.invalidateSessionToken(authorization);
-            return new OperationResponse(true, "Logout successful");
+    public OperationResponse logout(@CookieValue(name = "auth", required = false) String authCookie, HttpServletResponse response) {
+        if (authCookie != null) {
+            sessionService.invalidateSessionToken(authCookie);
         }
+        Cookie cookie = new Cookie("auth", "");
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return new OperationResponse(true, "Logged out successfully");
     }
 
 }

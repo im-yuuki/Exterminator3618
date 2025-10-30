@@ -7,6 +7,8 @@ import io.exterminator3618.server.repositories.AccountRepository;
 import io.exterminator3618.server.services.SessionService;
 import io.exterminator3618.server.utils.PasswordHash;
 import io.exterminator3618.server.utils.UsernameRequirementsCheck;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,7 @@ public class AccountRoute {
 
     @PostMapping("/login")
     @Transactional
-    public OperationResponse login(@RequestBody LoginRequest req) {
+    public OperationResponse login(@RequestBody LoginRequest req, HttpServletResponse response) {
         Account account =  accountRepository.findAccountByUsername(req.username());
         if (account == null) {
             log.debug("Username \"{}\" not found", req.username());
@@ -42,22 +44,20 @@ public class AccountRoute {
             log.debug("Login attempt for \"{}\" failed: {}", req.username(), banMessage);
             return new OperationResponse(false, banMessage);
         }
-        var res = new OperationWithSessionTokenResponse(true, "Login successful");
-        res.setAccountId(account.getId());
-        res.setAccountName(account.getName());
-        res.setLastLoginAt(account.getLastLoginAt());
-        res.setSessionToken(
-                sessionService.generateSessionToken(res.getAccountId())
-        );
+        // Set session token
+        Cookie authCookie = new Cookie("auth", sessionService.generateSessionToken(account.getId()));
+        authCookie.setHttpOnly(true);
+        authCookie.setPath("/");
+        response.addCookie(authCookie);
         // Update last login time
         account.setLastLoginAt(LocalDateTime.now());
         accountRepository.save(account);
         log.debug("User \"{}\" logged in successfully", req.username());
-        return res;
+        return new OperationResponse(true, "Login successful");
     }
 
     @PostMapping("/register")
-    public OperationResponse register(@RequestBody RegisterRequest req) {
+    public OperationResponse register(@RequestBody RegisterRequest req, HttpServletResponse response) {
         var existingAccount = accountRepository.findAccountByUsername(req.username());
         if (existingAccount != null) {
             return new OperationResponse(false, "Username already taken");
@@ -70,15 +70,13 @@ public class AccountRoute {
         newAccount.setName(req.name());
         newAccount.setPwdHash(PasswordHash.hashPassword(req.password()));
         accountRepository.save(newAccount);
-        var res = new OperationWithSessionTokenResponse(true, "Account registered successfully");
-        res.setAccountId(newAccount.getId());
-        res.setAccountName(newAccount.getName());
-        res.setLastLoginAt(newAccount.getLastLoginAt());
-        res.setSessionToken(
-                sessionService.generateSessionToken(res.getAccountId())
-        );
+        // Set session token
+        Cookie authCookie = new Cookie("auth", sessionService.generateSessionToken(newAccount.getId()));
+        authCookie.setHttpOnly(true);
+        authCookie.setPath("/");
+        response.addCookie(authCookie);
         log.debug("New account registered: \"{}\" ({}), ID: {}", newAccount.getUsername(), newAccount.getName(), newAccount.getId());
-        return res;
+        return new OperationResponse(true, "Registration successful");
     }
 
     @PostMapping("/recover")

@@ -17,7 +17,14 @@ public final class SessionValidationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String sessionToken = request.getHeader("Authorization");
+        var cookies = request.getCookies();
+        String sessionToken = null;
+        for (var cookie : cookies) {
+            if (cookie.getName().equals("auth")) {
+                sessionToken = cookie.getValue();
+                break;
+            }
+        }
         if (sessionToken == null || sessionToken.isEmpty()) {
             throw new InvalidRequestException("Missing or empty session token.");
         }
