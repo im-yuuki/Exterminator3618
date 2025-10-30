@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class OperationWithSessionTokenResponse extends OperationResponse {
+public final class OperationWithSessionTokenResponse extends OperationResponse {
 
     public OperationWithSessionTokenResponse(boolean success, String message) {
         super(success, message);
