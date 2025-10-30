@@ -4,11 +4,13 @@ import io.exterminator3618.server.services.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public final class SessionValidationInterceptor implements HandlerInterceptor {
 
     private final SessionService sessionService;
@@ -24,6 +26,7 @@ public final class SessionValidationInterceptor implements HandlerInterceptor {
             response.sendError(403, "Invalid or expired session token.");
             return false;
         }
+        log.debug("Valid request from account ID: {}", accountId);
         request.setAttribute("userId", accountId);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
