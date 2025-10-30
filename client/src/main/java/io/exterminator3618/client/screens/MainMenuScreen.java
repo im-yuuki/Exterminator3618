@@ -15,6 +15,7 @@ import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
+import io.exterminator3618.client.utils.SaveManager;
 
 public final class MainMenuScreen implements Screen {
 
@@ -26,6 +27,7 @@ public final class MainMenuScreen implements Screen {
     private Viewport viewport;
 
     private TextButton startButton;
+    private TextButton continueButton;
     private TextButton settingsButton;
     private TextButton exitButton;
 
@@ -42,9 +44,11 @@ public final class MainMenuScreen implements Screen {
 
         final int CENTER_X = (Constants.WINDOW_WIDTH / 2) - (Constants.BUTTON_WIDTH / 2);
         final int START_Y = (Constants.WINDOW_HEIGHT / 2) + Constants.BUTTON_HEIGHT + PADDING - 200;
+        final int CONTINUE_Y = START_Y - Constants.BUTTON_HEIGHT - PADDING;
         final int SETTINGS_Y = CONTINUE_Y - Constants.BUTTON_HEIGHT - PADDING;
         final int EXIT_Y = SETTINGS_Y - Constants.BUTTON_HEIGHT - PADDING;
         startButton = new TextButton("Start Game",CENTER_X, START_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        continueButton = new TextButton("Continue", CENTER_X, CONTINUE_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         settingsButton = new TextButton("Options", CENTER_X, SETTINGS_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         exitButton = new TextButton("Exit", CENTER_X, EXIT_Y, Constants.BUTTON_WIDTH,  Constants.BUTTON_HEIGHT, true);
     }
@@ -69,6 +73,9 @@ public final class MainMenuScreen implements Screen {
         // Draw text here
         renderer.drawLogo(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2);
         startButton.draw(renderer);
+        if (SaveManager.hasSave(game)) {
+            continueButton.draw(renderer);
+        }
         settingsButton.draw(renderer);
         exitButton.draw(renderer);
         renderer.end();
@@ -87,7 +94,15 @@ public final class MainMenuScreen implements Screen {
             viewport.unproject(touchPos);
 
             if (startButton.isClicked(touchPos.x, touchPos.y)) {
+                SaveManager.clearSave(game);
                 game.launchScreen(new GameScreen(game));
+            }
+
+            if (continueButton.isClicked(touchPos.x, touchPos.y)) {
+                soundManager.stop();
+                GameScreen gs = new GameScreen(game);
+                SaveManager.loadInto(game, gs);
+                game.launchScreen(gs);
             }
 
             // Transition to setting screen on input

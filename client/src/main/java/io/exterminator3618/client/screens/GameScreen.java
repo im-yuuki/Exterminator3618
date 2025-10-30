@@ -35,13 +35,23 @@ import io.exterminator3618.client.Exterminator3618;
 import static io.exterminator3618.client.Physics.checkPowerUpCollision;
 import io.exterminator3618.client.components.Ball;
 import io.exterminator3618.client.components.Brick;
+import io.exterminator3618.client.components.ExtraLifePowerUp;
+import io.exterminator3618.client.components.HeavyBallPowerUp;
+import io.exterminator3618.client.components.MultiBallBrick;
+import io.exterminator3618.client.components.NormalBrick;
 import io.exterminator3618.client.components.Paddle;
 import io.exterminator3618.client.components.PowerUp;
 import io.exterminator3618.client.components.PowerUpBrick;
+import io.exterminator3618.client.components.SlowBallPowerUp;
+import io.exterminator3618.client.components.SolidBrick;
+import io.exterminator3618.client.components.SplitBallPowerUp;
+import io.exterminator3618.client.components.StickyPaddlePowerUp;
 import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.components.TextButton;
+import io.exterminator3618.client.components.WidenPaddlePowerUp;
 import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Assets;
+import io.exterminator3618.client.utils.GameSaveData;
 import io.exterminator3618.client.utils.LevelLoader;
 import io.exterminator3618.client.utils.Renderer;
 
@@ -126,6 +136,168 @@ public final class GameScreen implements Screen {
         ));
 
         ball.setStuckToPaddle(true);
+    }
+
+
+    public GameSaveData.SaveData exportState() {
+        GameSaveData.SaveData d = new GameSaveData.SaveData();
+        d.level = currentLevel;
+        d.score = score;
+        d.lives = lives;
+
+        GameSaveData.Obj b = new GameSaveData.Obj();
+        b.x = ball.getX();
+        b.y = ball.getY();
+        b.width = ball.getWidth();
+        b.height = ball.getHeight();
+        b.vx = ball.getVelocityX();
+        b.vy = ball.getVelocityY();
+        b.region = ball.getRegionName();
+        b.bool1 = ball.isHeavyBall();
+        b.bool2 = ball.isStuckToPaddle();
+        b.i1 = ball.getStuckOffsetX();
+        b.cb = ball.getComboCount();
+        d.ball = b;
+
+        GameSaveData.Obj p = new GameSaveData.Obj();
+        p.x = paddle.getX();
+        p.y = paddle.getY();
+        p.width = paddle.getWidth();
+        p.height = paddle.getHeight();
+        p.region = paddle.getRegionName();
+        p.bool1 = paddle.isSticky();
+        d.paddle = p;
+
+        d.extraBalls = new ArrayList<>();
+        for (Ball eb : extraBalls) {
+            GameSaveData.Obj o = new GameSaveData.Obj();
+            o.x = eb.getX();
+            o.y = eb.getY();
+            o.width = eb.getWidth();
+            o.height = eb.getHeight();
+            o.vx = eb.getVelocityX();
+            o.vy = eb.getVelocityY();
+            o.region = eb.getRegionName();
+            o.bool1 = eb.isHeavyBall();
+            o.bool2 = eb.isStuckToPaddle();
+            o.i1 = eb.getStuckOffsetX();
+            d.extraBalls.add(o);
+        }
+
+        d.bricks = new ArrayList<>();
+        for (Brick bk : bricks) {
+            if (bk.isDestroyed()) continue;
+            GameSaveData.BrickState bs = new GameSaveData.BrickState();
+            bs.x = bk.getX();
+            bs.y = bk.getY();
+            bs.width = bk.getWidth();
+            bs.height = bk.getHeight();
+            bs.region = bk.getRegionName();
+            bs.hp = bk.getHitPoints();
+            bs.type = bk.getType();
+            d.bricks.add(bs);
+        }
+
+        d.activePowerUps = new ArrayList<>();
+        if (activePowerUps != null) {
+            for (PowerUp apu : activePowerUps) {
+                GameSaveData.PowerUpState ps = new GameSaveData.PowerUpState();
+                ps.type = apu.getType();
+                ps.remaining = apu.getRemainingDuration();
+                d.activePowerUps.add(ps);
+            }
+        }
+        return d;
+    }
+
+    public void importState(GameSaveData.SaveData d) {
+        this.currentLevel = Math.max(1, d.level);
+        this.score = Math.max(0, d.score);
+        setLives(d.lives);
+
+        // fresh lists
+        powerUps = new ArrayList<>();
+        activePowerUps = new ArrayList<>();
+        extraBalls = new ArrayList<>();
+
+        // paddle
+        paddle = new Paddle(d.paddle.x, d.paddle.y, d.paddle.width, d.paddle.height, d.paddle.region);
+        paddle.setSticky(d.paddle.bool1);
+
+        // ball
+        ball = new Ball(d.ball.x, d.ball.y, d.ball.width, d.ball.height, d.ball.region, BALL_SPEED, 90);
+        ball.setVelocity(d.ball.vx, d.ball.vy);
+        ball.setHeavyBall(d.ball.bool1);
+        ball.setStuckToPaddle(d.ball.bool2);
+        ball.setStuckOffsetX(d.ball.i1);
+        ball.setComboCount(d.ball.cb);
+
+        // extra balls
+        for (GameSaveData.Obj o : d.extraBalls) {
+            Ball eb = new Ball(o.x, o.y, o.width, o.height, o.region, BALL_SPEED, 90);
+            eb.setVelocity(o.vx, o.vy);
+            eb.setHeavyBall(o.bool1);
+            eb.setStuckToPaddle(o.bool2);
+            eb.setStuckOffsetX(o.i1);
+            extraBalls.add(eb);
+        }
+
+        // bricks
+        bricks = new ArrayList<>();
+        for (GameSaveData.BrickState bs : d.bricks) {
+            switch (bs.type) {
+                case "solid_brick":
+                    Brick sb = new SolidBrick(bs.x, bs.y);
+                    bricks.add(sb);
+                    break;
+                case "normal":
+                    Brick nb = new NormalBrick(bs.x, bs.y, bs.width, bs.height, bs.region);
+                    bricks.add(nb);
+                    break;
+                case "multiball":
+                    Brick mb = new MultiBallBrick(bs.x, bs.y);
+                    bricks.add(mb);
+                    break;
+                case "strong":
+                    Brick stb = new StrongBrick(bs.x, bs.y, bs.width, bs.height, bs.region, bs.hp);
+                    bricks.add(stb);
+                    break;
+                default:
+                    // Unknown brick type; skip
+                    break;
+            }
+        }
+
+        // active powerups: re-apply with saved remaining duration
+        if (d.activePowerUps != null) {
+            for (GameSaveData.PowerUpState ps : d.activePowerUps) {
+                PowerUp pu = createPowerUpByType(ps.type);
+                if (pu != null) {
+                    pu.applyEffect(this);
+                    pu.setRemainingDuration(ps.remaining);
+                    activePowerUps.add(pu);
+                }
+            }
+        }
+    }
+
+    private PowerUp createPowerUpByType(String type) {
+        switch (type) {
+            case "Widen Paddle":
+                return new WidenPaddlePowerUp(0, 0);
+            case "Heavy Ball":
+                return new HeavyBallPowerUp(0, 0);
+            case "Sticky Paddle":
+                return new StickyPaddlePowerUp(0, 0);
+            case "Extra Life":
+                return new ExtraLifePowerUp(0, 0);
+            case "Split Ball":
+                return new SplitBallPowerUp(0, 0);
+            case "Slow Ball":
+                return new SlowBallPowerUp(0, 0);
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -521,6 +693,14 @@ public final class GameScreen implements Screen {
 
     public List<Ball> getExtraBalls() {
         return extraBalls;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
     }
 
     public SoundManager getSoundManager() {

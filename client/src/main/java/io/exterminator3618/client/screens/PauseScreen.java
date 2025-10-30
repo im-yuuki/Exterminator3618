@@ -4,16 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.math.Vector3;
+
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Renderer;
+import io.exterminator3618.client.utils.SaveManager;
 
 public final class PauseScreen implements Screen {
 
@@ -78,16 +79,10 @@ public final class PauseScreen implements Screen {
         renderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
-        // Resume game on input (e.g., P key)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+        // Resume game on input (e.g., P or ESC key) - use justPressed to avoid immediate close
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.backToPreviousScreen();
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            // Stop gameplay background music before transitioning to game over
-            gameScreen.getSoundManager().stop();
-            game.launchScreen(new GameOverScreen(game));
-            game.replaceCurrentScreen(new MainMenuScreen(game));
         }
-
 
         if (Gdx.input.justTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -95,6 +90,7 @@ public final class PauseScreen implements Screen {
             viewport.unproject(touchPos);
 
             if (backButton.isClicked(touchPos.x, touchPos.y)) {
+                SaveManager.saveGame(game, gameScreen);
                 game.replaceCurrentScreen(new MainMenuScreen(game));
             }
             if (playButton.isClicked(touchPos.x, touchPos.y)) {

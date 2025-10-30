@@ -136,4 +136,9 @@ public class Constants {
     public static final int PLAY_AREA_X_MIN = 55;
     public static final int PLAY_AREA_Y_MAX = 985;
     public static final int PLAY_AREA_Y_MIN = 85;
+
+    /**
+     * Saved game path
+     */
+    public static final String SAVE_FILE = "client/src/main/resources/data/save/saved_game.json";
 }
