@@ -16,6 +16,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <libgdx.version>1.13.5</libgdx.version>
+        <spring-boot.version>3.5.7</spring-boot.version>
     </properties>
 
     <developers>

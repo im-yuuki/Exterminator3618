@@ -2,13 +2,11 @@ package io.exterminator3618.server.routes;
 
 import io.exterminator3618.server.data.Account;
 import io.exterminator3618.server.data.Ban;
-import io.exterminator3618.server.models.OperationWithSessionTokenResponse;
-import io.exterminator3618.server.models.LoginRequest;
-import io.exterminator3618.server.models.RecoverRequest;
-import io.exterminator3618.server.models.RegisterRequest;
+import io.exterminator3618.server.models.*;
 import io.exterminator3618.server.repositories.AccountRepository;
 import io.exterminator3618.server.services.SessionService;
 import io.exterminator3618.server.utils.PasswordHash;
+import io.exterminator3618.server.utils.UsernameRequirementsCheck;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,19 +28,19 @@ public class AccountRoute {
 
     @PostMapping("/login")
     @Transactional
-    public OperationWithSessionTokenResponse login(@RequestBody LoginRequest req) {
+    public OperationResponse login(@RequestBody LoginRequest req) {
         Account account =  accountRepository.findAccountByUsername(req.username());
         if (account == null) {
             log.debug("Username \"{}\" not found", req.username());
-            return new OperationWithSessionTokenResponse(false, "Account not found");
+            return new OperationResponse(false, "Account not found");
         } else if (!PasswordHash.verifyPassword(req.password(), account.getPwdHash())) {
             log.debug("Login attempt for \"{}\" failed: invalid password", req.username());
-            return new OperationWithSessionTokenResponse(false, "Invalid password");
+            return new OperationResponse(false, "Invalid password");
         }
         String banMessage = isBannedAccount(account);
         if (banMessage != null) {
             log.debug("Login attempt for \"{}\" failed: {}", req.username(), banMessage);
-            return new OperationWithSessionTokenResponse(false, banMessage);
+            return new OperationResponse(false, banMessage);
         }
         var res = new OperationWithSessionTokenResponse(true, "Login successful");
         res.setAccountId(account.getId());
@@ -59,10 +57,13 @@ public class AccountRoute {
     }
 
     @PostMapping("/register")
-    public OperationWithSessionTokenResponse register(@RequestBody RegisterRequest req) {
+    public OperationResponse register(@RequestBody RegisterRequest req) {
         var existingAccount = accountRepository.findAccountByUsername(req.username());
         if (existingAccount != null) {
-            return new OperationWithSessionTokenResponse(false, "Username already taken");
+            return new OperationResponse(false, "Username already taken");
+        }
+        if (!UsernameRequirementsCheck.check(req.username())) {
+            return new OperationResponse(false, "Username does not meet the requirements");
         }
         Account newAccount = new Account();
         newAccount.setUsername(req.username());
@@ -81,8 +82,8 @@ public class AccountRoute {
     }
 
     @PostMapping("/recover")
-    public OperationWithSessionTokenResponse recover(@RequestBody RecoverRequest req) {
-        return new OperationWithSessionTokenResponse(false, "Account recovery not implemented");
+    public OperationResponse recover(@RequestBody RecoverRequest req) {
+        return new OperationResponse(false, "Account recovery not implemented");
     }
 
     /**

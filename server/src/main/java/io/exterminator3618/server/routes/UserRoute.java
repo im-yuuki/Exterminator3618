@@ -9,6 +9,7 @@ import io.exterminator3618.server.services.MatchFindService;
 import io.exterminator3618.server.services.SessionService;
 import io.exterminator3618.server.utils.InvalidRequestException;
 import io.exterminator3618.server.utils.PasswordHash;
+import io.exterminator3618.server.utils.UsernameRequirementsCheck;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,9 @@ public class UserRoute {
         }
         // update username
         if (data.getUsername() != null && !data.getUsername().isEmpty()) {
+            if (!UsernameRequirementsCheck.check(data.getUsername())) {
+                return new OperationResponse(false, "Username does not meet requirements");
+            }
             var existingAccount = accountRepository.findAccountByUsername(data.getUsername());
             if (existingAccount != null) {
                 return new OperationResponse(false, "Username already taken");

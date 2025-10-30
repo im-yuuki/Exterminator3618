@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
-public class TestMatchFindService {
+public class MatchFindServiceTest {
 
     public final MatchFindService matchFindService = new MatchFindService(null);
 

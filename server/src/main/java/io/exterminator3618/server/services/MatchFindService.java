@@ -27,7 +27,7 @@ public class MatchFindService {
 
     /**
      * Cache to track if a user is currently online.
-     * Value is true if the user online, false if invisible mode, and null if offline.
+     * Value is true if the user is online, false if invisible mode, and null if offline.
      * Entries expire after 2 minutes of inactivity.
      */
     private final Cache<@NonNull Long, Boolean> userOnline = Caffeine.newBuilder()
