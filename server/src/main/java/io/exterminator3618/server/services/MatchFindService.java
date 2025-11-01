@@ -60,21 +60,24 @@ public class MatchFindService {
                         clearMatch(req.getMatchedAccountId());
                     }
                     continue;
-                } else if (req.isAcceptedMatch()) {
-                    MatchRequest other = req.getMatchedAccountId() == null ? null : matchQueue.remove(req.getMatchedAccountId());
-                    if (other != null) {
-                        if (other.isAcceptedMatch()) {
-                            log.debug("User ID {} accepted match with user ID {}", req.accountId, req.matchedAccountId);
-                            createMatchRoom(req, other);
-                            continue;
-                        } else {
-                            matchQueue.put(other.getAccountId(), other);
-                        }
-                    } else {
-                        log.warn("User ID {} accepted match but no matched account ID found", req.accountId);
-                        clearMatch(req.getAccountId());
-                    }
-                } else if (req.getMatchedAccountId() == null) {
+                }
+                // TODO: implement accept match logic, as i didn't have enough time to finish it
+                // else if (req.isAcceptedMatch()) {
+                //     MatchRequest other = req.getMatchedAccountId() == null ? null : matchQueue.remove(req.getMatchedAccountId());
+                //     if (other != null) {
+                //         if (other.isAcceptedMatch()) {
+                //             log.debug("User ID {} accepted match with user ID {}", req.accountId, req.matchedAccountId);
+                //             createMatchRoom(req, other);
+                //             continue;
+                //         } else {
+                //             matchQueue.put(other.getAccountId(), other);
+                //         }
+                //     } else {
+                //         log.warn("User ID {} accepted match but no matched account ID found", req.accountId);
+                //         clearMatch(req.getAccountId());
+                //     }
+                // }
+                else if (req.getMatchedAccountId() == null) {
                     // TODO: make a better algorithm to find the best match
                     AtomicReference<MatchRequest> smallestDiffReq = new AtomicReference<>();
                     matchQueue.forEach((accountId, other) -> {
@@ -155,9 +158,9 @@ public class MatchFindService {
             if (req == null) {
                 throw new Forbidden("Not in match queue");
             }
-            if (req.acceptedMatch) {
-                throw new Forbidden("Cannot leave match queue after accepting a match");
-            }
+            // if (req.acceptedMatch) {
+            //     throw new Forbidden("Cannot leave match queue after accepting a match");
+            // }
             if (req.matchedAccountId != null) {
                 clearMatch(req.matchedAccountId);
             }
@@ -166,47 +169,35 @@ public class MatchFindService {
         }
     }
 
-    /**
-     * Checks if a match has been found for the user.
-     *
-     * @param accountId account ID of the user
-     * @return true if a match is found, false otherwise
-     */
-    public boolean isMatchFound(long accountId) {
-        synchronized (matchQueue) {
-            var req = matchQueue.get(accountId);
-            if (req == null) {
-                throw new Forbidden("Not in match queue");
-            }
-            req.setLastInteraction(LocalDateTime.now());
-            return req.getMatchedAccountId() != null;
-        }
-    }
+    // public boolean isMatchFound(long accountId) {
+    //     synchronized (matchQueue) {
+    //         var req = matchQueue.get(accountId);
+    //         if (req == null) {
+    //             throw new Forbidden("Not in match queue");
+    //         }
+    //         req.setLastInteraction(LocalDateTime.now());
+    //         return req.getMatchedAccountId() != null;
+    //     }
+    // }
 
-    /**
-     * Accepts the found match for the user.
-     *
-     * @param accountId account ID of the user
-     * @return true if both users have accepted the match, false otherwise
-     */
-    public boolean acceptMatch(long accountId) {
-        synchronized (matchQueue) {
-            var req = matchQueue.get(accountId);
-            if (req == null) {
-                throw new Forbidden("Not in match queue");
-            }
-            if (req.getMatchedAccountId() == null) {
-                throw new Forbidden("No match found to accept");
-            }
-            req.setLastInteraction(LocalDateTime.now());
-            if (!req.isAcceptedMatch()) {
-                req.setAcceptedMatch(true);
-                log.debug("Account ID {} accepted match with account ID {}", accountId, req.getMatchedAccountId());
-            }
-            var other = matchQueue.get(req.getMatchedAccountId());
-            return other != null && other.isAcceptedMatch();
-        }
-    }
+    // public boolean acceptMatch(long accountId) {
+    //     synchronized (matchQueue) {
+    //         var req = matchQueue.get(accountId);
+    //         if (req == null) {
+    //             throw new Forbidden("Not in match queue");
+    //         }
+    //         if (req.getMatchedAccountId() == null) {
+    //             throw new Forbidden("No match found to accept");
+    //         }
+    //         req.setLastInteraction(LocalDateTime.now());
+    //         if (!req.isAcceptedMatch()) {
+    //             req.setAcceptedMatch(true);
+    //             log.debug("Account ID {} accepted match with account ID {}", accountId, req.getMatchedAccountId());
+    //         }
+    //         var other = matchQueue.get(req.getMatchedAccountId());
+    //         return other != null && other.isAcceptedMatch();
+    //     }
+    // }
 
     @Data
     @EqualsAndHashCode(callSuper = false)
@@ -217,7 +208,7 @@ public class MatchFindService {
         private LocalDateTime lastInteraction = LocalDateTime.now();
 
         private Long matchedAccountId = null;
-        private boolean acceptedMatch = false;
+        // private boolean acceptedMatch = false;
 
     }
 
@@ -230,7 +221,7 @@ public class MatchFindService {
         var req = matchQueue.get(accountId);
         if (req != null) {
             req.setMatchedAccountId(null);
-            req.setAcceptedMatch(false);
+            // req.setAcceptedMatch(false);
             log.debug("Clear match of user ID {}", req.accountId);
         }
     }

@@ -84,7 +84,7 @@ public class UserRoute {
         return new OperationResponse(true, "Password changed successfully");
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public OperationResponse logout(@CookieValue(name = "auth", required = false) String authCookie, HttpServletResponse response) {
         if (authCookie != null) {
             sessionService.invalidateSessionToken(authCookie);
