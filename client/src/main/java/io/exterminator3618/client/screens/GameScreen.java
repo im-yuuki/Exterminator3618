@@ -90,7 +90,7 @@ public class GameScreen implements Screen {
     public GameScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
-        this.currentLevel = 1;
+        this.currentLevel = 0;
         loadLevel(currentLevel, null);
         soundManager = game.getSoundManager();
         soundManager.play("sound/gameplay_bgm.mp3", true);
@@ -482,6 +482,11 @@ public class GameScreen implements Screen {
 
     private void gotoVictoryScreen() {
         // TODO: implement victory screen transition
+        game.launchScreen(new VictoryScreen(game));
+    }
+
+    private void gotoWinLevelScreen(int level) {
+        game.launchScreen(new WinLevelScreen(game, level));
     }
 
     private void gotoGameOverScreen() {
@@ -625,7 +630,6 @@ public class GameScreen implements Screen {
                     if (wasDestroyed) {
                         ball.incrementCombo();
                         score += 10 * ball.getComboCount();
-                        // Nếu gạch bị phá hủy, kiểm tra xem có phải loại đặc biệt không
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
                         } else if (brick instanceof PowerUpBrick) {
@@ -642,14 +646,18 @@ public class GameScreen implements Screen {
 
                         // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
                         if (levelClear()) {
-                            currentLevel++;
+
+                            gotoWinLevelScreen(currentLevel);
                             soundManager.play("sound/collected_and_level.wav");
                             ball.resetToCenter(paddle);
-                            // Giả sử bạn có 2 level, đánh số 1 và 2
+                            int nextLevel = currentLevel + 1;
+                            // Giả sử có 2 level, đánh số 1 và 2
                             if (currentLevel > 2) {
                                 gotoVictoryScreen();
+
                             } else {
                                 // Tải màn chơi tiếp theo
+                                currentLevel = nextLevel;
                                 loadLevel(currentLevel, ball);
                             }
                         }

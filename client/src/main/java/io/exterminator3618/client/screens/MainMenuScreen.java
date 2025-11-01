@@ -47,8 +47,8 @@ public final class MainMenuScreen implements Screen {
         final int CONTINUE_Y = START_Y - Constants.BUTTON_HEIGHT - PADDING;
         final int SETTINGS_Y = CONTINUE_Y - Constants.BUTTON_HEIGHT - PADDING;
         final int EXIT_Y = SETTINGS_Y - Constants.BUTTON_HEIGHT - PADDING;
-        startButton = new TextButton("Start Game",CENTER_X, START_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
-        continueButton = new TextButton("Continue", CENTER_X, CONTINUE_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        startButton = new TextButton("Start Game",CENTER_X, CONTINUE_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        continueButton = new TextButton("Continue", CENTER_X, START_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         settingsButton = new TextButton("Options", CENTER_X, SETTINGS_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         exitButton = new TextButton("Exit", CENTER_X, EXIT_Y, Constants.BUTTON_WIDTH,  Constants.BUTTON_HEIGHT, true);
     }
