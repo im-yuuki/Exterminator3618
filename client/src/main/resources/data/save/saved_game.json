@@ -1,0 +1,194 @@
+{
+"level": 1,
+"score": 640,
+"lives": 5,
+"ball": {
+	"x": 772,
+	"y": 216,
+	"width": 32,
+	"height": 32,
+	"vx": 856.5674465851754,
+	"vy": 516.0350854840714,
+	"region": "green_ball",
+	"bool1": true,
+	"cb": 10
+},
+"paddle": {
+	"x": 519,
+	"y": 100,
+	"width": 150,
+	"height": 20,
+	"region": "red_paddle"
+},
+"extraBalls": [],
+"bricks": [
+	{
+		"x": 218,
+		"y": 923,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 494,
+		"y": 923,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 632,
+		"y": 923,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 770,
+		"y": 923,
+		"width": 64,
+		"height": 32,
+		"region": "normal_purple_brick",
+		"hp": 1,
+		"type": "multiball"
+	},
+	{
+		"x": 908,
+		"y": 923,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 1046,
+		"y": 923,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 287,
+		"y": 886,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 425,
+		"y": 886,
+		"width": 64,
+		"height": 32,
+		"region": "normal_orange_brick",
+		"hp": 3,
+		"type": "strong"
+	},
+	{
+		"x": 563,
+		"y": 886,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 701,
+		"y": 886,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 977,
+		"y": 886,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 287,
+		"y": 849,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 425,
+		"y": 849,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 701,
+		"y": 849,
+		"width": 64,
+		"height": 32,
+		"region": "normal_green_brick",
+		"hp": 1,
+		"type": "normal"
+	},
+	{
+		"x": 977,
+		"y": 849,
+		"width": 64,
+		"height": 32,
+		"region": "normal_orange_brick_2",
+		"hp": 2,
+		"type": "strong"
+	},
+	{
+		"x": 494,
+		"y": 812,
+		"width": 64,
+		"height": 32,
+		"region": "thick_blue_brick",
+		"hp": 1,
+		"type": "solid_brick"
+	},
+	{
+		"x": 632,
+		"y": 812,
+		"width": 64,
+		"height": 32,
+		"region": "thick_blue_brick",
+		"hp": 1,
+		"type": "solid_brick"
+	},
+	{
+		"x": 770,
+		"y": 812,
+		"width": 64,
+		"height": 32,
+		"region": "thick_blue_brick",
+		"hp": 1,
+		"type": "solid_brick"
+	}
+],
+"activePowerUps": [
+	{
+		"type": "Heavy Ball",
+		"remaining": 2.7159383
+	}
+]
+}

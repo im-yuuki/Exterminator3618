@@ -6,7 +6,7 @@ import io.exterminator3618.client.screens.GameScreen;
 public class ExtraLifePowerUp extends PowerUp {
 
     public ExtraLifePowerUp(int x, int y) {
-        super("extra_life_power_up", 0.0f , x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "extra_life_power_up");
+        super("Extra Life", 0.0f , x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "extra_life_power_up");
     }
 
     @Override

@@ -10,7 +10,7 @@ import io.exterminator3618.client.screens.GameScreen;
 public class StickyPaddlePowerUp extends PowerUp {
 
     public StickyPaddlePowerUp(int x, int y) {
-        super("sticky_paddle_power_up", 10.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "sticky_paddle_power_up");
+        super("Sticky Paddle", 10.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "sticky_paddle_power_up");
     }
 
     @Override

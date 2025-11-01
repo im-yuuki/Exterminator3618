@@ -72,7 +72,7 @@ public final class GameOverScreen implements Screen {
             viewport.unproject(touchPos);
 
             if (backButton.isClicked(touchPos.x, touchPos.y)) {
-                game.backToPreviousScreen();
+                game.launchScreen(new MainMenuScreen(game));
             }
 
             if (playAgainButton.isClicked(touchPos.x, touchPos.y)) {

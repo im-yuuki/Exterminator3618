@@ -253,4 +253,8 @@ public class Ball extends MovableObject {
         //updateVelocity();
     }
 
+    public void setComboCount(int comboCount) {
+        this.comboCount = comboCount;
+    }
+
 }
