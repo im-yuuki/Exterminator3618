@@ -5,7 +5,7 @@ import io.exterminator3618.server.models.ChangePasswordRequest;
 import io.exterminator3618.server.models.OperationResponse;
 import io.exterminator3618.server.models.UserInfo;
 import io.exterminator3618.server.repositories.AccountRepository;
-import io.exterminator3618.server.services.MatchFindService;
+import io.exterminator3618.server.repositories.RecordRepository;
 import io.exterminator3618.server.services.SessionService;
 import io.exterminator3618.server.utils.InvalidRequestException;
 import io.exterminator3618.server.utils.PasswordHash;
@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/user")
 @Slf4j
@@ -25,14 +23,8 @@ import java.util.Map;
 public class UserRoute {
 
     private final AccountRepository accountRepository;
+    private final RecordRepository recordRepository;
     private final SessionService sessionService;
-    private final MatchFindService matchFindService;
-
-    @GetMapping("/alive")
-    public void userAlive(@RequestAttribute(name = "userId") Long userId) {
-        log.debug("Received online ping from user ID: {}", userId);
-        matchFindService.setOnline(userId);
-    }
 
     @GetMapping("/info")
     public UserInfo getUserInfo(@RequestAttribute(name = "userId") Long userId) {
@@ -40,7 +32,8 @@ public class UserRoute {
         if (account == null) {
             throw new InvalidRequestException("Account not found");
         }
-        return new UserInfo(account);
+        var stats = recordRepository.getUserStatisticsByAccountId(userId);
+        return new UserInfo(account, stats);
     }
 
     @PatchMapping("/info")

@@ -4,15 +4,14 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.exterminator3618.server.models.UserInfo;
 import io.exterminator3618.server.models.UserStatistics;
-import io.exterminator3618.server.utils.Forbidden;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
+import io.exterminator3618.server.utils.ForbiddenAction;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -20,8 +19,9 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 public class MatchFindService {
 
-    public static final int ONLINE_STATUS_CACHE_MINUTES = 2;
+    public static final int ONLINE_STATUS_CACHE_MINUTES = 1;
     public static final int MATCH_QUEUE_TIMEOUT_SECONDS = 20;
+    public static final int MATCH_INVITE_TIMEOUT_SECONDS = 60;
 
     private final RoomService roomService;
 
@@ -34,78 +34,80 @@ public class MatchFindService {
             .expireAfterWrite(ONLINE_STATUS_CACHE_MINUTES, TimeUnit.MINUTES)
             .build();
 
-    private final LinkedHashMap<Long, MatchRequest> matchQueue = new LinkedHashMap<>();
+    private final Cache<@NonNull Long, Set<Long>> matchInvites = Caffeine.newBuilder()
+            .expireAfterWrite(MATCH_INVITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .build();
 
-    /**
-     * Background thread to process the match queue.
-     * It continuously checks for matches and handles user interactions.
-     */
-    private final Thread queueWorkerThread = new Thread(() -> {
-        while (true) {
-            synchronized (matchQueue) {
-                var entry = matchQueue.pollFirstEntry();
-                if (entry == null) {
-                    try {
-                        matchQueue.wait();
-                    } catch (InterruptedException e) {
-                        log.error("Match queue worker interrupted", e);
-                        break;
-                    }
-                    continue;
-                }
-                var req = entry.getValue();
-                if (req.getLastInteraction().plusSeconds(MATCH_QUEUE_TIMEOUT_SECONDS).isBefore(LocalDateTime.now())) {
-                    log.debug("Removing inactive user ID {} from match queue", req.accountId);
-                    if (req.getMatchedAccountId() != null) {
-                        clearMatch(req.getMatchedAccountId());
-                    }
-                    continue;
-                }
-                // TODO: implement accept match logic, as i didn't have enough time to finish it
-                // else if (req.isAcceptedMatch()) {
-                //     MatchRequest other = req.getMatchedAccountId() == null ? null : matchQueue.remove(req.getMatchedAccountId());
-                //     if (other != null) {
-                //         if (other.isAcceptedMatch()) {
-                //             log.debug("User ID {} accepted match with user ID {}", req.accountId, req.matchedAccountId);
-                //             createMatchRoom(req, other);
-                //             continue;
-                //         } else {
-                //             matchQueue.put(other.getAccountId(), other);
-                //         }
-                //     } else {
-                //         log.warn("User ID {} accepted match but no matched account ID found", req.accountId);
-                //         clearMatch(req.getAccountId());
-                //     }
-                // }
-                else if (req.getMatchedAccountId() == null) {
-                    // TODO: make a better algorithm to find the best match
-                    AtomicReference<MatchRequest> smallestDiffReq = new AtomicReference<>();
-                    matchQueue.forEach((accountId, other) -> {
-                        if (other.getAccountId() == req.getAccountId()) return;
-                        if (smallestDiffReq.get() == null) smallestDiffReq.set(other);
-                        else {
-                            int diff1 = Math.abs(other.getAverageScore() - req.getAverageScore());
-                            int diff2 = Math.abs(smallestDiffReq.get().getAverageScore() - req.getAverageScore());
-                            if (diff1 < diff2) {
-                                smallestDiffReq.set(other);
-                            }
-                        }
-                    });
-                    if (smallestDiffReq.get() != null) {
-                        MatchRequest other = smallestDiffReq.get();
-                        req.setMatchedAccountId(other.getAccountId());
-                        other.setMatchedAccountId(req.getAccountId());
-                        log.debug("Matched user ID {} with user ID {}", req.accountId, other.getAccountId());
-                    }
-                }
-                matchQueue.put(req.accountId, req);
-            }
-        }
-    });
+    private final LinkedHashMap<Long, MatchRequest> matchQueue = new LinkedHashMap<>();
 
     public MatchFindService(RoomService roomService) {
         this.roomService = roomService;
 
+        // Background thread to process the match queue.
+        Thread queueWorkerThread = new Thread(() -> {
+            while (true) {
+                synchronized (matchQueue) {
+                    var entry = matchQueue.pollFirstEntry();
+                    if (entry == null) {
+                        try {
+                            matchQueue.wait();
+                        } catch (InterruptedException e) {
+                            log.error("Match queue worker interrupted", e);
+                            break;
+                        }
+                        continue;
+                    }
+                    var req = entry.getValue();
+                    if (req.getLastInteraction().plusSeconds(MATCH_QUEUE_TIMEOUT_SECONDS).isBefore(LocalDateTime.now())) {
+                        log.debug("Removing inactive user ID {} from match queue", req.accountId);
+                        if (req.getMatchedAccountId() != null) {
+                            clearMatch(req.getMatchedAccountId());
+                        }
+                        continue;
+                    }
+                    // TODO: implement accept match logic, as i didn't have enough time to finish it
+                    // else if (req.isAcceptedMatch()) {
+                    //     MatchRequest other = req.getMatchedAccountId() == null ? null : matchQueue.remove(req.getMatchedAccountId());
+                    //     if (other != null) {
+                    //         if (other.isAcceptedMatch()) {
+                    //             log.debug("User ID {} accepted match with user ID {}", req.accountId, req.matchedAccountId);
+                    //             createMatchRoom(req, other);
+                    //             continue;
+                    //         } else {
+                    //             matchQueue.put(other.getAccountId(), other);
+                    //         }
+                    //     } else {
+                    //         log.warn("User ID {} accepted match but no matched account ID found", req.accountId);
+                    //         clearMatch(req.getAccountId());
+                    //     }
+                    // }
+                    else if (req.getMatchedAccountId() == null) {
+                        // TODO: make a better algorithm to find the best match
+                        AtomicReference<MatchRequest> smallestDiffReq = new AtomicReference<>();
+                        matchQueue.forEach((accountId, other) -> {
+                            if (other.getAccountId() == req.getAccountId()) return;
+                            if (smallestDiffReq.get() == null) smallestDiffReq.set(other);
+                            else {
+                                int diff1 = Math.abs(other.getAverageScore() - req.getAverageScore());
+                                int diff2 = Math.abs(smallestDiffReq.get().getAverageScore() - req.getAverageScore());
+                                if (diff1 < diff2) {
+                                    smallestDiffReq.set(other);
+                                }
+                            }
+                        });
+                        if (smallestDiffReq.get() != null) {
+                            MatchRequest other = smallestDiffReq.get();
+                            req.setMatchedAccountId(other.getAccountId());
+                            other.setMatchedAccountId(req.getAccountId());
+                            log.debug("Matched user ID {} with user ID {}", req.accountId, other.getAccountId());
+                            // create match room immediately for now
+                            roomService.createRoom(req.getAccountId(), other.getAccountId());
+                        }
+                    }
+                    matchQueue.put(req.accountId, req);
+                }
+            }
+        });
         queueWorkerThread.setName("MatchService-QueueWorker");
         queueWorkerThread.setDaemon(true);
         queueWorkerThread.start();
@@ -128,21 +130,28 @@ public class MatchFindService {
      */
     public void setOnline(long accountId) {
         userOnline.put(accountId, true);
+        // Update last interaction time if in match queue
+        synchronized (matchQueue) {
+            var currentMatchReq = matchQueue.get(accountId);
+            if (currentMatchReq != null) {
+                currentMatchReq.setLastInteraction(LocalDateTime.now());
+            }
+        }
     }
 
     /**
      * Adds a user to the match queue.
      *
      * @param accountId account ID of the user
-     * @param userInfo user info
+     * @param userStatistics user statistics
      */
-    public void joinMatchQueue(long accountId, UserInfo userInfo) {
+    public void joinMatchQueue(long accountId, UserStatistics userStatistics) {
         synchronized (matchQueue) {
             if (matchQueue.containsKey(accountId)) {
-                throw new Forbidden("Already in match queue");
+                throw new ForbiddenAction("Already in match queue");
             }
             log.debug("Account ID {} joined the match queue", accountId);
-            matchQueue.put(accountId, new MatchRequest(accountId));
+            matchQueue.put(accountId, new MatchRequest(accountId, userStatistics));
             matchQueue.notify();
         }
     }
@@ -156,7 +165,7 @@ public class MatchFindService {
         synchronized (matchQueue) {
             var req = matchQueue.get(accountId);
             if (req == null) {
-                throw new Forbidden("Not in match queue");
+                throw new ForbiddenAction("Not in match queue");
             }
             // if (req.acceptedMatch) {
             //     throw new Forbidden("Cannot leave match queue after accepting a match");
@@ -199,22 +208,61 @@ public class MatchFindService {
     //     }
     // }
 
-    @Data
+    public void inviteFriend(long accountId, long friendAccountId) {
+        if (roomService.isInRoom(accountId) || roomService.isInRoom(friendAccountId)) {
+            throw new ForbiddenAction("One of the users is already in a room");
+        }
+        var inviteList = matchInvites.getIfPresent(friendAccountId);
+        if (inviteList == null) {
+            inviteList = Set.of(accountId);
+        } else {
+            inviteList.add(accountId);
+        }
+        matchInvites.put(friendAccountId, inviteList);
+    }
+
+    @NonNull
+    public Set<Long> getPendingInvites(long accountId) {
+        var inviteList = matchInvites.getIfPresent(accountId);
+        if (inviteList == null) {
+            return Set.of();
+        }
+        return inviteList;
+    }
+
+    public void acceptInvite(long accountId, long friendAccountId) {
+        var inviteList = matchInvites.getIfPresent(accountId);
+        if (inviteList == null || !inviteList.contains(friendAccountId)) {
+            throw new ForbiddenAction("No invite from this user");
+        }
+        if (roomService.isInRoom(accountId) || roomService.isInRoom(friendAccountId)) {
+            throw new ForbiddenAction("One of the users is already in a room");
+        }
+        matchInvites.invalidate(accountId);
+        synchronized (matchQueue) {
+            matchQueue.remove(accountId);
+            matchQueue.remove(friendAccountId);
+        }
+        roomService.createRoom(accountId, friendAccountId);
+    }
+
+    @Getter
+    @Setter
     @EqualsAndHashCode(callSuper = false)
     private static class MatchRequest extends UserStatistics {
 
         private final long accountId;
+
+        public MatchRequest(long accountId, UserStatistics userStatistics) {
+            super(userStatistics);
+            this.accountId = accountId;
+        }
 
         private LocalDateTime lastInteraction = LocalDateTime.now();
 
         private Long matchedAccountId = null;
         // private boolean acceptedMatch = false;
 
-    }
-
-
-    private void createMatchRoom(MatchRequest req1, MatchRequest req2) {
-        roomService.createRoom(req1.getAccountId(), req2.getAccountId());
     }
 
     private void clearMatch(long accountId) {

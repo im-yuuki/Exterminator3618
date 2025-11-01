@@ -33,8 +33,8 @@ public class Record {
     private Integer highestCombo;
 
     @Lob
-    @Column(nullable = true)
-    private byte[] data;
+    @Column
+    private String data;
 
     @PrePersist
     protected void onCreate() {

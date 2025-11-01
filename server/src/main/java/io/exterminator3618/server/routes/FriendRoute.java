@@ -6,7 +6,8 @@ import io.exterminator3618.server.models.FriendAuditRequest;
 import io.exterminator3618.server.models.OperationResponse;
 import io.exterminator3618.server.models.UserInfo;
 import io.exterminator3618.server.repositories.AccountRepository;
-import io.exterminator3618.server.repositories.FriendsRepository;
+import io.exterminator3618.server.repositories.FriendshipRepository;
+import io.exterminator3618.server.repositories.RecordRepository;
 import io.exterminator3618.server.services.MatchFindService;
 import io.exterminator3618.server.services.RoomService;
 import io.exterminator3618.server.utils.InvalidRequestException;
@@ -24,13 +25,14 @@ import java.util.List;
 public class FriendRoute {
 
     private final AccountRepository accountRepository;
-    private final FriendsRepository friendsRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final RecordRepository recordRepository;
     private final MatchFindService matchFindService;
     private final RoomService roomService;
 
     @GetMapping("/list")
     public List<UserInfo> getFriendList(@RequestAttribute(name = "userId") Long userId) {
-        var friendships = friendsRepository.findFriendshipsByAccountId(userId);
+        var friendships = friendshipRepository.findFriendshipsByAccountId(userId);
         return friendships.stream().map(friendship -> {
             Account other;
             if (friendship.getAccount1().getId().equals(userId)) {
@@ -38,10 +40,11 @@ public class FriendRoute {
             } else {
                 other = friendship.getAccount1();
             }
-            var model = new UserInfo(other);
+            var friendStats = recordRepository.getUserStatisticsByAccountId(other.getId());
+            var model = new UserInfo(other, friendStats);
             if (!other.isInvisibleMode()) {
                 model.setOnline(matchFindService.isOnline(other.getId()));
-                model.setInMatch(roomService.isInMatch(other.getId()));
+                model.setInMatch(roomService.isInRoom(other.getId()));
             }
             return model;
         }).toList();
@@ -53,7 +56,7 @@ public class FriendRoute {
         if (friendUsername == null) {
             throw new MissingRequestFieldException("Username cannot be null");
         }
-        var existFriendship = friendsRepository.findFriendshipByAccountIdAndFriendUsername(userId, friendUsername);
+        var existFriendship = friendshipRepository.findFriendshipByAccountIdAndFriendUsername(userId, friendUsername);
         if (existFriendship != null) {
             return new OperationResponse(false, "User " + friendUsername + " is already your friend");
         }
@@ -71,7 +74,7 @@ public class FriendRoute {
         var friendship = new Friendship();
         friendship.setAccount1(user);
         friendship.setAccount2(other);
-        friendsRepository.save(friendship);
+        friendshipRepository.save(friendship);
         return new OperationResponse(true, "Successfully added friend with " + friendUsername);
     }
 
@@ -81,11 +84,11 @@ public class FriendRoute {
         if (friendUsername == null) {
             throw new MissingRequestFieldException("Username cannot be null");
         }
-        var friendship = friendsRepository.findFriendshipByAccountIdAndFriendUsername(userId, friendUsername);
+        var friendship = friendshipRepository.findFriendshipByAccountIdAndFriendUsername(userId, friendUsername);
         if (friendship == null) {
             return new OperationResponse(false, "User is not your friend");
         }
-        friendsRepository.delete(friendship);
+        friendshipRepository.delete(friendship);
         return new OperationResponse(true, "Friend removed successfully");
     }
 
