@@ -29,7 +29,7 @@ public class Constants {
     /**
      * Default ball speed.
      */
-    public static double BALL_SPEED = 2000.0;
+    public static double BALL_SPEED = 1000.0;
     /**
      * Ball collision tolerance.
      */
@@ -136,4 +136,9 @@ public class Constants {
     public static final int PLAY_AREA_X_MIN = 55;
     public static final int PLAY_AREA_Y_MAX = 985;
     public static final int PLAY_AREA_Y_MIN = 85;
+
+    /**
+     * Saved game path
+     */
+    public static final String SAVE_FILE = "client/src/main/resources/data/save/saved_game.json";
 }

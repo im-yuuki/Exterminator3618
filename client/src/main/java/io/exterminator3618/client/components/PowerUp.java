@@ -43,6 +43,10 @@ public abstract class PowerUp extends MovableObject {
         return duration;
     }
 
+    public void setRemainingDuration(float duration) {
+        this.remainingDuration = duration;
+    }
+
     public abstract void applyEffect(GameScreen screen);
     public abstract void removeEffect(GameScreen screen);
 
