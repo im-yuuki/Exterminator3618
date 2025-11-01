@@ -55,21 +55,17 @@ public final class WinLevelScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Render game over screen
         Gdx.gl.glClearColor(0.2f, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         viewport.apply();
         camera.update();
         renderer.begin(camera);
         renderer.drawBackground(Assets.menuBackground);
-        // Draw game over text here
         box.draw(renderer);
 
-        //renderer.begin(camera);
         playAgainButton.draw(renderer);
         backButton.draw(renderer);
         nextLevelButton.draw(renderer);
-
         renderer.end();
 
         if (Gdx.input.justTouched()) {

@@ -77,21 +77,17 @@ public final class SettingsScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.begin(camera);
-        // Draw text here
         box.draw(renderer);
         // Update button text to reflect current setting
         enableMusicButton.text = String.format("Music: %s", (isMusicEnabled() ? "On" : "Off"));
         enableMusicButton.draw(renderer);
         backButton.draw(renderer);
         renderer.end();
-        if (Gdx.input.justTouched()) {
-            // Lấy tọa độ nhấp chuột trên màn hình
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 
-            // Chuyển đổi tọa độ màn hình -> tọa độ thế giới game
+        if (Gdx.input.justTouched()) {
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             viewport.unproject(touchPos);
 
-            // Bây giờ mới kiểm tra click
             if (backButton.isClicked(touchPos.x, touchPos.y)) {
                 game.backToPreviousScreen();
             }

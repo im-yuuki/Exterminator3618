@@ -87,6 +87,5 @@ public class Brick extends GameObject {
      */
     @Override
     public void update(float deltaTime) {
-        // nó đứng im, đéo cần update đâu, thêm cái này cho có
     }
 }

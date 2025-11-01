@@ -57,13 +57,10 @@ public final class VictoryScreen implements Screen {
         camera.update();
         renderer.begin(camera);
         renderer.drawBackground(Assets.menuBackground);
-        // Draw game over text here
         box.draw(renderer);
 
-        //renderer.begin(camera);
         playAgainButton.draw(renderer);
         backButton.draw(renderer);
-
         renderer.end();
 
         if (Gdx.input.justTouched()) {

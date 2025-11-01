@@ -129,6 +129,7 @@ public class Constants {
 
     public static int BUTTON_WIDTH = 300;
     public static int BUTTON_HEIGHT = 75;
+
     /**
      * game borders
      */
@@ -137,4 +138,13 @@ public class Constants {
     public static final int PLAY_AREA_Y_MAX = 985;
     public static final int PLAY_AREA_Y_MIN = 85;
 
+    /**
+     * Saved game path
+     */
+    public static final String SAVE_FILE = "client/src/main/resources/data/save/saved_game.json";
+
+    /**
+     * Number of game levels
+     */
+    public static final int Level = 3;
 }

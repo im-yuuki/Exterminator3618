@@ -65,12 +65,8 @@ public final class MainMenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         viewport.apply();
         camera.update();
-
-        
-
         renderer.begin(camera);
         renderer.drawBackground(Assets.menuBackground);
-        // Draw text here
         renderer.drawLogo(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2);
         startButton.draw(renderer);
         if (SaveManager.hasSave(game)) {
@@ -87,9 +83,7 @@ public final class MainMenuScreen implements Screen {
             Gdx.app.exit();
         }
 
-        // 3. Xử lý Input (Logic)
-        if (Gdx.input.justTouched()) { // Chỉ kiểm tra khi người dùng vừa nhấp
-            // Lấy tọa độ nhấp chuột trên màn hình
+        if (Gdx.input.justTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             viewport.unproject(touchPos);
 
@@ -105,7 +99,6 @@ public final class MainMenuScreen implements Screen {
                 game.launchScreen(gs);
             }
 
-            // Transition to setting screen on input
             if (settingsButton.isClicked(touchPos.x, touchPos.y)) {
                 game.launchScreen(new SettingsScreen(game, this));
             }

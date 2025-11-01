@@ -61,11 +61,6 @@ public final class PauseScreen implements Screen {
 
     @Override
     public void render(float v) {
-        // Render paused screen overlay
-
-        //Gdx.gl.glClearColor(0, 0, 0, 0.5f);
-        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        // renderer.begin();
         gameScreen.render(0);
         renderer.drawOverlay(camera, 0.7f);
         viewport.apply();

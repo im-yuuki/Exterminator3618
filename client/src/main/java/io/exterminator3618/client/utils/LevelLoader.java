@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lớp này có nhiệm vụ duy nhất là đọc file thiết kế màn chơi
- * và tạo ra một danh sách các viên gạch.
+ * This class is to read the level design file and generate a list of bricks.
+ *
  */
 public class LevelLoader {
-
     private static final Logger log = LoggerFactory.getLogger(LevelLoader.class);
 
     public static List<Brick> load(InputStream fileStream) {
@@ -31,7 +30,6 @@ public class LevelLoader {
         List<String> lines = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(fileStream))) {
-            // Tách file thành từng dòng
             String line;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
@@ -40,23 +38,19 @@ public class LevelLoader {
             log.warn("Load level failed", e);
         }
 
-        // Vị trí bắt đầu vẽ lưới gạch từ trên xuống
         int startY = Constants.WINDOW_HEIGHT - 120;
 
         for (int row = 0; row < lines.size(); row++) {
             String line = lines.get(row);
             char[] chars = line.toCharArray();
-            // Vị trí bắt đầu vẽ lưới gạch từ trái qua
             int startX = Constants.BRICK_START_X;
 
             for (int col = 0; col < chars.length; col++) {
                 char brickType = chars[col];
 
-                // Tính toán vị trí x, y cho từng viên gạch
                 int x = startX + col * (Constants.BRICK_WIDTH + Constants.BRICK_SPACING);
                 int y = startY - row * (Constants.BRICK_HEIGHT + Constants.BRICK_SPACING);
 
-                // Dựa vào ký tự để tạo ra đúng loại gạch
                 switch (brickType) {
                     case 'N':
                         bricks.add(new NormalBrick(x, y));
@@ -70,10 +64,9 @@ public class LevelLoader {
                     case 'P':
                         bricks.add(new PowerUpBrick(x, y));
                         break;
-                    case 'X': // Dùng tên 'SolidBrick' hoặc tên bạn đã chọn
+                    case 'X':
                         bricks.add(new SolidBrick(x, y));
                         break;
-                    // Thêm các loại gạch khác nếu có
                 }
             }
         }

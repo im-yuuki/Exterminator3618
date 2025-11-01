@@ -34,14 +34,13 @@ public class Renderer {
     private final BitmapFont font;
 
     private ShapeRenderer shapeRenderer;
+
     /**
      * Creates a renderer and its SpriteBatch.
      */
     public Renderer() {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        //this.backgroundTexture = new Texture(Gdx.files.internal("Background_Tiles.png"));
-        //this.backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/RetroGaming.ttf"));
         FreeTypeFontParameter param = new FreeTypeFontParameter();
         param.size = 36;
@@ -179,17 +178,19 @@ public class Renderer {
      */
     public void drawUiTiledX(String regionName, int x, int y, int totalWidth, int height) {
         TextureRegion region = Assets.getUiRegion(regionName);
+
         if (region == null) {
             log.warn("UI Tiled TextureRegion not found: {}", regionName);
             return;
         }
 
         float originalWidth = region.getRegionWidth();
-        if (originalWidth == 0) return; // Tránh lỗi chia cho 0
+        if (originalWidth == 0) {
+            return;
+        }
 
         float currentX = x;
         float remainingWidth = totalWidth;
-
         float oldU2 = region.getU2();
 
         while (remainingWidth > 0) {
@@ -229,5 +230,4 @@ public class Renderer {
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
-
 }
