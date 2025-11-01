@@ -7,18 +7,20 @@ import java.util.List;
 interface FriendsApi extends HttpConnection {
 
     default List<UserInfo> getFriendsList() {
-        HttpRequest req = createGetRequest("/api/friends/list");
+        HttpRequest req = createGetRequest("/friends/list");
         return new ArrayList<>();
     }
 
     default void addFriend(String friendUsername) {
-        HttpRequest req = createJsonPostRequest("/api/friends/add", new Object() {
+        HttpRequest req = createJsonPostRequest("/friends/add", new Object() {
             public final String friendAccountUsername = friendUsername;
         });
     }
 
     default void removeFriend(String friendUsername) {
-
+        HttpRequest req = createJsonPostRequest("/friends/remove", new Object() {
+            public final String friendAccountUsername = friendUsername;
+        });
     }
 
 }

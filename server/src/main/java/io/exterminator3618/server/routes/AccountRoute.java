@@ -80,6 +80,7 @@ public class AccountRoute {
     }
 
     @PostMapping("/recover")
+    @Deprecated
     public OperationResponse recover(@RequestBody RecoverRequest req) {
         return new OperationResponse(false, "Account recovery not implemented");
     }

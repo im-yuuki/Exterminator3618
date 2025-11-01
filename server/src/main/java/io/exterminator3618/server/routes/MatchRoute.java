@@ -1,8 +1,6 @@
 package io.exterminator3618.server.routes;
 
-import io.exterminator3618.server.models.OperationResponse;
-import io.exterminator3618.server.models.RoomStatus;
-import io.exterminator3618.server.models.UserStatus;
+import io.exterminator3618.server.models.*;
 import io.exterminator3618.server.repositories.AccountRepository;
 import io.exterminator3618.server.repositories.FriendshipRepository;
 import io.exterminator3618.server.repositories.RecordRepository;
@@ -13,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import org.hibernate.internal.util.collections.ArrayHelper;
 
 @RestController
 @RequestMapping("/api/match")
@@ -56,6 +55,7 @@ public class MatchRoute {
     }
 
     @PostMapping("/joinDailyRankingMatch")
+    @Deprecated
     public OperationResponse joinDailyRankingMatch(@RequestAttribute(name = "userId") Long userId) {
         return new OperationResponse(false, "Daily ranking matches are not available at the moment");
     }
@@ -85,10 +85,10 @@ public class MatchRoute {
     }
 
     @PostMapping("/inviteFriend")
-    public OperationResponse inviteFriend(@RequestAttribute(name = "userId") Long userId, @RequestBody String friendUsername) {
-        var friendship = friendshipRepository.findFriendshipByAccountIdAndFriendUsername(userId, friendUsername);
+    public OperationResponse inviteFriend(@RequestAttribute(name = "userId") Long userId, @RequestBody FriendUsernameRequest req) {
+        var friendship = friendshipRepository.findFriendshipByAccountIdAndFriendUsername(userId, req.friendAccountUsername());
         if (friendship == null) {
-            return new OperationResponse(false, "User " + friendUsername + " is not your friend");
+            return new OperationResponse(false, "User " + req.friendAccountUsername() + " is not your friend");
         }
         var otherAccount = friendship.getAccount1();
         if (otherAccount.getId().equals(userId)) {
@@ -96,26 +96,34 @@ public class MatchRoute {
         }
         try {
             matchFindService.inviteFriend(userId, otherAccount.getId());
-            return new OperationResponse(true, "Match invite sent to " + friendUsername);
+            return new OperationResponse(true, "Match invite sent to " + req.friendAccountUsername());
         } catch (ForbiddenAction e) {
-            return new OperationResponse(false, "Cannot send match invite to " + friendUsername + ": " + e.getMessage());
+            return new OperationResponse(false, "Cannot send match invite to " + req.friendAccountUsername() + ": " + e.getMessage());
         }
     }
 
     @PostMapping("/acceptMatchInvite")
-    public OperationResponse acceptMatchInvite(@RequestAttribute(name = "userId") Long userId, @RequestBody Long friendUsername) {
+    public OperationResponse acceptMatchInvite(@RequestAttribute(name = "userId") Long userId, @RequestBody FriendUsernameRequest req) {
+        var friendship = friendshipRepository.findFriendshipByAccountIdAndFriendUsername(userId, req.friendAccountUsername());
+        if (friendship == null) {
+            return new OperationResponse(false, "User " + req.friendAccountUsername() + " is not your friend");
+        }
+        var otherAccount = friendship.getAccount1();
+        if (otherAccount.getId().equals(userId)) {
+            otherAccount = friendship.getAccount2();
+        }
         try {
-            matchFindService.acceptInvite(userId, friendUsername);
-            return new OperationResponse(true, "Match invite accepted from " + friendUsername);
+            matchFindService.acceptInvite(userId, otherAccount.getId());
+            return new OperationResponse(true, "Match invite accepted from " + req.friendAccountUsername());
         } catch (ForbiddenAction e) {
-            return new OperationResponse(false, "Cannot accept match invite from " + friendUsername + ": " + e.getMessage());
+            return new OperationResponse(false, "Cannot accept match invite from " + req.friendAccountUsername() + ": " + e.getMessage());
         }
     }
 
     @PostMapping("/pushGameEvents")
-    public OperationResponse pushGameEvents(@RequestAttribute(name = "userId") Long userId, @RequestBody List<String> rawGameEventsData) {
+    public OperationResponse pushGameEvents(@RequestAttribute(name = "userId") Long userId, @RequestBody RawGameEventListRequest req) {
         try {
-            rawGameEventsData.forEach((data) -> {
+            ArrayHelper.forEach(req.list(), (data) -> {
                 if (data == null || data.isEmpty()) {
                     throw new IllegalArgumentException("No game event data provided");
                 }

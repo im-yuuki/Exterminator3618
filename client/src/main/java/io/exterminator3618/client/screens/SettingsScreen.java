@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
-import io.exterminator3618.client.Settings;
 import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.managers.SoundManager;
@@ -41,7 +40,7 @@ public final class SettingsScreen implements Screen {
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         touchPos = new Vector3();
         backButton = new TextButton("Back", 100, 300, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
-        enableMusicButton = new TextButton(String.format("Music: %s", (Settings.enableMusic ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        enableMusicButton = new TextButton(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         box = new Box(800,500,"SETTINGS");
     }
     public SettingsScreen(Exterminator3618 game, Screen previousScreen) {
@@ -54,7 +53,7 @@ public final class SettingsScreen implements Screen {
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         touchPos = new Vector3();
         backButton = new TextButton("Back", CENTER_X, BACK_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
-        enableMusicButton = new TextButton(String.format("Music: %s", (Settings.enableMusic ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        enableMusicButton = new TextButton(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         box = new Box(800,500,"SETTINGS");
     }
 
@@ -81,7 +80,7 @@ public final class SettingsScreen implements Screen {
         // Draw text here
         box.draw(renderer);
         // Update button text to reflect current setting
-        enableMusicButton.text = String.format("Music: %s", (Settings.enableMusic ? "On" : "Off"));
+        enableMusicButton.text = String.format("Music: %s", (isMusicEnabled() ? "On" : "Off"));
         enableMusicButton.draw(renderer);
         backButton.draw(renderer);
         renderer.end();
@@ -98,8 +97,8 @@ public final class SettingsScreen implements Screen {
             }
 
             if (enableMusicButton.isClicked(touchPos.x, touchPos.y)) {
-                Settings.enableMusic = !Settings.enableMusic;
-                if (Settings.enableMusic) {
+                setMusicEnabled(!isMusicEnabled());
+                if (isMusicEnabled()) {
                     soundManager.setVolume(1f);
                 } else {
                     soundManager.setVolume(0f);
@@ -132,6 +131,15 @@ public final class SettingsScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    private boolean isMusicEnabled() {
+        return game.getPreferences().getBoolean("music_enabled", true);
+    }
+
+    private void setMusicEnabled(boolean enabled) {
+        game.getPreferences().putBoolean("music_enabled", enabled);
+        game.getPreferences().flush();
     }
 
 }

@@ -2,7 +2,7 @@ package io.exterminator3618.server.routes;
 
 import io.exterminator3618.server.data.Account;
 import io.exterminator3618.server.data.Friendship;
-import io.exterminator3618.server.models.FriendAuditRequest;
+import io.exterminator3618.server.models.FriendUsernameRequest;
 import io.exterminator3618.server.models.OperationResponse;
 import io.exterminator3618.server.models.UserInfo;
 import io.exterminator3618.server.repositories.AccountRepository;
@@ -51,7 +51,7 @@ public class FriendRoute {
     }
 
     @PostMapping("/add")
-    public OperationResponse addFriend(@RequestAttribute(name = "userId") Long userId, @RequestBody FriendAuditRequest req) {
+    public OperationResponse addFriend(@RequestAttribute(name = "userId") Long userId, @RequestBody FriendUsernameRequest req) {
         String friendUsername = req.friendAccountUsername();
         if (friendUsername == null) {
             throw new MissingRequestFieldException("Username cannot be null");
@@ -79,7 +79,7 @@ public class FriendRoute {
     }
 
     @PostMapping("/remove")
-    public OperationResponse removeFriend(@RequestAttribute(name = "userId") Long userId, @RequestBody FriendAuditRequest req) {
+    public OperationResponse removeFriend(@RequestAttribute(name = "userId") Long userId, @RequestBody FriendUsernameRequest req) {
         String friendUsername = req.friendAccountUsername();
         if (friendUsername == null) {
             throw new MissingRequestFieldException("Username cannot be null");
