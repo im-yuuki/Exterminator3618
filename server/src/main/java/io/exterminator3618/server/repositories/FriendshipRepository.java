@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FriendsRepository extends CrudRepository<Friendship, FriendshipId> {
+public interface FriendshipRepository extends CrudRepository<Friendship, FriendshipId> {
 
     @Query("""
             SELECT f

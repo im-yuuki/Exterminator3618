@@ -71,6 +71,7 @@ public class Exterminator3618 extends Game {
         if (soundManager == null) {
             log.info("Creating sound manager");
             soundManager = SoundManager.getInstance();
+            soundManager.setVolume(getPreferences().getBoolean("music_enabled", true) ? 1f : 0f);
         }
         return soundManager;
     }
@@ -80,7 +81,8 @@ public class Exterminator3618 extends Game {
         screenStack.push(screen);
         super.setScreen(screen);
     }
-/**
+
+/*
     public void backToPreviousScreen() {
         super.getScreen().dispose();
         if (screenStack.isEmpty()) {
@@ -92,6 +94,7 @@ public class Exterminator3618 extends Game {
         }
     }
 */
+
     public void backToPreviousScreen () {
         super.getScreen().dispose();
         if (screenStack.isEmpty()) {
@@ -115,7 +118,7 @@ public class Exterminator3618 extends Game {
         screenStack.pop();
         screenStack.push(screen);
         super.setScreen(screen);
-        //launchScreen(screen);
+        // launchScreen(screen);
     }
 
     @Override

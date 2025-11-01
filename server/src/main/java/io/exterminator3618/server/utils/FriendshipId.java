@@ -18,6 +18,8 @@ public final class FriendshipId implements Serializable {
         if (account1.equals(account2)) {
             throw new IllegalArgumentException("Cannot form a friendship with oneself");
         }
+        this.account1 = account1;
+        this.account2 = account2;
     }
 
     @Override

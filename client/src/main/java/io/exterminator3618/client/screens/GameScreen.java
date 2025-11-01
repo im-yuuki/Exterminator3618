@@ -32,7 +32,7 @@ import static io.exterminator3618.client.Constants.PADDLE_WIDTH;
 import static io.exterminator3618.client.Constants.WINDOW_HEIGHT;
 import static io.exterminator3618.client.Constants.WINDOW_WIDTH;
 import io.exterminator3618.client.Exterminator3618;
-import static io.exterminator3618.client.Physics.checkPowerUpCollision;
+import static io.exterminator3618.client.utils.Physics.checkPowerUpCollision;
 import io.exterminator3618.client.components.Ball;
 import io.exterminator3618.client.components.Brick;
 import io.exterminator3618.client.components.ExtraLifePowerUp;
@@ -59,7 +59,7 @@ import io.exterminator3618.client.utils.Renderer;
  * Main LibGDX application for the Exterminator3618 client. It owns the renderer
  * and the root game objects and drives the frame loop.
  */
-public final class GameScreen implements Screen {
+public class GameScreen implements Screen {
 
     private static final String[] BRICK_COLORS = {"red", "green", "blue", "yellow", "purple"};
 

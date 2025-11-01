@@ -18,8 +18,11 @@ public class Match {
     @Column(nullable = false)
     private LocalDateTime datetime;
 
-    @Column(nullable = false)
-    private boolean isDailyRankingGame;
+    @Column
+    private String mode;
+
+    @Column
+    private String mapCode;
 
     @PrePersist
     protected void onCreate() {
