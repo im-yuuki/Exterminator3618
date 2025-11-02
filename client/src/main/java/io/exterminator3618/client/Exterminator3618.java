@@ -1,12 +1,14 @@
 package io.exterminator3618.client;
 
 import com.badlogic.gdx.*;
+import io.exterminator3618.client.api.ApiClient;
 import io.exterminator3618.client.utils.SoundManager;
 import io.exterminator3618.client.screens.SplashScreen;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.kotcrab.vis.ui.VisUI;
 
 import java.util.Stack;
 
@@ -18,16 +20,21 @@ public class Exterminator3618 extends Game {
     private Preferences preferences = null;
     private Renderer renderer = null;
     private SoundManager soundManager = null;
+    private ApiClient apiClient = null;
 
     @Override
     public void create() {
         Assets.load();
+        VisUI.load();
         launchScreen(new SplashScreen(this));
     }
 
     @Override
     public void dispose() {
         // save game preferences before exit
+        if (apiClient != null) {
+            apiClient.saveAuthToken();
+        }
         if (preferences != null) {
             log.info("Saving preferences");
             preferences.flush();
@@ -40,6 +47,7 @@ public class Exterminator3618 extends Game {
             soundManager.dispose();
         }
         Assets.dispose();
+        VisUI.dispose();
         super.dispose();
     }
 
@@ -71,7 +79,7 @@ public class Exterminator3618 extends Game {
     public void launchScreen(Screen screen) {
         log.info("Launching screen: {}", screen.getClass().getSimpleName());
         screenStack.push(screen);
-        super.setScreen(screen);
+        // super.setScreen(screen);
     }
 
 /*
@@ -86,6 +94,13 @@ public class Exterminator3618 extends Game {
         }
     }
 */
+    @Override
+    public void render() {
+        if (screenStack.peek() != super.getScreen()) {
+            super.setScreen(screenStack.peek());
+        }
+        super.render();
+    }
 
     public void backToPreviousScreen () {
         super.getScreen().dispose();
@@ -95,13 +110,13 @@ public class Exterminator3618 extends Game {
             return;
         }
         screenStack.pop();
-        screenStack.peek().show();
+        // screenStack.peek().show();
         if (screenStack.isEmpty()) {
             log.warn("Popped the last screen, quiting game.");
             Gdx.app.exit();
         } else {
             log.info("Returning to screen: {}", screenStack.peek().getClass().getSimpleName());
-            super.setScreen(screenStack.peek());
+            // super.setScreen(screenStack.peek());
         }
     }
 
@@ -109,20 +124,15 @@ public class Exterminator3618 extends Game {
         super.getScreen().dispose();
         screenStack.pop();
         screenStack.push(screen);
-        super.setScreen(screen);
-        // launchScreen(screen);
+        // super.setScreen(screen);
     }
 
-    @Override
-    @Deprecated
-    public Screen getScreen() {
-        throw new UnsupportedOperationException("Calling this method is prohibited.");
+    public ApiClient getApiClient() {
+        return apiClient;
     }
 
-    @Override
-    @Deprecated
-    public void setScreen(Screen screen) {
-        throw new UnsupportedOperationException("Calling this method is prohibited.");
+    public void setApiClient(ApiClient apiClient) {
+        this.apiClient = apiClient;
     }
 
 }

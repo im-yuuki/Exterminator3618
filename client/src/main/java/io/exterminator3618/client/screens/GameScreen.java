@@ -94,7 +94,12 @@ public class GameScreen implements Screen {
         this.currentLevel = 0;
         loadLevel(currentLevel, null);
         soundManager = game.getSoundManager();
-        soundManager.play("sound/gameplay_bgm.mp3", true);
+
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
+        camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
+        touchPos = new Vector3();
+        pauseButton = new TextButton("Pause", 1545, 900, 300, 75, true);
     }
 
     public void loadLevel(int levelNumber, Ball oldball) {
@@ -303,11 +308,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
-        camera.position.set(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2, 0);
-        touchPos = new Vector3();
-        pauseButton = new TextButton("Pause", 1545, 900, 300, 75, true);
+        soundManager.play("sound/gameplay_bgm.mp3", true);
+
     }
 
     @Override

@@ -15,6 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ApiClient implements FriendsApi, MatchApi, UserApi {
 
+    public static final String AUTHTOKEN_KEY = "auth";
+
     private static final Logger logger = LoggerFactory.getLogger(ApiClient.class);
 
     protected final Exterminator3618 game;
@@ -66,6 +68,7 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
         if (!client.fetchUserInfo()) {
             throw new IOException("Failed to fetch user info after login");
         }
+        client.saveAuthToken();
         return client;
     }
 
@@ -87,6 +90,7 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
         if (!client.fetchUserInfo()) {
             throw new IOException("Failed to fetch user info after registration");
         }
+        client.saveAuthToken();
         return client;
     }
 
@@ -118,6 +122,7 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
                 for (HttpCookie cookie : cookieManager.getCookieStore().getCookies()) {
                     if (cookie.getName().equals("auth")) {
                         authToken.set(cookie.getValue());
+                        logger.debug("Exported auth token from cookies");
                         break;
                     }
                 }
@@ -130,7 +135,7 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
         String authToken = exportAuthToken();
         if (authToken != null) {
             logger.info("Saving auth token to preferences");
-            game.getPreferences().putString("auth", authToken);
+            game.getPreferences().putString(AUTHTOKEN_KEY, authToken);
         } else {
             logger.warn("No auth token found, removing from preferences");
             game.getPreferences().remove("auth");

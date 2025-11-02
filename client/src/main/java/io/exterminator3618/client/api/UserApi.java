@@ -28,7 +28,7 @@ public interface UserApi extends HttpConnection {
         return false;
     }
 
-    default boolean saveUserInfo() {
+    default boolean updateUserInfo() {
         HttpRequest req = createJsonPatchRequest("/user/info", new Object() {
             public final String name = getUserInfo().getName();
             public final String username = getUserInfo().getUsername();
