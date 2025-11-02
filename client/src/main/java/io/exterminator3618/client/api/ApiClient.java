@@ -23,6 +23,10 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
     protected final UserInfo userInfo = new UserInfo();
     protected final ArrayList<UserInfo> friendsList = new ArrayList<>();
 
+    protected boolean inMatch = false;
+    protected ArrayList<MatchInvite> matchInvites = new ArrayList<>();
+    protected RoomStatus roomStatus = null;
+
     private ApiClient(Exterminator3618 game, HttpClient httpClient) {
         this.game = game;
         this.httpClient = httpClient;
@@ -144,6 +148,36 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
                 .connectTimeout(Duration.ofSeconds(6))
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
+    }
+
+    @Override
+    public ArrayList<UserInfo> getFriendsList() {
+        return friendsList;
+    }
+
+    @Override
+    public boolean isInMatch() {
+        return inMatch;
+    }
+
+    @Override
+    public void setInMatch(boolean inMatch) {
+        this.inMatch = inMatch;
+    }
+
+    @Override
+    public ArrayList<MatchInvite> getMatchInvites() {
+        return matchInvites;
+    }
+
+    @Override
+    public RoomStatus getRoomStatus() {
+        return roomStatus;
+    }
+
+    @Override
+    public void setRoomStatus(RoomStatus roomStatus) {
+        this.roomStatus = roomStatus;
     }
 
 }

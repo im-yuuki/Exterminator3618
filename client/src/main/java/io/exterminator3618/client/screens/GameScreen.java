@@ -49,7 +49,7 @@ import io.exterminator3618.client.components.StickyPaddlePowerUp;
 import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.components.WidenPaddlePowerUp;
-import io.exterminator3618.client.managers.SoundManager;
+import io.exterminator3618.client.utils.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.GameSaveData;
 import io.exterminator3618.client.utils.LevelLoader;

@@ -1,17 +1,39 @@
 package io.exterminator3618.client.api;
 
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.List;
 
 interface FriendsApi extends HttpConnection {
 
-    default boolean getFriendsList() {
+    default boolean fetchFriendsList() {
         HttpRequest req = createGetRequest("/friends/list");
+        try {
+            HttpResponse<FriendListResponse> res = getHttpClient().send(req, DataProcessor.getFriendListResponseHandler());
+            if (res.statusCode() != 200) {
+                getLogger().error("Get friends list failed with status code {}", res.statusCode());
+            } else {
+                ArrayList<UserInfo> friends = getFriendsList();
+                friends.clear();
+                friends.addAll(res.body());
+                friends.sort((a, b) -> {
+                    int aPoint = 0, bPoint = 0;
+                    aPoint += a.isOnline() ? 1 : 0;
+                    bPoint += b.isOnline() ? 1 : 0;
+                    aPoint += a.isInMatch() ? 1 : 0;
+                    bPoint += b.isInMatch() ? 1 : 0;
+                    if (aPoint == bPoint) {
+                        return a.getUsername().compareToIgnoreCase(b.getUsername());
+                    } else {
+                        return Integer.compare(bPoint, aPoint);
+                    }
+                });
+                return true;
+            }
+        } catch (IOException | InterruptedException e) {
+            getLogger().error("Get friends list failed", e);
+        }
         return false;
     }
 
@@ -55,5 +77,7 @@ interface FriendsApi extends HttpConnection {
         HttpResponse<JsonResponse> res = getHttpClient().send(req, DataProcessor.getJsonResponseHandler());
         return false;
     }
+
+    ArrayList<UserInfo> getFriendsList();
 
 }
