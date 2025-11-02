@@ -85,6 +85,7 @@ public final class PauseScreen implements Screen {
             viewport.unproject(touchPos);
 
             if (backButton.isClicked(touchPos.x, touchPos.y)) {
+                game.backToPreviousScreen();
                 SaveManager.saveGame(game, gameScreen);
                 game.replaceCurrentScreen(new MainMenuScreen(game));
             }

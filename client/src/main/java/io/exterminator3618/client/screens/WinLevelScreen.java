@@ -14,11 +14,12 @@ import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
+import io.exterminator3618.client.utils.SaveManager;
 
 public final class WinLevelScreen implements Screen {
     private final Exterminator3618 game;
     private final Renderer renderer;
-
+    private final GameScreen gameScreen;
     private OrthographicCamera camera;
     private Viewport viewport;
     private Vector3 touchPos = new Vector3();
@@ -29,8 +30,9 @@ public final class WinLevelScreen implements Screen {
     private Box box;
 
 
-    public WinLevelScreen(Exterminator3618 game, int level) {
+    public WinLevelScreen(Exterminator3618 game, int level, GameScreen gameScreen) {
         this.game = game;
+        this.gameScreen = gameScreen;
         this.renderer = game.getRenderer();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
@@ -73,7 +75,8 @@ public final class WinLevelScreen implements Screen {
             viewport.unproject(touchPos);
 
             if (backButton.isClicked(touchPos.x, touchPos.y)) {
-                game.launchScreen(new MainMenuScreen(game));
+                SaveManager.saveGame(game, gameScreen);
+                game.replaceCurrentScreen(new MainMenuScreen(game));
             }
 
             if (playAgainButton.isClicked(touchPos.x, touchPos.y)) {
@@ -84,6 +87,7 @@ public final class WinLevelScreen implements Screen {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            SaveManager.saveGame(game, gameScreen);
             game.getSoundManager().stop(); // Stop any playing music
             game.launchScreen(new MainMenuScreen(game));
         }
