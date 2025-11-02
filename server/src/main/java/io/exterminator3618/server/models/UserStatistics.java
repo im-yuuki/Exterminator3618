@@ -21,6 +21,12 @@ public class UserStatistics {
         }
     }
 
+    public UserStatistics(int averageScore, int bestScore, int totalGamesPlayed) {
+        this.averageScore = averageScore;
+        this.bestScore = bestScore;
+        this.totalGamesPlayed = totalGamesPlayed;
+    }
+
     public UserStatistics(UserStatistics statistics) {
         this.averageScore = statistics.averageScore;
         this.bestScore = statistics.bestScore;
