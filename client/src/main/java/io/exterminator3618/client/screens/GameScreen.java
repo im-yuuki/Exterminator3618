@@ -90,7 +90,7 @@ public class GameScreen implements Screen {
     public GameScreen(Exterminator3618 game) {
         this.game = game;
         this.renderer = game.getRenderer();
-        this.currentLevel = 1;
+        this.currentLevel = 0;
         loadLevel(currentLevel, null);
         soundManager = game.getSoundManager();
         soundManager.play("sound/gameplay_bgm.mp3", true);
@@ -309,12 +309,8 @@ public class GameScreen implements Screen {
         pauseButton = new TextButton("Pause", 1545, 900, 300, 75, true);
     }
 
-    /**
-     * Frame callback: updates and renders the scene.
-     */
     @Override
     public void render(float deltaTime) {
-        // Update game logic
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -337,7 +333,7 @@ public class GameScreen implements Screen {
                 }
             }
 
-            // Mạng
+            // Lives
             if (ball.getY() <= 0 && extraBalls.isEmpty()) {
                 lives--; // Trừ 1 mạng
                 soundManager.play("sound/lose_heart.wav", false);
@@ -352,7 +348,7 @@ public class GameScreen implements Screen {
                 }
             }
 
-            // CẬP NHẬT TẤT CẢ BÓNG PHỤ
+            // Update extraballs
             for (Ball extraBall : extraBalls) {
                 extraBall.update(deltaTime);
             }
@@ -367,8 +363,7 @@ public class GameScreen implements Screen {
             checkBallBrickCollisions();
             ball.checkPaddleCollision(paddle);
 
-            // KIỂM TRA VA CHẠM PADDLE CHO TẤT CẢ BÓNG
-            //ball.checkPaddleCollision(paddle); // vcl vibe code
+
             for (Ball extraBall : extraBalls) {
                 extraBall.checkPaddleCollision(paddle);
             }
@@ -385,7 +380,7 @@ public class GameScreen implements Screen {
             renderer.draw(powerUp);
         }
 
-        // Vẽ bóng phụ
+        // Draw extraballs
         for (Ball extraBall : extraBalls) {
             renderer.draw(extraBall);
         }
@@ -423,7 +418,7 @@ public class GameScreen implements Screen {
                     ball.launchFromPaddle();
                     log.debug("Ball launched from sticky paddle!");
                 }
-                // Also check extra balls
+                // Check extra balls
                 for (Ball extraBall : extraBalls) {
                     if (extraBall.isStuckToPaddle()) {
                         extraBall.launchFromPaddle();
@@ -481,17 +476,20 @@ public class GameScreen implements Screen {
     }
 
     private void gotoVictoryScreen() {
-        // TODO: implement victory screen transition
+        game.launchScreen(new VictoryScreen(game));
+    }
+
+    private void gotoWinLevelScreen(int level) {
+        game.launchScreen(new WinLevelScreen(game, level));
     }
 
     private void gotoGameOverScreen() {
         game.launchScreen(new GameOverScreen(game));
-        soundManager.dispose();
-        //game.replaceCurrentScreen(new GameOverScreen(game));
+        //soundManager.dispose();
+        soundManager.stop();
     }
 
     /**
-     * THÊM PHƯƠNG THỨC MỚI
      * Spawns three extra balls at the location of a destroyed brick.
      *
      * @param x The x-coordinate of the spawn location.
@@ -499,8 +497,6 @@ public class GameScreen implements Screen {
      */
     public void spawnExtraBalls(int x, int y) {
         log.info("Spawning 3 extra balls!");
-
-        // Vị trí spawn có thể đặt lại ở tâm viên gạch
         int spawnY = y + (BRICK_HEIGHT / 2);
 
         // Tạo 3 bóng với 3 góc khác nhau
@@ -515,7 +511,6 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * THÊM PHƯƠNG THỨC MỚI
      * Updates extra balls and removes them if they fall off the bottom of the screen.
      *
      * @param deltaTime The time since the last frame.
@@ -586,46 +581,37 @@ public class GameScreen implements Screen {
         }
     }
 
+
     /**
      * Checks for collisions between any ball and all bricks.
      * Handles brick destruction and ball bouncing.
      * This corrected version iterates through each brick and checks against all balls.
      */
     private void checkBallBrickCollisions() {
-        // Thoát sớm nếu không còn gạch
         if (bricks.isEmpty()) {
             return;
         }
 
-        // Tạo danh sách tất cả các bóng để kiểm tra
         List<Ball> allBalls = new ArrayList<>(extraBalls);
         allBalls.add(ball);
 
-        // Dùng iterator cho bricks để có thể xóa an toàn khi đang duyệt
         Iterator<Brick> brickIterator = bricks.iterator();
         while (brickIterator.hasNext()) {
             Brick brick = brickIterator.next();
 
-            // Bỏ qua gạch đã bị phá hủy (để phòng vệ)
             if (brick.isDestroyed()) {
                 brickIterator.remove();
                 continue;
             }
 
-            // Với mỗi viên gạch, kiểm tra va chạm với TẤT CẢ các quả bóng
             for (Ball currentBall : allBalls) {
                 if (currentBall.collidesWith(brick)) {
-
-                    // 1. Xử lý bóng nảy lại
                     currentBall.handleBrickCollision(brick);
-
-                    // 2. Gạch nhận sát thương
                     boolean wasDestroyed = brick.takeHit();
 
                     if (wasDestroyed) {
                         ball.incrementCombo();
                         score += 10 * ball.getComboCount();
-                        // Nếu gạch bị phá hủy, kiểm tra xem có phải loại đặc biệt không
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
                         } else if (brick instanceof PowerUpBrick) {
@@ -637,19 +623,19 @@ public class GameScreen implements Screen {
                             score += 10 * ball.getComboCount();
                         }
 
-                        // Xóa gạch khỏi danh sách
                         brickIterator.remove();
 
-                        // KIỂM TRA ĐIỀU KIỆN THẮNG MÀN
                         if (levelClear()) {
-                            currentLevel++;
+
+                            gotoWinLevelScreen(currentLevel);
                             soundManager.play("sound/collected_and_level.wav");
                             ball.resetToCenter(paddle);
-                            // Giả sử bạn có 2 level, đánh số 1 và 2
-                            if (currentLevel > 2) {
+                            int nextLevel = currentLevel + 1;
+                            if (currentLevel > Constants.Level) {
                                 gotoVictoryScreen();
+
                             } else {
-                                // Tải màn chơi tiếp theo
+                                currentLevel = nextLevel;
                                 loadLevel(currentLevel, ball);
                             }
                         }

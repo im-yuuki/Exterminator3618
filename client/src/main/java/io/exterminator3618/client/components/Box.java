@@ -8,6 +8,9 @@ import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
 
+/**
+ * Menu box for pause screen and setting screen.
+ */
 public class Box {
 
     private int x = Constants.WINDOW_WIDTH / 2;

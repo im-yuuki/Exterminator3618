@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.utils.Renderer;
 import io.exterminator3618.client.utils.Assets;
+
+/**
+ * A simple text button with an optional 9-patch-style background frame.
+ */
 public class TextButton {
 
     public String text;
@@ -16,6 +20,16 @@ public class TextButton {
     public String middleRegion;
     public String rightRegion;
 
+    /**
+     * Creates a new TextButton.
+     *
+     * @param text     The text to display.
+     * @param x        The x-coordinate (bottom-left).
+     * @param y        The y-coordinate (bottom-left).
+     * @param width    The button's width.
+     * @param height   The button's height.
+     * @param hasFrame True to draw the 9-patch style frame, false for text only.
+     */
     public TextButton(String text, float x, float y, float width, float height, boolean hasFrame) {
         this.text = text;
         this.bounds = new Rectangle(x, y, width, height);
@@ -30,14 +44,15 @@ public class TextButton {
             this.rightRegion = null;
         }
     }
+
     /**
-     * Tạo một TextButton mới.
+     * Creates a new TextButton without a frame.
      *
-     * @param text   Văn bản sẽ hiển thị.
-     * @param x      Tọa độ X (góc DƯỚI-BÊN TRÁI) của vùng nhấp.
-     * @param y      Tọa độ Y (góc DƯỚI-BÊN TRÁI) của vùng nhấp.
-     * @param width  Chiều rộng của vùng nhấp.
-     * @param height Chiều cao của vùng nhấp.
+     * @param text   The text to display.
+     * @param x      The x-coordinate (bottom-left).
+     * @param y      The y-coordinate (bottom-left).
+     * @param width  The button's width.
+     * @param height The button's height.
      */
     public TextButton(String text, float x, float y, float width, float height) {
         this.text = text;
@@ -45,10 +60,12 @@ public class TextButton {
     }
 
     /**
-     * Vẽ button này bằng Renderer.
+     * Draws the button (frame and text) using the provided Renderer.
+     * @param renderer The renderer to use for drawing.
      */
     public void draw(Renderer renderer) {
 
+        // Draw the 9-patch style frame if regions are defined
         if (leftRegion != null && middleRegion != null && rightRegion != null) {
 
             TextureRegion leftTex = Assets.getUiRegion(leftRegion);
@@ -63,10 +80,13 @@ public class TextButton {
                 int width = (int)bounds.width;
                 int height = (int)bounds.height;
 
+                // Draw left cap
                 renderer.drawUi(leftRegion, x, y, leftWidth, height);
 
+                // Draw right cap
                 renderer.drawUi(rightRegion, (x + width) - rightWidth, y, rightWidth, height);
 
+                // Draw tiled middle section
                 int middleX = x + leftWidth;
                 int middleWidth = width - leftWidth - rightWidth;
 
@@ -76,21 +96,20 @@ public class TextButton {
             }
         }
 
+        // Draw the text centered
         int centerX = (int)(bounds.x + bounds.width / 2);
         int centerY = (int)(bounds.y + bounds.height / 2);
         renderer.drawTextMiddle(text, centerX, centerY);
     }
 
     /**
-     * Kiểm tra xem tọa độ (đã được unproject) có nằm trong nút này không.
+     * Checks if the given (unprojected) coordinates are within the button's bounds.
      *
-     * @param touchX Tọa độ X của thế giới game (đã qua camera.unproject).
-     * @param touchY Tọa độ Y của thế giới game (đã qua camera.unproject).
-     * @return true nếu được nhấp, false nếu không.
+     * @param touchX The world x-coordinate (already unprojected).
+     * @param touchY The world y-coordinate (already unprojected).
+     * @return true if clicked, false otherwise.
      */
     public boolean isClicked(float touchX, float touchY) {
         return bounds.contains(touchX, touchY);
     }
-
-
 }
