@@ -31,7 +31,7 @@ public final class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        if (prefs.contains(ApiClient.AUTHTOKEN_KEY)) {
+        if (prefs.contains(ApiClient.AUTH_TOKEN_KEY)) {
             initApiClientThread.start();
         } else {
             log.warn("No auth token found in preferences");
@@ -74,14 +74,14 @@ public final class SplashScreen implements Screen {
     }
 
     private void initApiClient() {
-        String authToken = prefs.getString(ApiClient.AUTHTOKEN_KEY);
+        String authToken = prefs.getString(ApiClient.AUTH_TOKEN_KEY);
         if (authToken != null && !authToken.isEmpty()) {
             try {
                 game.setApiClient(ApiClient.create(game));
             } catch (Exception e) {
                 log.error("Failed to initialize ApiClient with saved auth token", e);
                 game.setApiClient(null);
-                prefs.remove(ApiClient.AUTHTOKEN_KEY);
+                prefs.remove(ApiClient.AUTH_TOKEN_KEY);
             }
         }
         loadFinished = true;

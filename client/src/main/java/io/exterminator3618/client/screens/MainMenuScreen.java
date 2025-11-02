@@ -138,7 +138,7 @@ public final class MainMenuScreen implements Screen {
 
             if (accountButton1.isClicked(touchPos.x, touchPos.y)) {
                 if (game.getApiClient() != null) {
-                    // game.launchScreen(new MultiplayerScreen(game, this));
+                    game.launchScreen(new OnlineMenuScreen(game));
                 } else {
                     game.launchScreen(new LoginScreen(game, this));
                 }
@@ -179,11 +179,20 @@ public final class MainMenuScreen implements Screen {
     public void dispose() {
     }
 
-    private void logoutAccount() {
-        game.getApiClient().logout();
-        game.setApiClient(null);
-        game.getPreferences().remove(ApiClient.AUTHTOKEN_KEY);
-        show();
+    void logoutAccount() {
+        if (game.getApiClient() != null) {
+            game.getApiClient().logout();
+            game.setApiClient(null);
+        }
+        game.getPreferences().remove(ApiClient.AUTH_TOKEN_KEY);
+
+        if (game.getApiClient() != null) {
+            accountButton1.setText("Multiplayer");
+            accountButton2.setText("Logout: " + game.getApiClient().getUserInfo().getUsername());
+        } else {
+            accountButton1.setText("Login");
+            accountButton2.setText("Register");
+        }
     }
 
 }

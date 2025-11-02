@@ -139,12 +139,9 @@ public class Constants {
     public static final int PLAY_AREA_Y_MIN = 85;
 
     /**
-     * Saved game path
-     */
-    public static final String SAVE_FILE = "client/src/main/resources/data/save/saved_game.json";
-
-    /**
      * Number of game levels
      */
     public static final int Level = 3;
+
+    public static final int POLL_INTERVAL_MS = 3000;
 }

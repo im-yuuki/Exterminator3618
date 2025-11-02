@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
+import io.exterminator3618.client.api.ApiClient;
 import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Renderer;
@@ -17,29 +18,22 @@ import io.exterminator3618.client.utils.SoundManager;
 
 public final class SettingsScreen extends OverlayScreen {
 
-    private Renderer renderer;
-    private OrthographicCamera camera;
-    private Viewport viewport;
-    private Vector3 touchPos = new Vector3();
-    private SoundManager soundManager;
+    private final Renderer renderer;
+    private final OrthographicCamera camera;
+    private final Viewport viewport;
+    private final Vector3 touchPos;
+    private final SoundManager soundManager;
 
-    private TextButton backButton;
-    private TextButton enableMusicButton;
-    private Box box;
+    private final TextButton backButton;
+    private final TextButton enableMusicButton;
+    private final TextButton editServerBaseUrlButton;
+    private final Box box;
+
     final int CENTER_X = (Constants.WINDOW_WIDTH / 2) - (Constants.BUTTON_WIDTH / 2);
     final int BACK_Y = (Constants.WINDOW_HEIGHT / 2) + Constants.BUTTON_HEIGHT - 20;
 
     public SettingsScreen(Exterminator3618 game) {
-        super(game, null);
-        this.renderer = game.getRenderer();
-        this.camera = new OrthographicCamera();
-        this.soundManager = game.getSoundManager();
-
-        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
-        touchPos = new Vector3();
-        backButton = new TextButton("Back", 100, 300, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
-        enableMusicButton = new TextButton(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
-        box = new Box(800,500,"SETTINGS");
+        this(game, null);
     }
 
     public SettingsScreen(Exterminator3618 game, Screen previousScreen) {
@@ -51,7 +45,14 @@ public final class SettingsScreen extends OverlayScreen {
         viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, camera);
         touchPos = new Vector3();
         backButton = new TextButton("Back", CENTER_X, BACK_Y, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
-        enableMusicButton = new TextButton(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
+        enableMusicButton = new TextButton(
+                String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")),
+                CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true
+        );
+        editServerBaseUrlButton = new TextButton(
+                "Server URL",
+                CENTER_X, BACK_Y - (Constants.BUTTON_HEIGHT + 20) * 2, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true
+        );
         box = new Box(800,500,"SETTINGS");
     }
 
@@ -82,6 +83,9 @@ public final class SettingsScreen extends OverlayScreen {
         enableMusicButton.setText(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")));
         enableMusicButton.draw(renderer);
         backButton.draw(renderer);
+        if (backScreen instanceof MainMenuScreen) {
+            editServerBaseUrlButton.draw(renderer);
+        }
         renderer.end();
 
         if (Gdx.input.justTouched()) {
@@ -99,6 +103,19 @@ public final class SettingsScreen extends OverlayScreen {
                 } else {
                     soundManager.setVolume(0f);
                 }
+            }
+
+            if (backScreen instanceof MainMenuScreen && editServerBaseUrlButton.isClicked(touchPos.x, touchPos.y)) {
+                InputScreen inputScreen = new InputScreen(game, backScreen, "Edit Server URL", "Enter new server base URL:");
+                inputScreen.setValue(game.getPreferences().getString(ApiClient.SERVER_URL_KEY, ""));
+                inputScreen.setOnInputSubmitted((input) -> {
+                    game.getPreferences().putString(ApiClient.SERVER_URL_KEY, input.trim());
+                    game.getPreferences().flush();
+                    ((MainMenuScreen) backScreen).logoutAccount();
+                    game.backToPreviousScreen();
+                    return null;
+                });
+                game.replaceCurrentScreen(inputScreen);
             }
         }
 

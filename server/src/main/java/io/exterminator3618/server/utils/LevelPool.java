@@ -3,11 +3,12 @@ package io.exterminator3618.server.utils;
 import java.util.List;
 import java.util.Random;
 
-public class MapPool {
+public class LevelPool {
 
     private static final List<String> availableMaps = List.of(
             "level1",
-            "level2"
+            "level2",
+            "level3"
     );
 
     private static final Random random = new Random();

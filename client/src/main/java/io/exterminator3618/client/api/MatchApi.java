@@ -12,7 +12,7 @@ public interface MatchApi extends HttpConnection {
             var response = getHttpClient().send(req, DataProcessor.getJsonResponseHandler());
             if (response.statusCode() == 200) {
                 setInMatch((Boolean) response.body().get("inMatch"));
-                Object[] invites = (Object[]) response.body().get("matchInvite");
+                ArrayList<Object> invites = (ArrayList<Object>) response.body().get("matchInvite");
                 getMatchInvites().clear();
                 for (Object invite : invites) {
                     MatchInvite mi = DataProcessor.jsonDeserializeObject(

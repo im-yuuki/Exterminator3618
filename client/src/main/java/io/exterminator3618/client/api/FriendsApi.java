@@ -5,7 +5,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
-interface FriendsApi extends HttpConnection {
+public interface FriendsApi extends HttpConnection {
 
     default boolean fetchFriendsList() {
         HttpRequest req = createGetRequest("/friends/list");
@@ -17,18 +17,6 @@ interface FriendsApi extends HttpConnection {
                 ArrayList<UserInfo> friends = getFriendsList();
                 friends.clear();
                 friends.addAll(res.body());
-                friends.sort((a, b) -> {
-                    int aPoint = 0, bPoint = 0;
-                    aPoint += a.isOnline() ? 1 : 0;
-                    bPoint += b.isOnline() ? 1 : 0;
-                    aPoint += a.isInMatch() ? 1 : 0;
-                    bPoint += b.isInMatch() ? 1 : 0;
-                    if (aPoint == bPoint) {
-                        return a.getUsername().compareToIgnoreCase(b.getUsername());
-                    } else {
-                        return Integer.compare(bPoint, aPoint);
-                    }
-                });
                 return true;
             }
         } catch (IOException | InterruptedException e) {
@@ -57,7 +45,7 @@ interface FriendsApi extends HttpConnection {
         return false;
     }
 
-    default boolean removeFriend(String friendUsername) throws IOException, InterruptedException {
+    default boolean removeFriend(String friendUsername) {
         HttpRequest req = createJsonPostRequest("/friends/remove", new Object() {
             public final String friendAccountUsername = friendUsername;
         });
@@ -74,7 +62,6 @@ interface FriendsApi extends HttpConnection {
         } catch (IOException | InterruptedException e) {
             getLogger().error("Remove friend {} failed", friendUsername, e);
         }
-        HttpResponse<JsonResponse> res = getHttpClient().send(req, DataProcessor.getJsonResponseHandler());
         return false;
     }
 

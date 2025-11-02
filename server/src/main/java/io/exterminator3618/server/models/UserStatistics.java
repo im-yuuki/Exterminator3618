@@ -9,6 +9,9 @@ public class UserStatistics {
     private int bestScore = 0;
     private int totalGamesPlayed = 0;
 
+    public UserStatistics() {
+    }
+
     public UserStatistics(Double averageScore, Integer bestScore, Long totalGamesPlayed) {
         if (averageScore != null) {
             this.averageScore = averageScore.intValue();
