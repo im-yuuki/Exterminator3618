@@ -1,7 +1,11 @@
 package io.exterminator3618.client.api;
 
+import org.slf4j.Logger;
+
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.time.Duration;
 
 interface HttpConnection {
 
@@ -9,30 +13,33 @@ interface HttpConnection {
 
     String getBaseServerUrl();
 
-    String jsonSerializeObject(Object o);
+    Logger getLogger();
 
     default HttpRequest createGetRequest(String endpoint) {
         return HttpRequest.newBuilder()
-                .uri(java.net.URI.create(getBaseServerUrl() + endpoint))
+                .uri(URI.create(getBaseServerUrl() + endpoint))
                 .GET()
+                .timeout(Duration.ofSeconds(6))
                 .build();
     }
 
     default HttpRequest createJsonPostRequest(String endpoint, Object body) {
-        String serializedBody = jsonSerializeObject(body);
+        String serializedBody = DataProcessor.jsonSerializeObject(body);
         return HttpRequest.newBuilder()
-                .uri(java.net.URI.create(getBaseServerUrl() + endpoint))
+                .uri(URI.create(getBaseServerUrl() + endpoint))
                 .POST(HttpRequest.BodyPublishers.ofString(serializedBody))
                 .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(6))
                 .build();
     }
 
     default HttpRequest createJsonPatchRequest(String endpoint, Object body) {
-        String serializedBody = jsonSerializeObject(body);
+        String serializedBody = DataProcessor.jsonSerializeObject(body);
         return HttpRequest.newBuilder()
-                .uri(java.net.URI.create(getBaseServerUrl() + endpoint))
+                .uri(URI.create(getBaseServerUrl() + endpoint))
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(serializedBody))
                 .header("Content-Type", "application/json")
+                .timeout(Duration.ofSeconds(6))
                 .build();
     }
 

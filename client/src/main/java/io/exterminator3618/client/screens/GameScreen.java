@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import io.exterminator3618.client.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,11 +50,6 @@ import io.exterminator3618.client.components.StickyPaddlePowerUp;
 import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.components.WidenPaddlePowerUp;
-import io.exterminator3618.client.managers.SoundManager;
-import io.exterminator3618.client.utils.Assets;
-import io.exterminator3618.client.utils.GameSaveData;
-import io.exterminator3618.client.utils.LevelLoader;
-import io.exterminator3618.client.utils.Renderer;
 
 /**
  * Main LibGDX application for the Exterminator3618 client. It owns the renderer

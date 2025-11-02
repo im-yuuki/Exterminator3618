@@ -9,10 +9,22 @@ public class UserStatistics {
     private int bestScore = 0;
     private int totalGamesPlayed = 0;
 
-    public UserStatistics(double averageScore, int bestScore, long totalGamesPlayed) {
-        this.averageScore = (int) averageScore;
-        this.bestScore = (int) bestScore;
-        this.totalGamesPlayed = (int) totalGamesPlayed;
+    public UserStatistics(Double averageScore, Integer bestScore, Long totalGamesPlayed) {
+        if (averageScore != null) {
+            this.averageScore = averageScore.intValue();
+        }
+        if (bestScore != null) {
+            this.bestScore = bestScore;
+        }
+        if (totalGamesPlayed != null) {
+            this.totalGamesPlayed = totalGamesPlayed.intValue();
+        }
+    }
+
+    public UserStatistics(int averageScore, int bestScore, int totalGamesPlayed) {
+        this.averageScore = averageScore;
+        this.bestScore = bestScore;
+        this.totalGamesPlayed = totalGamesPlayed;
     }
 
     public UserStatistics(UserStatistics statistics) {

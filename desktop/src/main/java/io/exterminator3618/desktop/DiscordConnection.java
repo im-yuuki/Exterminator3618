@@ -1,6 +1,5 @@
 package io.exterminator3618.desktop;
 
-import io.exterminator3618.client.Exterminator3618;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -26,7 +25,7 @@ public class DiscordConnection {
             // Set initial presence
             DiscordRichPresence presence = new DiscordRichPresence
                     .Builder("Breaking Bricks!")
-                    .setBigImage("logo", Exterminator3618.GAME_NAME)
+                    .setBigImage("logo", Launcher.GAME_NAME)
                     .build();
             DiscordRPC.discordUpdatePresence(presence);
         };

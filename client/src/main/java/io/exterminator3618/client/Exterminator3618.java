@@ -1,20 +1,16 @@
 package io.exterminator3618.client;
 
 import com.badlogic.gdx.*;
-import io.exterminator3618.client.managers.SoundManager;
+import io.exterminator3618.client.utils.SoundManager;
 import io.exterminator3618.client.screens.SplashScreen;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
 public class Exterminator3618 extends Game {
-
-    public static final String GAME_NAME = "Exterminator3618";
-    public static final String GAME_VERSION = "0.1.0-dev";
 
     private static final Logger log = LoggerFactory.getLogger(Exterminator3618.class);
 
@@ -25,7 +21,6 @@ public class Exterminator3618 extends Game {
 
     @Override
     public void create() {
-        log.info("Starting {} v{}", GAME_NAME, GAME_VERSION);
         Assets.load();
         launchScreen(new SplashScreen(this));
     }
@@ -48,7 +43,6 @@ public class Exterminator3618 extends Game {
         super.dispose();
     }
 
-    @NotNull
     public Preferences getPreferences() {
         if (preferences == null) {
             log.info("Loading preferences");
@@ -57,7 +51,6 @@ public class Exterminator3618 extends Game {
         return preferences;
     }
 
-    @NotNull
     public Renderer getRenderer() {
         if (renderer == null) {
             log.info("Creating renderer");
@@ -66,7 +59,6 @@ public class Exterminator3618 extends Game {
         return renderer;
     }
 
-    @NotNull
     public SoundManager getSoundManager() {
         if (soundManager == null) {
             log.info("Creating sound manager");
@@ -76,7 +68,7 @@ public class Exterminator3618 extends Game {
         return soundManager;
     }
 
-    public void launchScreen(@NotNull Screen screen) {
+    public void launchScreen(Screen screen) {
         log.info("Launching screen: {}", screen.getClass().getSimpleName());
         screenStack.push(screen);
         super.setScreen(screen);
@@ -113,7 +105,7 @@ public class Exterminator3618 extends Game {
         }
     }
 
-    public void replaceCurrentScreen(@NotNull Screen screen) {
+    public void replaceCurrentScreen(Screen screen) {
         super.getScreen().dispose();
         screenStack.pop();
         screenStack.push(screen);
@@ -129,7 +121,7 @@ public class Exterminator3618 extends Game {
 
     @Override
     @Deprecated
-    public void setScreen(@NotNull Screen screen) {
+    public void setScreen(Screen screen) {
         throw new UnsupportedOperationException("Calling this method is prohibited.");
     }
 

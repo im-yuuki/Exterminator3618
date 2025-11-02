@@ -12,10 +12,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.components.TextButton;
-import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.Renderer;
 import io.exterminator3618.client.utils.SaveManager;
+import io.exterminator3618.client.utils.SoundManager;
 
 public final class MainMenuScreen implements Screen {
 

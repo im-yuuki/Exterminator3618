@@ -1,4 +1,4 @@
-package io.exterminator3618.client.managers;
+package io.exterminator3618.client.utils;
 
 import java.util.HashMap;
 import java.util.Map;
