@@ -6,9 +6,11 @@ import io.exterminator3618.client.Exterminator3618;
 
 public class Launcher {
 
+    public static final String GAME_NAME = "Exterminator3618";
+
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-        cfg.setTitle(Exterminator3618.GAME_NAME);
+        cfg.setTitle(GAME_NAME);
         cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
         // cfg.setWindowedMode(1600, 900);
         cfg.useVsync(true);

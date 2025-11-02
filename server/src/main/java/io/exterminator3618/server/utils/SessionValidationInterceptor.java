@@ -18,6 +18,10 @@ public final class SessionValidationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         var cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0) {
+            response.sendError(403, "No cookies found in the request.");
+            return false;
+        }
         String sessionToken = null;
         for (var cookie : cookies) {
             if (cookie.getName().equals("auth")) {
@@ -26,7 +30,8 @@ public final class SessionValidationInterceptor implements HandlerInterceptor {
             }
         }
         if (sessionToken == null || sessionToken.isEmpty()) {
-            throw new InvalidRequestException("Missing or empty session token.");
+            response.sendError(403, "No cookies found in the request.");
+            return false;
         }
         Long accountId = sessionService.getSessionAccountId(sessionToken);
         if (accountId == null) {

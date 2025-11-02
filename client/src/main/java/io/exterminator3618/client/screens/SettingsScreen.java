@@ -12,8 +12,8 @@ import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.components.Box;
 import io.exterminator3618.client.components.TextButton;
-import io.exterminator3618.client.managers.SoundManager;
 import io.exterminator3618.client.utils.Renderer;
+import io.exterminator3618.client.utils.SoundManager;
 
 public final class SettingsScreen implements Screen {
 
