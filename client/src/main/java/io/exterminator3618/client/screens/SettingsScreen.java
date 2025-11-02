@@ -79,7 +79,7 @@ public final class SettingsScreen implements Screen {
         renderer.begin(camera);
         box.draw(renderer);
         // Update button text to reflect current setting
-        enableMusicButton.text = String.format("Music: %s", (isMusicEnabled() ? "On" : "Off"));
+        enableMusicButton.setText(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")));
         enableMusicButton.draw(renderer);
         backButton.draw(renderer);
         renderer.end();

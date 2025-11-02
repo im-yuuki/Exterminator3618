@@ -33,7 +33,6 @@ import static io.exterminator3618.client.Constants.PADDLE_WIDTH;
 import static io.exterminator3618.client.Constants.WINDOW_HEIGHT;
 import static io.exterminator3618.client.Constants.WINDOW_WIDTH;
 import io.exterminator3618.client.Exterminator3618;
-import static io.exterminator3618.client.utils.Physics.checkPowerUpCollision;
 import io.exterminator3618.client.components.Ball;
 import io.exterminator3618.client.components.Brick;
 import io.exterminator3618.client.components.ExtraLifePowerUp;
@@ -50,6 +49,12 @@ import io.exterminator3618.client.components.StickyPaddlePowerUp;
 import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.components.WidenPaddlePowerUp;
+import io.exterminator3618.client.managers.SoundManager;
+import io.exterminator3618.client.utils.Assets;
+import io.exterminator3618.client.utils.GameSaveData;
+import io.exterminator3618.client.utils.LevelLoader;
+import static io.exterminator3618.client.utils.Physics.checkPowerUpCollision;
+import io.exterminator3618.client.utils.Renderer;
 
 /**
  * Main LibGDX application for the Exterminator3618 client. It owns the renderer
@@ -431,7 +436,15 @@ public class GameScreen implements Screen {
             if (Gdx.input.justTouched()) {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 viewport.unproject(touchPos);
-
+                if (ball.isStuckToPaddle()) {
+                    ball.launchFromPaddle();
+                }
+                for (Ball extraBall : extraBalls) {
+                    if (extraBall.isStuckToPaddle()) {
+                        extraBall.launchFromPaddle();
+                    }
+                }
+                
                 if (pauseButton.isClicked(touchPos.x, touchPos.y)) {
                     game.launchScreen(new PauseScreen(game, this));
                 }
@@ -476,7 +489,7 @@ public class GameScreen implements Screen {
     }
 
     private void gotoWinLevelScreen(int level) {
-        game.launchScreen(new WinLevelScreen(game, level));
+        game.launchScreen(new WinLevelScreen(game, level, this));
     }
 
     private void gotoGameOverScreen() {

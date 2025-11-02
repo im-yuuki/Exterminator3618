@@ -1,12 +1,11 @@
 package io.exterminator3618.client.components;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
+
 import io.exterminator3618.client.Constants;
-import io.exterminator3618.client.utils.Renderer;
 import io.exterminator3618.client.utils.Assets;
+import io.exterminator3618.client.utils.Renderer;
 
 /**
  * A simple text button with an optional 9-patch-style background frame.
@@ -111,5 +110,9 @@ public class TextButton {
      */
     public boolean isClicked(float touchX, float touchY) {
         return bounds.contains(touchX, touchY);
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
