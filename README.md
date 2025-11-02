@@ -1,7 +1,7 @@
 # Exterminator3618
 
-[![Release - JAR](https://github.com/im-yuuki/Exterminator3618/actions/workflows/build-jar.yml/badge.svg?event=release)](https://github.com/im-yuuki/Exterminator3618/actions/workflows/build-jar.yml)
-[![Testing](https://github.com/im-yuuki/Exterminator3618/actions/workflows/build-jar.yml/badge.svg?event=release)](https://github.com/im-yuuki/Exterminator3618/actions/workflows/build-jar.yml)
+[![Build JAR executable](https://github.com/im-yuuki/Exterminator3618/actions/workflows/build-jar.yml/badge.svg?branch=master&event=pull_request)](https://github.com/im-yuuki/Exterminator3618/actions/workflows/build-jar.yml)
+[![Run Tests](https://github.com/im-yuuki/Exterminator3618/actions/workflows/run-test.yml/badge.svg?event=pull_request)](https://github.com/im-yuuki/Exterminator3618/actions/workflows/run-test.yml)
 
 *This game is our team project for the Object-Oriented Programming course at the University of Engineering and Technology (UET), Vietnam National University.*
 
@@ -47,14 +47,14 @@
 - [Maven](https://maven.apache.org/) - A build automation tool used primarily for Java projects.
 
 ## 🏫 Team members
-- @maaL6 Tran Duc Lam (24020197) - Team leader
-- @im-yuuki Le Dang Ngo Dan (24020054)
-- @BakaAfk Nguyen Xuan Bac (24020036)
-- @ngocmai3438 Pham Ngoc Mai (24020216)
+- [@maaL6](https://github.com/maaL6) Tran Duc Lam (24020197) - Team leader
+- [@im-yuuki](https://github.com/im-yuuki) Le Dang Ngo Dan (24020054)
+- [@BakaAfk](https://github.com/BakaAfk) Nguyen Xuan Bac (24020036)
+- [@ngocmai3438](https://github.com/ngocmai3438) Pham Ngoc Mai (24020216)
 
 *📀 We keep track of the progress in this [GitHub Project](https://github.com/users/im-yuuki/projects/2) site.*
 
-## 📝Architecture diagram (commit f0d4f1af5df58d55fbd364bf59d84c60aeb72d3c)
+## 📝Architecture diagram (commit [f7dc12f](https://github.com/im-yuuki/Exterminator3618/commit/f7dc12f3b6e74535f66ee6e4a68f829b551fe659))
 
 ### Client
 ![Client](.github/images/io.exterminator3618.client.png)

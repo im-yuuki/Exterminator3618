@@ -15,14 +15,12 @@ import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Renderer;
 import io.exterminator3618.client.utils.SoundManager;
 
-public final class SettingsScreen implements Screen {
+public final class SettingsScreen extends OverlayScreen {
 
-    private final Exterminator3618 game;
     private Renderer renderer;
     private OrthographicCamera camera;
     private Viewport viewport;
     private Vector3 touchPos = new Vector3();
-    private Screen previousScreen;
     private SoundManager soundManager;
 
     private TextButton backButton;
@@ -32,7 +30,7 @@ public final class SettingsScreen implements Screen {
     final int BACK_Y = (Constants.WINDOW_HEIGHT / 2) + Constants.BUTTON_HEIGHT - 20;
 
     public SettingsScreen(Exterminator3618 game) {
-        this.game = game;
+        super(game, null);
         this.renderer = game.getRenderer();
         this.camera = new OrthographicCamera();
         this.soundManager = game.getSoundManager();
@@ -43,9 +41,9 @@ public final class SettingsScreen implements Screen {
         enableMusicButton = new TextButton(String.format("Music: %s", (isMusicEnabled() ? "On" : "Off")), CENTER_X, BACK_Y - Constants.BUTTON_HEIGHT - 20, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, true);
         box = new Box(800,500,"SETTINGS");
     }
+
     public SettingsScreen(Exterminator3618 game, Screen previousScreen) {
-        this.game = game;
-        this.previousScreen = previousScreen;
+        super(game, previousScreen);
         this.renderer = game.getRenderer();
         this.camera = new OrthographicCamera();
         this.soundManager = game.getSoundManager();
@@ -68,10 +66,12 @@ public final class SettingsScreen implements Screen {
     @Override
     public void render(float delta) {
         // Only render game screen if previous screen is PauseScreen
-        if (previousScreen instanceof PauseScreen) {
-            ((PauseScreen) previousScreen).getGameScreen().render(0);
-        } else {
-            previousScreen.render(0);
+        if (backScreen != null) {
+            if (backScreen instanceof PauseScreen) {
+                ((PauseScreen) backScreen).getGameScreen().render(0);
+            } else {
+                backScreen.render(0);
+            }
         }
         renderer.drawOverlay(camera, 0.7f);
         viewport.apply();

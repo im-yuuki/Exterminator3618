@@ -23,6 +23,14 @@ interface HttpConnection {
                 .build();
     }
 
+    default HttpRequest createPostRequest(String endpoint) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(getBaseServerUrl() + endpoint))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .timeout(Duration.ofSeconds(6))
+                .build();
+    }
+
     default HttpRequest createJsonPostRequest(String endpoint, Object body) {
         String serializedBody = DataProcessor.jsonSerializeObject(body);
         return HttpRequest.newBuilder()

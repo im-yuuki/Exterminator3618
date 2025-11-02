@@ -41,8 +41,11 @@ public class Box {
     }
 
     public void draw(Renderer renderer) {
-        renderer.drawUi("tile_1",x,y,width,height);
+        renderer.drawUi("tile_1", x, y, width, height);
         renderer.drawTextMiddle(title, x + width / 2, y + height - 50);
+        if (content != null) {
+            renderer.drawTextMiddle(content, x + width / 2, y + height / 2 + 20);
+        }
     }
 
 }

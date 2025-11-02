@@ -24,6 +24,14 @@ public class DataProcessor {
         }
     }
 
+    public static <T> T jsonDeserializeObject(String json, Class<T> valueType) {
+        try {
+            return mapper.readValue(json, valueType);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static HttpResponse.BodyHandler<JsonResponse> getJsonResponseHandler() {
         return responseInfo -> {
             int code = responseInfo.statusCode();
@@ -48,6 +56,38 @@ public class DataProcessor {
                     body -> {
                         try {
                             return mapper.readValue(body, OperationResponse.class);
+                        } catch (Exception e) {
+                            throw new JsonParseError(code, "Invalid JSON", e);
+                        }
+                    }
+            );
+        };
+    }
+
+    public static HttpResponse.BodyHandler<FriendListResponse> getFriendListResponseHandler() {
+        return responseInfo -> {
+            int code = responseInfo.statusCode();
+            return HttpResponse.BodySubscribers.mapping(
+                    HttpResponse.BodySubscribers.ofString(Charset.defaultCharset()),
+                    body -> {
+                        try {
+                            return mapper.readValue(body, FriendListResponse.class);
+                        } catch (Exception e) {
+                            throw new JsonParseError(code, "Invalid JSON", e);
+                        }
+                    }
+            );
+        };
+    }
+
+    public static HttpResponse.BodyHandler<RoomStatus> getRoomStatusResponseHandler() {
+        return responseInfo -> {
+            int code = responseInfo.statusCode();
+            return HttpResponse.BodySubscribers.mapping(
+                    HttpResponse.BodySubscribers.ofString(Charset.defaultCharset()),
+                    body -> {
+                        try {
+                            return mapper.readValue(body, RoomStatus.class);
                         } catch (Exception e) {
                             throw new JsonParseError(code, "Invalid JSON", e);
                         }

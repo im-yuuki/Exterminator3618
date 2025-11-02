@@ -16,15 +16,13 @@ import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.utils.Renderer;
 import io.exterminator3618.client.utils.SaveManager;
 
-public final class PauseScreen implements Screen {
+public final class PauseScreen extends OverlayScreen {
 
-    private final Exterminator3618 game;
-    private final GameScreen gameScreen;
     private final Renderer renderer;
 
     private OrthographicCamera camera;
     private Viewport viewport;
-    private Vector3 touchPos = new Vector3();
+    private Vector3 touchPos;
 
     private TextButton backButton;
     private TextButton playButton;
@@ -33,8 +31,7 @@ public final class PauseScreen implements Screen {
     private Box box;
 
     public PauseScreen(Exterminator3618 game, GameScreen gameScreen) {
-        this.game = game;
-        this.gameScreen = gameScreen;
+        super(game, gameScreen);
         this.renderer = game.getRenderer();
         touchPos = new Vector3();
 
@@ -61,7 +58,7 @@ public final class PauseScreen implements Screen {
 
     @Override
     public void render(float v) {
-        gameScreen.render(0);
+        backScreen.render(0);
         renderer.drawOverlay(camera, 0.7f);
         viewport.apply();
         camera.update();
@@ -86,7 +83,7 @@ public final class PauseScreen implements Screen {
 
             if (backButton.isClicked(touchPos.x, touchPos.y)) {
                 game.backToPreviousScreen();
-                SaveManager.saveGame(game, gameScreen);
+                SaveManager.saveGame(game, (GameScreen) backScreen);
                 game.replaceCurrentScreen(new MainMenuScreen(game));
             }
             if (playButton.isClicked(touchPos.x, touchPos.y)) {
@@ -100,7 +97,7 @@ public final class PauseScreen implements Screen {
     }
 
     public GameScreen getGameScreen(){
-        return this.gameScreen;
+        return (GameScreen) backScreen;
     }
 
     @Override
