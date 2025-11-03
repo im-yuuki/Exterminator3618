@@ -55,16 +55,16 @@ public class GameScreen implements Screen {
     private static final Logger log = LoggerFactory.getLogger(GameScreen.class);
     private static final Random random = new Random();
 
-    private final Exterminator3618 game;
-    private final Renderer renderer;
+    protected final Exterminator3618 game;
+    protected final Renderer renderer;
     private final SoundManager soundManager;
 
     private Ball ball;
     private List<Brick> bricks;
     private List<Ball> extraBalls;
     private Paddle paddle;
-    private int score = 0;
-    private int lives = 5;
+    protected int score = 0;
+    protected int lives = 5;
     private int currentLevel;
     private List<PowerUp> powerUps;
     private List<PowerUp> activePowerUps;
@@ -73,7 +73,7 @@ public class GameScreen implements Screen {
     private Viewport viewport;
     private Vector3 touchPos = new Vector3();
 
-    private TextButton pauseButton;
+    protected TextButton pauseButton;
 
 
     public GameScreen(Exterminator3618 game) {
@@ -436,11 +436,15 @@ public class GameScreen implements Screen {
                 }
                 
                 if (pauseButton.isClicked(touchPos.x, touchPos.y)) {
-                    game.launchScreen(new PauseScreen(game, this));
+                    onPauseButtonClicked();
                 }
             }
         }
 
+    }
+
+    protected void onPauseButtonClicked() {
+        game.launchScreen(new PauseScreen(game, this));
     }
 
     @Override
@@ -474,15 +478,15 @@ public class GameScreen implements Screen {
         log.info("Game disposed");
     }
 
-    private void gotoVictoryScreen() {
+    protected void gotoVictoryScreen() {
         game.launchScreen(new VictoryScreen(game));
     }
 
-    private void gotoWinLevelScreen(int level) {
+    protected void gotoWinLevelScreen(int level) {
         game.launchScreen(new WinLevelScreen(game, level, this));
     }
 
-    private void gotoGameOverScreen() {
+    protected void gotoGameOverScreen() {
         game.launchScreen(new GameOverScreen(game));
         //soundManager.dispose();
         soundManager.stop();

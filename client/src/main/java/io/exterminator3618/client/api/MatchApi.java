@@ -125,7 +125,7 @@ public interface MatchApi extends HttpConnection {
 
     default boolean pushGameEvents(List<String> data) {
         HttpRequest req = createJsonPostRequest("/match/pushGameEvents", new Object() {
-            public final String[] list = data.toArray(new String[] {});
+            public final String[] list = data.toArray(new String[]{});
         });
         try {
             var res = getHttpClient().send(req, DataProcessor.getOperationResponseHandler());
@@ -162,9 +162,13 @@ public interface MatchApi extends HttpConnection {
     }
 
     boolean isInMatch();
+
     void setInMatch(boolean inMatch);
+
     ArrayList<MatchInvite> getMatchInvites();
+
     RoomStatus getRoomStatus();
+
     void setRoomStatus(RoomStatus roomStatus);
 
 }
