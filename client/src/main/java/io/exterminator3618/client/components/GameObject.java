@@ -52,6 +52,22 @@ public abstract class GameObject {
     }
 
     /**
+     * Sets the X position.
+     * @param x new X position in pixels
+     */
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    /**
+     * Sets the Y position.
+     * @param y
+     */
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    /**
      * @return width in pixels
      */
     public int getWidth() {
