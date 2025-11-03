@@ -3,7 +3,7 @@ package io.exterminator3618.server.utils;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class FriendshipId implements Serializable {
+public final class FriendshipId implements Serializable {
 
     private Long account1;
     private Long account2;
@@ -18,15 +18,8 @@ public class FriendshipId implements Serializable {
         if (account1.equals(account2)) {
             throw new IllegalArgumentException("Cannot form a friendship with oneself");
         }
-
-        // account1 < account2
-        if (account1 < account2) {
-            this.account1 = account1;
-            this.account2 = account2;
-        } else {
-            this.account1 = account2;
-            this.account2 = account1;
-        }
+        this.account1 = account1;
+        this.account2 = account2;
     }
 
     @Override

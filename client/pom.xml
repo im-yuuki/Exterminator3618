@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.exterminator3618</groupId>
         <artifactId>common</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -32,6 +32,10 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.projectlombok</groupId>-->
+        <!--    <artifactId>lombok</artifactId>-->
+        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx -->
         <dependency>
@@ -57,11 +61,18 @@
             <artifactId>ashley</artifactId>
             <version>1.7.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+
+        <!-- https://mvnrepository.com/artifact/pl.kotcrab.vis/vis-ui -->
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>26.0.2</version>
+            <groupId>pl.kotcrab.vis</groupId>
+            <artifactId>vis-ui</artifactId>
+            <version>0.3.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.20.1</version>
         </dependency>
     </dependencies>
 

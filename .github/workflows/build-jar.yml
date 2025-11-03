@@ -1,8 +1,8 @@
 name: Build JAR executable
 on:
-  push:
-    branches-ignore:
-      - master
+#  push:
+#    branches-ignore:
+#      - master
   pull_request:
     branches:
       - master
@@ -33,9 +33,9 @@ jobs:
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: desktop-jar
+          name: desktop-jar-${{ github.sha }}
           path: |
-            "./desktop/target/*.jar"
+            ./desktop/target/*.jar
             !./desktop/target/original-*.jar
 
       - name: Upload Desktop JAR to GitHub Releases
@@ -64,9 +64,9 @@ jobs:
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: server-jar
+          name: server-jar-${{ github.sha }}
           path: |
-            "./server/target/*.jar"
+            ./server/target/*.jar
 
       - name: Upload Server JAR to GitHub Releases
         if: github.event_name == 'release'

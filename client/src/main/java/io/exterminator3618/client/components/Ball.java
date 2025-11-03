@@ -2,7 +2,7 @@ package io.exterminator3618.client.components;
 
 
 import io.exterminator3618.client.Constants;
-import io.exterminator3618.client.Physics;
+import io.exterminator3618.client.utils.Physics;
 
 /**
  * A simple moving ball that derives its velocity from a constant speed and an angle.
@@ -251,6 +251,10 @@ public class Ball extends MovableObject {
     public void setBallSpeed(float speedMultiplier) {
         Constants.BALL_SPEED *= speedMultiplier;
         //updateVelocity();
+    }
+
+    public void setComboCount(int comboCount) {
+        this.comboCount = comboCount;
     }
 
 }

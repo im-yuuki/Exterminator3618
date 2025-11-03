@@ -22,6 +22,7 @@ public class Paddle extends MovableObject{
         super(x, y, width, height, regionName);
     }
 
+
     /**
      * Update vị trí trên trục hoành của paddle, chỉ trục hoành, CHỈ TRỤC HOÀNH
      * hiêện đang dùng chuột, dùng phím đang bị phế
@@ -42,8 +43,11 @@ public class Paddle extends MovableObject{
         desiredX += (int) keyboardDelta;
         */
 
+        int minX = Constants.PLAY_AREA_X_MIN;
+        int maxX = Constants.PLAY_AREA_X_MAX;
         //nhét paddle vào đúng trong màn hình
-        int clampedX = Math.max(0, Math.min(desiredX, Constants.WINDOW_WIDTH - getWidth()));
+        //int clampedX = Math.max(0, Math.min(desiredX, Constants.WINDOW_WIDTH - getWidth()));
+        int clampedX = Math.max(minX, Math.min(desiredX, maxX - getWidth()));
         setPosition(clampedX, getY());
     }
 
