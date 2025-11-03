@@ -128,11 +128,13 @@ public class OnlineGameScreen extends GameScreen {
 
     @Override
     protected void onPauseButtonClicked() {
+        client.setInMatch(false);
         game.backToPreviousScreen();
     }
 
     @Override
     protected void gotoGameOverScreen() {
+        client.setInMatch(false);
         finished = true;
         StringBuilder sb = new StringBuilder("You lose the game!");
         synchronized (playerStates) {
@@ -140,17 +142,13 @@ public class OnlineGameScreen extends GameScreen {
                 sb.append(" | ").append(state);
             }
         }
-        String message = sb.toString();
         AlertScreen screen = new AlertScreen(game, this, "Lose!", sb.toString(), "Back");
-        screen.setOnConfirm(() -> {
-            game.backToPreviousScreen();
-            game.backToPreviousScreen();
-        });
-        game.launchScreen(screen);
+        game.replaceCurrentScreen(screen);
     }
 
     @Override
     protected void gotoVictoryScreen() {
+        client.setInMatch(false);
         finished = true;
         StringBuilder sb = new StringBuilder("You have finished the game!");
         synchronized (playerStates) {
@@ -158,13 +156,8 @@ public class OnlineGameScreen extends GameScreen {
                 sb.append(" | ").append(state);
             }
         }
-        String message = sb.toString();
         AlertScreen screen = new AlertScreen(game, this, "Victory!", sb.toString(), "Back");
-        screen.setOnConfirm(() -> {
-            game.backToPreviousScreen();
-            game.backToPreviousScreen();
-        });
-        game.launchScreen(screen);
+        game.replaceCurrentScreen(screen);
     }
 
     @Override
