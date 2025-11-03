@@ -107,7 +107,7 @@ public class OnlineGameScreen extends GameScreen {
         renderer.setFontSize(24);
         synchronized (playerStates) {
             for (int i = 0; i < playerStates.size(); i++) {
-                renderer.drawText(playerStates.get(i), 1400, 400 - i * 50);
+                renderer.drawText(playerStates.get(i), 50, 250 - i * 50);
             }
         }
         renderer.setFontSize(36);
@@ -117,6 +117,7 @@ public class OnlineGameScreen extends GameScreen {
     @Override
     public void dispose() {
         super.dispose();
+        client.setInMatch(false);
         statusPollingThread.interrupt();
         new Thread(() -> {
             if (!client.leaveRoom()) {
