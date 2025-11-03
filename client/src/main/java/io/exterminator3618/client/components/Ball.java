@@ -70,6 +70,7 @@ public class Ball extends MovableObject {
         isStuckToPaddle = true;
         stuckOffsetX = 0; // Reset offset to center
         setVelocity(0,0);
+
     }
 
     /**

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import io.exterminator3618.client.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +48,13 @@ import io.exterminator3618.client.components.StickyPaddlePowerUp;
 import io.exterminator3618.client.components.StrongBrick;
 import io.exterminator3618.client.components.TextButton;
 import io.exterminator3618.client.components.WidenPaddlePowerUp;
-import io.exterminator3618.client.utils.SoundManager;
 import io.exterminator3618.client.utils.Assets;
 import io.exterminator3618.client.utils.GameSaveData;
 import io.exterminator3618.client.utils.LevelLoader;
+import static io.exterminator3618.client.utils.Physics.checkBallBrickCollisions;
 import static io.exterminator3618.client.utils.Physics.checkPowerUpCollision;
 import io.exterminator3618.client.utils.Renderer;
+import io.exterminator3618.client.utils.SoundManager;
 
 /**
  * Main LibGDX application for the Exterminator3618 client. It owns the renderer
@@ -142,6 +142,7 @@ public class GameScreen implements Screen {
         ));
 
         ball.setStuckToPaddle(true);
+        ball.setBallSpeed(1f);
     }
 
 
@@ -371,7 +372,7 @@ public class GameScreen implements Screen {
 
             updatePowerUps(deltaTime);
             updateActivePowerUps(deltaTime);
-            checkBallBrickCollisions();
+            checkBallBrickCollisions(this);
             ball.checkPaddleCollision(paddle);
 
 
@@ -494,11 +495,11 @@ public class GameScreen implements Screen {
         log.info("Game disposed");
     }
 
-    private void gotoVictoryScreen() {
+    public void gotoVictoryScreen() {
         game.launchScreen(new VictoryScreen(game));
     }
 
-    private void gotoWinLevelScreen(int level) {
+    public void gotoWinLevelScreen(int level) {
         game.launchScreen(new WinLevelScreen(game, level, this));
     }
 
@@ -601,81 +602,6 @@ public class GameScreen implements Screen {
     }
 
 
-    /**
-     * Checks for collisions between any ball and all bricks.
-     * Handles brick destruction and ball bouncing.
-     * This corrected version iterates through each brick and checks against all balls.
-     */
-    private void checkBallBrickCollisions() {
-        if (bricks.isEmpty()) {
-            return;
-        }
-
-        List<Ball> allBalls = new ArrayList<>(extraBalls);
-        allBalls.add(ball);
-
-        Iterator<Brick> brickIterator = bricks.iterator();
-        while (brickIterator.hasNext()) {
-            Brick brick = brickIterator.next();
-
-            if (brick.isDestroyed()) {
-                brickIterator.remove();
-                continue;
-            }
-
-            for (Ball currentBall : allBalls) {
-                if (currentBall.collidesWith(brick)) {
-                    currentBall.handleBrickCollision(brick);
-                    boolean wasDestroyed = brick.takeHit();
-
-                    if (wasDestroyed) {
-                        ball.incrementCombo();
-                        score += 10 * ball.getComboCount();
-                        if ("multiball".equals(brick.getType())) {
-                            spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
-                        } else if ("powerup_brick".equals(brick.getType())) {
-                            PowerUp powerUp = PowerUp.createRandomPowerUp(brick.getX() + brick.getWidth() / 2 - Constants.POWERUP_WIDTH / 2,
-                                    brick.getY() + brick.getHeight() / 2 - Constants.POWERUP_HEIGHT / 2);
-                            powerUps.add(powerUp);
-                            log.debug("PowerUp created at position ({}, {})", powerUp.getX(), powerUp.getY());
-                        } else if ("strong".equals(brick.getType())) {
-                            score += 10 * ball.getComboCount();
-                        }
-
-                        brickIterator.remove();
-
-                        if (levelClear()) {
-
-                            gotoWinLevelScreen(currentLevel);
-                            soundManager.play("sound/collected_and_level.wav");
-                            ball.resetToCenter(paddle);
-                            int nextLevel = currentLevel + 1;
-                            if (currentLevel > Constants.Level) {
-                                gotoVictoryScreen();
-
-                            } else {
-                                currentLevel = nextLevel;
-                                loadLevel(currentLevel, ball);
-                            }
-                        }
-
-                        // log
-                        log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
-                    } else {
-                        // Gạch vẫn còn máu
-                        log.debug("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
-                                brick.getType().equals("strong") ? 3 : 1);
-                    }
-
-                    // 3. QUAN TRỌNG: Thoát khỏi vòng lặp kiểm tra bóng
-                    // Vì viên gạch này đã được xử lý va chạm rồi.
-                    // Điều này ngăn một viên gạch bị nhiều bóng phá hủy trong cùng một frame.
-                    break;
-                }
-            }
-        }
-    }
-
     public Paddle getPaddle(){
         return paddle;
     }
@@ -700,27 +626,6 @@ public class GameScreen implements Screen {
         return extraBalls;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public int getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public SoundManager getSoundManager() {
-        return soundManager;
-    }
-
-    public boolean isPowerUpTypeExist(String type) {
-        for (PowerUp powerUp : powerUps) {
-            if (powerUp.getType().equals(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean levelClear() {
         if (bricks.isEmpty()) {
             return true;
@@ -733,8 +638,28 @@ public class GameScreen implements Screen {
         return true;
     }
 
-    public List<Ball> getExtraBall(){
-        return extraBalls;
+    public List<Brick> getBricks() {
+        return bricks;
+    }
+
+    public void addScore(int points) {
+        this.score += points;
+    }
+
+    public void addPowerUp(PowerUp powerUp) {
+        this.powerUps.add(powerUp);
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int level) {
+        this.currentLevel = level;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 
 }
