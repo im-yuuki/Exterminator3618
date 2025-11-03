@@ -1,15 +1,20 @@
 package io.exterminator3618.client.utils;
 
-import io.exterminator3618.client.Constants;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.exterminator3618.client.Constants;
 import io.exterminator3618.client.components.Ball;
 import io.exterminator3618.client.components.Brick;
 import io.exterminator3618.client.components.GameObject;
 import io.exterminator3618.client.components.Paddle;
 import io.exterminator3618.client.components.PowerUp;
 import io.exterminator3618.client.components.SolidBrick;
+import io.exterminator3618.client.screens.GameScreen;
 
 /**
  * Physics engine for handling all collision detection and response in the game.
@@ -62,10 +67,6 @@ public class Physics {
         }
         
         return checkAABBCollision(ball, brick);
-    }
-
-    public static boolean checkPaddlePowerUpCollision(Paddle paddle, PowerUp powerUp) {
-        return checkAABBCollision(paddle, powerUp);
     }
     
     /**
@@ -342,5 +343,92 @@ public class Physics {
 
     public static boolean checkPowerUpCollision(PowerUp powerUp, Paddle paddle) {
         return checkAABBCollision(powerUp, paddle);
+    }
+
+    /**
+     * Checks for collisions between any ball and all bricks.
+     * Handles brick destruction and ball bouncing.
+     * This corrected version iterates through each brick and checks against all balls.
+     *
+     * @param gameScreen the GameScreen instance to access game state
+     */
+    public static void checkBallBrickCollisions(GameScreen gameScreen) {
+        List<Brick> bricks = gameScreen.getBricks();
+        if (bricks == null || bricks.isEmpty()) {
+            return;
+        }
+
+        List<Ball> allBalls = new ArrayList<>(gameScreen.getExtraBalls());
+        allBalls.add(gameScreen.getBall());
+
+        Iterator<Brick> brickIterator = bricks.iterator();
+        while (brickIterator.hasNext()) {
+            Brick brick = brickIterator.next();
+
+            if (brick.isDestroyed()) {
+                brickIterator.remove();
+                continue;
+            }
+
+            for (Ball currentBall : allBalls) {
+                if (currentBall.collidesWith(brick)) {
+                    currentBall.handleBrickCollision(brick);
+                    boolean wasDestroyed = brick.takeHit();
+
+                    if (wasDestroyed) {
+                        Ball mainBall = gameScreen.getBall();
+                        mainBall.incrementCombo();
+                        gameScreen.addScore(10 * mainBall.getComboCount());
+
+                        if ("multiball".equals(brick.getType())) {
+                            gameScreen.spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
+                        } else if ("powerup_brick".equals(brick.getType())) {
+                            PowerUp powerUp = PowerUp.createRandomPowerUp(
+                                    brick.getX() + brick.getWidth() / 2 - Constants.POWERUP_WIDTH / 2,
+                                    brick.getY() + brick.getHeight() / 2 - Constants.POWERUP_HEIGHT / 2);
+                            if (powerUp != null) {
+                                gameScreen.addPowerUp(powerUp);
+                                log.debug("PowerUp {} created at position ({}, {})", powerUp.getType(), powerUp.getX(), powerUp.getY());
+                            } else {
+                                log.warn("Failed to create power-up at position ({}, {})",
+                                        brick.getX() + brick.getWidth() / 2, brick.getY() + brick.getHeight() / 2);
+                            }
+                        } else if ("strong".equals(brick.getType())) {
+                            gameScreen.addScore(10 * mainBall.getComboCount());
+                        }
+
+                        brickIterator.remove();
+
+                        // Check if level is cleared AFTER removing brick but BEFORE loading next level
+                        // This ensures power-ups spawned from the last brick are not lost
+                        boolean levelCleared = gameScreen.levelClear();
+                        if (levelCleared) {
+                            gameScreen.gotoWinLevelScreen(gameScreen.getCurrentLevel());
+                            gameScreen.getSoundManager().play("sound/collected_and_level.wav");
+                            mainBall.resetToCenter(gameScreen.getPaddle());
+                            int nextLevel = gameScreen.getCurrentLevel() + 1;
+                            if (gameScreen.getCurrentLevel() > Constants.Level) {
+                                gameScreen.gotoVictoryScreen();
+                            } else {
+                                gameScreen.setCurrentLevel(nextLevel);
+                                gameScreen.loadLevel(nextLevel, mainBall);
+                            }
+                        }
+
+                        // log
+                        log.debug("Brick destroyed! Remaining bricks: {}", bricks.size());
+                    } else {
+                        // Gạch vẫn còn máu
+                        log.debug("Brick hit! Remaining HP: {}/{}", brick.getHitPoints(),
+                                brick.getType().equals("strong") ? 3 : 1);
+                    }
+
+                    // 3. QUAN TRỌNG: Thoát khỏi vòng lặp kiểm tra bóng
+                    // Vì viên gạch này đã được xử lý va chạm rồi.
+                    // Điều này ngăn một viên gạch bị nhiều bóng phá hủy trong cùng một frame.
+                    break;
+                }
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import io.exterminator3618.client.screens.GameScreen;
 public class WidenPaddlePowerUp extends PowerUp {
 
     public WidenPaddlePowerUp(int x, int y) {
-        super("Widen Paddle", 10.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "extend_paddle_power_up");
+        super("Widen Paddle", 10.0f, x, y, Constants.POWERUP_WIDTH, Constants.POWERUP_HEIGHT, "expand_paddle_power_up");
     }
 
     @Override
