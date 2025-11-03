@@ -602,6 +602,10 @@ public class GameScreen implements Screen {
         return lives;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public void setLives(int lives){
         if (lives > 5) {
             this.lives = 5;

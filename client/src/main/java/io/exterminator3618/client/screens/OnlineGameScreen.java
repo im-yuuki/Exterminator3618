@@ -147,7 +147,7 @@ public class OnlineGameScreen extends GameScreen {
     }
 
     @Override
-    protected void gotoVictoryScreen() {
+    public void gotoVictoryScreen() {
         client.setInMatch(false);
         finished = true;
         StringBuilder sb = new StringBuilder("You have finished the game!");
@@ -161,7 +161,7 @@ public class OnlineGameScreen extends GameScreen {
     }
 
     @Override
-    protected void gotoWinLevelScreen(int level) {
+    public void gotoWinLevelScreen(int level) {
         gotoVictoryScreen();
     }
 
