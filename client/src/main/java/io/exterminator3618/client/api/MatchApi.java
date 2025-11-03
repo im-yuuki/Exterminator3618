@@ -12,7 +12,7 @@ public interface MatchApi extends HttpConnection {
             var response = getHttpClient().send(req, DataProcessor.getJsonResponseHandler());
             if (response.statusCode() == 200) {
                 setInMatch((Boolean) response.body().get("inMatch"));
-                Object[] invites = (Object[]) response.body().get("matchInvite");
+                ArrayList<Object> invites = (ArrayList<Object>) response.body().get("matchInvite");
                 getMatchInvites().clear();
                 for (Object invite : invites) {
                     MatchInvite mi = DataProcessor.jsonDeserializeObject(
@@ -32,7 +32,7 @@ public interface MatchApi extends HttpConnection {
     }
 
     default boolean inviteFriendToMatch(String friendUsername) {
-        HttpRequest req = createJsonPostRequest("/match/invite", new Object() {
+        HttpRequest req = createJsonPostRequest("/match/inviteFriend", new Object() {
             public final String friendAccountUsername = friendUsername;
         });
         try {
@@ -52,7 +52,7 @@ public interface MatchApi extends HttpConnection {
     }
 
     default boolean acceptInvite(String friendUsername) {
-        HttpRequest req = createJsonPostRequest("/match/acceptInvite", new Object() {
+        HttpRequest req = createJsonPostRequest("/match/acceptMatchInvite", new Object() {
             public final String friendAccountUsername = friendUsername;
         });
         try {
@@ -125,7 +125,7 @@ public interface MatchApi extends HttpConnection {
 
     default boolean pushGameEvents(List<String> data) {
         HttpRequest req = createJsonPostRequest("/match/pushGameEvents", new Object() {
-            public final String[] list = data.toArray(new String[] {});
+            public final String[] list = data.toArray(new String[]{});
         });
         try {
             var res = getHttpClient().send(req, DataProcessor.getOperationResponseHandler());
@@ -162,9 +162,13 @@ public interface MatchApi extends HttpConnection {
     }
 
     boolean isInMatch();
+
     void setInMatch(boolean inMatch);
+
     ArrayList<MatchInvite> getMatchInvites();
+
     RoomStatus getRoomStatus();
+
     void setRoomStatus(RoomStatus roomStatus);
 
 }

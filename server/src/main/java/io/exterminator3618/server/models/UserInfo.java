@@ -5,15 +5,14 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode(callSuper = false)
 public final class UserInfo extends UserStatistics {
 
-    private final String name;
-    private final String username;
-    private final boolean invisibleMode;
-    private final LocalDateTime accountCreatedAt;
+    private String name;
+    private String username;
+    private boolean invisibleMode;
+    private LocalDateTime accountCreatedAt;
 
     public UserInfo(String name, String username, boolean invisibleMode, LocalDateTime accountCreatedAt, UserStatistics statistics) {
         super(statistics);

@@ -13,8 +13,8 @@ import io.exterminator3618.client.utils.Renderer;
  */
 public class Box {
 
-    private int x = Constants.WINDOW_WIDTH / 2;
-    private int y = Constants.WINDOW_HEIGHT / 2;
+    private int x;
+    private int y;
     private int width, height;
     private String title, content;
     private String leftRegion = Constants.HEADER_LEFT_REGION;
@@ -38,6 +38,11 @@ public class Box {
         this.width = width;
         this.height = height;
         this.title = title;
+    }
+
+    public void setPos(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     public void draw(Renderer renderer) {

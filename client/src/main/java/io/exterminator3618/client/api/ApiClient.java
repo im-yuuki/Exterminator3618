@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ApiClient implements FriendsApi, MatchApi, UserApi {
 
-    public static final String AUTHTOKEN_KEY = "auth";
+    public static final String AUTH_TOKEN_KEY = "auth";
+    public static final String SERVER_URL_KEY = "server_url";
 
     private static final Logger logger = LoggerFactory.getLogger(ApiClient.class);
 
@@ -96,8 +97,7 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
 
     @Override
     public String getBaseServerUrl() {
-        // return "http://localhost:36018/api"; // mock server URL
-        return game.getPreferences().getString("server_url", "http://localhost:36018/api");
+        return game.getPreferences().getString(SERVER_URL_KEY, "http://localhost:36018/api");
     }
 
     @Override
@@ -135,11 +135,12 @@ public class ApiClient implements FriendsApi, MatchApi, UserApi {
         String authToken = exportAuthToken();
         if (authToken != null) {
             logger.info("Saving auth token to preferences");
-            game.getPreferences().putString(AUTHTOKEN_KEY, authToken);
+            game.getPreferences().putString(AUTH_TOKEN_KEY, authToken);
         } else {
             logger.warn("No auth token found, removing from preferences");
             game.getPreferences().remove("auth");
         }
+        game.getPreferences().flush();
     }
 
     private static HttpClient createHttpClient(CookieManager cookieManager) {

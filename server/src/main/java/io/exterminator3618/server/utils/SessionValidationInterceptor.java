@@ -38,7 +38,7 @@ public final class SessionValidationInterceptor implements HandlerInterceptor {
             response.sendError(403, "Invalid or expired session token.");
             return false;
         }
-        log.debug("Valid request from account ID: {}", accountId);
+        // log.debug("Valid request from account ID: {}", accountId);
         request.setAttribute("userId", accountId);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }

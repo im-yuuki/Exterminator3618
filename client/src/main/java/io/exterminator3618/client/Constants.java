@@ -102,4 +102,6 @@ public class Constants {
      * Number of game levels
      */
     public static final int Level = 3;
+
+    public static final int POLL_INTERVAL_MS = 3000;
 }

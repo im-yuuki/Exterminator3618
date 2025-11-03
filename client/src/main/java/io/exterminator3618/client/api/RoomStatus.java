@@ -117,15 +117,6 @@ public class RoomStatus {
         this.totalPlayers = totalPlayers;
     }
 
-    public MemberStatus[] getMembers() {
-        return members.toArray(new MemberStatus[] {});
-    }
-
-    public void setMembers(MemberStatus[] members) {
-        this.members.clear();
-        Collections.addAll(this.members, members);
-    }
-
     public ArrayList<MemberStatus> getMembersList() {
         return members;
     }

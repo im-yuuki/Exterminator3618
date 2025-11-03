@@ -18,19 +18,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import io.exterminator3618.client.Constants;
-import static io.exterminator3618.client.Constants.BALL_HEIGHT;
-import static io.exterminator3618.client.Constants.BALL_REGION_NAME;
-import static io.exterminator3618.client.Constants.BALL_SPEED;
-import static io.exterminator3618.client.Constants.BALL_WIDTH;
-import static io.exterminator3618.client.Constants.BRICK_HEIGHT;
-import static io.exterminator3618.client.Constants.EXTRA_BALL_REGION_NAME;
-import static io.exterminator3618.client.Constants.PADDLE_HEIGHT;
-import static io.exterminator3618.client.Constants.PADDLE_REGION_NAME;
-import static io.exterminator3618.client.Constants.PADDLE_START_X;
-import static io.exterminator3618.client.Constants.PADDLE_START_Y;
-import static io.exterminator3618.client.Constants.PADDLE_WIDTH;
-import static io.exterminator3618.client.Constants.WINDOW_HEIGHT;
-import static io.exterminator3618.client.Constants.WINDOW_WIDTH;
+import static io.exterminator3618.client.Constants.*;
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.components.Ball;
 import io.exterminator3618.client.components.Brick;
@@ -67,16 +55,16 @@ public class GameScreen implements Screen {
     private static final Logger log = LoggerFactory.getLogger(GameScreen.class);
     private static final Random random = new Random();
 
-    private final Exterminator3618 game;
-    private final Renderer renderer;
+    protected final Exterminator3618 game;
+    protected final Renderer renderer;
     private final SoundManager soundManager;
 
     private Ball ball;
     private List<Brick> bricks;
     private List<Ball> extraBalls;
     private Paddle paddle;
-    private int score = 0;
-    private int lives = 5;
+    protected int score = 0;
+    protected int lives = 5;
     private int currentLevel;
     private List<PowerUp> powerUps;
     private List<PowerUp> activePowerUps;
@@ -85,7 +73,7 @@ public class GameScreen implements Screen {
     private Viewport viewport;
     private Vector3 touchPos = new Vector3();
 
-    private TextButton pauseButton;
+    protected TextButton pauseButton;
 
 
     public GameScreen(Exterminator3618 game) {
@@ -268,10 +256,6 @@ public class GameScreen implements Screen {
                 case "strong":
                     Brick stb = new StrongBrick(bs.x, bs.y, bs.width, bs.height, bs.region, bs.hp);
                     bricks.add(stb);
-                    break;
-                case  "powerup_brick":
-                    Brick pub = new PowerUpBrick(bs.x, bs.y);
-                    bricks.add(pub);
                     break;
                 default:
                     // Unknown brick type; skip
@@ -457,11 +441,15 @@ public class GameScreen implements Screen {
                 }
                 
                 if (pauseButton.isClicked(touchPos.x, touchPos.y)) {
-                    game.launchScreen(new PauseScreen(game, this));
+                    onPauseButtonClicked();
                 }
             }
         }
 
+    }
+
+    protected void onPauseButtonClicked() {
+        game.launchScreen(new PauseScreen(game, this));
     }
 
     @Override
@@ -503,7 +491,7 @@ public class GameScreen implements Screen {
         game.launchScreen(new WinLevelScreen(game, level, this));
     }
 
-    private void gotoGameOverScreen() {
+    protected void gotoGameOverScreen() {
         game.launchScreen(new GameOverScreen(game));
         //soundManager.dispose();
         soundManager.stop();
@@ -612,6 +600,10 @@ public class GameScreen implements Screen {
 
     public int getLives(){
         return lives;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void setLives(int lives){

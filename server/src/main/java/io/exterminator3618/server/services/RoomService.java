@@ -10,7 +10,7 @@ import io.exterminator3618.server.repositories.AccountRepository;
 import io.exterminator3618.server.repositories.MatchRepository;
 import io.exterminator3618.server.repositories.RecordRepository;
 import io.exterminator3618.server.utils.ForbiddenAction;
-import io.exterminator3618.server.utils.MapPool;
+import io.exterminator3618.server.utils.LevelPool;
 import io.exterminator3618.server.utils.Room;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public class RoomService {
     }
 
     public void createRoom(long... accountIds) {
-        var mapCode = MapPool.getRandomMapCode();
+        var mapCode = LevelPool.getRandomMapCode();
         log.debug("Creating room with default mode, map code {} for accounts: {}", mapCode, accountIds);
         var roomInstance = new Room(mapCode, accountIds);
         var roomId = System.currentTimeMillis();
