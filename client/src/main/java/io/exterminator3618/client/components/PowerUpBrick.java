@@ -15,6 +15,6 @@ public class PowerUpBrick extends Brick {
      * @param y initial Y position in pixels
      */
     public PowerUpBrick(int x, int y) {
-        super(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_YELLOW_BRICK, 1, "powerup_widen_paddle");
+        super(x, y, Constants.BRICK_WIDTH, Constants.BRICK_HEIGHT, Constants.NORMAL_YELLOW_BRICK, 1, "powerup_brick");
     }
 }

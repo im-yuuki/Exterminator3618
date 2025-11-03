@@ -2,13 +2,14 @@ package io.exterminator3618.client.components;
 
 import static java.lang.Math.random;
 
+import static io.exterminator3618.client.Constants.POWERUP_FALL_SPEED;
 import io.exterminator3618.client.screens.GameScreen;
 
 public abstract class PowerUp extends MovableObject {
     private String type;
     private float duration;
     private float remainingDuration;
-    private float fallSpeed = 200f;
+    private final float fallSpeed = POWERUP_FALL_SPEED;
 
     public PowerUp(String type, float duration, int x, int y, int width, int height, String regionName) {
         super(x, y, width, height, regionName);
@@ -57,7 +58,11 @@ public abstract class PowerUp extends MovableObject {
     }
 
     public static PowerUp createRandomPowerUp(int x, int y){
-        switch ((int) (random() * 6)) {
+
+        int randomIndex = (int) (random() * 6);
+
+        
+        switch (randomIndex) {
             case 0:
                 return new WidenPaddlePowerUp(x, y);
             case 1:
@@ -71,7 +76,8 @@ public abstract class PowerUp extends MovableObject {
             case 5:
                 return new SlowBallPowerUp(x, y);
             default:
-                return null;
+                // Safety fallback
+                return new WidenPaddlePowerUp(x, y);
         }
     }
 
