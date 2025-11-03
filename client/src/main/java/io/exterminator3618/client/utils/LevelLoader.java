@@ -37,7 +37,7 @@ public class LevelLoader {
             log.warn("Load level failed", e);
         }
 
-        int startY = Constants.WINDOW_HEIGHT - 120;
+        int startY = Constants.WINDOW_HEIGHT - Constants.BRICK_START_Y;
 
         for (int row = 0; row < lines.size(); row++) {
             String line = lines.get(row);

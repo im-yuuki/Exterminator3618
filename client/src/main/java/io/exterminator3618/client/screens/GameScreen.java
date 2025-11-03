@@ -268,6 +268,10 @@ public class GameScreen implements Screen {
                     Brick stb = new StrongBrick(bs.x, bs.y, bs.width, bs.height, bs.region, bs.hp);
                     bricks.add(stb);
                     break;
+                case  "powerup_brick":
+                    Brick pub = new PowerUpBrick(bs.x, bs.y);
+                    bricks.add(pub);
+                    break;
                 default:
                     // Unknown brick type; skip
                     break;
@@ -629,12 +633,12 @@ public class GameScreen implements Screen {
                         score += 10 * ball.getComboCount();
                         if ("multiball".equals(brick.getType())) {
                             spawnExtraBalls(brick.getX() + brick.getWidth() / 2, brick.getY());
-                        } else if (brick instanceof PowerUpBrick) {
+                        } else if ("powerup_brick".equals(brick.getType())) {
                             PowerUp powerUp = PowerUp.createRandomPowerUp(brick.getX() + brick.getWidth() / 2 - Constants.POWERUP_WIDTH / 2,
                                     brick.getY() + brick.getHeight() / 2 - Constants.POWERUP_HEIGHT / 2);
                             powerUps.add(powerUp);
                             log.debug("PowerUp created at position ({}, {})", powerUp.getX(), powerUp.getY());
-                        } else if (brick instanceof StrongBrick) {
+                        } else if ("strong".equals(brick.getType())) {
                             score += 10 * ball.getComboCount();
                         }
 

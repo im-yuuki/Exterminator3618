@@ -3,12 +3,13 @@ package io.exterminator3618.client.components;
 import static java.lang.Math.random;
 
 import io.exterminator3618.client.screens.GameScreen;
+import static io.exterminator3618.client.Constants.POWERUP_FALL_SPEED;
 
 public abstract class PowerUp extends MovableObject {
     private String type;
     private float duration;
     private float remainingDuration;
-    private float fallSpeed = 200f;
+    private final float fallSpeed = POWERUP_FALL_SPEED;
 
     public PowerUp(String type, float duration, int x, int y, int width, int height, String regionName) {
         super(x, y, width, height, regionName);
