@@ -85,7 +85,7 @@ public class FriendMenuScreen extends OverlayScreen {
                     if (game.getApiClient().inviteFriendToMatch(friendUsername)) {
                         game.backToPreviousScreen();
                     } else {
-                        game.replaceCurrentScreen(new AlertScreen(game, backScreen, "Error", "Send match invite to " + friendUsername + "failed.", "OK"));
+                        game.replaceCurrentScreen(new AlertScreen(game, backScreen, "Error", "Send match invite to " + friendUsername + " failed.", "OK"));
                     }
                 }).start();
             }

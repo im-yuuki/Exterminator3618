@@ -32,7 +32,7 @@ public interface MatchApi extends HttpConnection {
     }
 
     default boolean inviteFriendToMatch(String friendUsername) {
-        HttpRequest req = createJsonPostRequest("/match/invite", new Object() {
+        HttpRequest req = createJsonPostRequest("/match/inviteFriend", new Object() {
             public final String friendAccountUsername = friendUsername;
         });
         try {
@@ -52,7 +52,7 @@ public interface MatchApi extends HttpConnection {
     }
 
     default boolean acceptInvite(String friendUsername) {
-        HttpRequest req = createJsonPostRequest("/match/acceptInvite", new Object() {
+        HttpRequest req = createJsonPostRequest("/match/acceptMatchInvite", new Object() {
             public final String friendAccountUsername = friendUsername;
         });
         try {
