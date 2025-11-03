@@ -325,6 +325,10 @@ public class GameScreen implements Screen {
             }
 
             // Lives
+            if (ball.getY() <= 0){
+                ball.setY(-100);
+            }
+
             if (ball.getY() <= 0 && extraBalls.isEmpty()) {
                 lives--; // Trừ 1 mạng
                 soundManager.play("sound/lose_heart.wav", false);
