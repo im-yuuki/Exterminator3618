@@ -297,7 +297,7 @@ public class OnlineMenuScreen implements Screen {
         public String fromUsername;
 
         public AcceptInviteButton(String fromUsername, int row) {
-            super("Accept match with " + fromUsername, WINDOW_WIDTH - 550, WINDOW_HEIGHT - 50 - (row * 60), 500, 50, true);
+            super("Accept match with " + fromUsername, WINDOW_WIDTH - 550, WINDOW_HEIGHT - 100 - (row * 60), 500, 50, true);
             this.fromUsername = fromUsername;
         }
 

@@ -3,6 +3,7 @@ package io.exterminator3618.client.screens;
 import io.exterminator3618.client.Exterminator3618;
 import io.exterminator3618.client.api.ApiClient;
 import io.exterminator3618.client.api.RoomStatus;
+import io.exterminator3618.client.components.Ball;
 import io.exterminator3618.client.components.TextButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static io.exterminator3618.client.Constants.POLL_INTERVAL_MS;
+import static io.exterminator3618.client.Constants.*;
+import static io.exterminator3618.client.Constants.BALL_HEIGHT;
+import static io.exterminator3618.client.Constants.BALL_REGION_NAME;
+import static io.exterminator3618.client.Constants.BALL_SPEED;
+import static io.exterminator3618.client.Constants.BALL_WIDTH;
+import static io.exterminator3618.client.Constants.WINDOW_HEIGHT;
 
 public class OnlineGameScreen extends GameScreen {
 
@@ -42,7 +48,15 @@ public class OnlineGameScreen extends GameScreen {
             log.error("Failed to fetch initial room status");
             throw new IllegalStateException("Failed to launch online game screen");
         }
-        loadLevel(Integer.parseInt(mapCode.substring(5)), null);
+        loadLevel(Integer.parseInt(mapCode.substring(5)), new Ball(
+                WINDOW_WIDTH / 2 - BALL_WIDTH / 2,
+                WINDOW_HEIGHT / 2 - BALL_HEIGHT / 2,
+                BALL_WIDTH,
+                BALL_HEIGHT,
+                BALL_REGION_NAME,
+                BALL_SPEED,
+                67
+        ));
         startTime = System.currentTimeMillis();
         statusPollingThread.start();
     }
@@ -90,10 +104,10 @@ public class OnlineGameScreen extends GameScreen {
     public void render(float delta) {
         super.render(delta);
         renderer.begin();
-        renderer.setFontSize(14);
+        renderer.setFontSize(24);
         synchronized (playerStates) {
             for (int i = 0; i < playerStates.size(); i++) {
-                renderer.drawText(playerStates.get(i), 50, 850 - i * 30);
+                renderer.drawText(playerStates.get(i), 1400, 400 - i * 50);
             }
         }
         renderer.setFontSize(36);
