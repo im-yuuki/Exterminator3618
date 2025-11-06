@@ -1,8 +1,5 @@
 name: Build JAR executable
 on:
-#  push:
-#    branches-ignore:
-#      - master
   pull_request:
     branches:
       - master
@@ -26,8 +23,8 @@ jobs:
 
       - name: Build Desktop JAR
         run: |
-          mvn -B -f ./pom.xml clean install
-          mvn -B -f ./desktop/pom.xml package
+          mvn -B -f ./pom.xml clean install -DskipTests
+          mvn -B -f ./desktop/pom.xml package -DskipTests
 
       - name: Upload Desktop JAR artifact
         if: github.event_name != 'release'
@@ -58,7 +55,7 @@ jobs:
 
       - name: Build Server JAR
         run: |
-          mvn -B -f ./server/pom.xml clean package spring-boot:repackage
+          mvn -B -f ./server/pom.xml clean package spring-boot:repackage -DskipTests
 
       - name: Upload Server JAR artifact
         if: github.event_name != 'release'

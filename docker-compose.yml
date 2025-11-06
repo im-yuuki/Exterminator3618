@@ -1,0 +1,41 @@
+name: exterminator3618
+
+services:
+  mysql:
+    image: mysql:9.5
+    container_name: exterminator3618-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: testpassword101
+      MYSQL_DATABASE: exterminator3618
+    # ports:
+    #   - "3306:3306/tcp"
+    volumes:
+      - exterminator3618-server-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: exterminator3618-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/exterminator3618
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: testpassword101
+      EXTERMINATOR3618_ADMIN_ALLOW-ACCESS: false
+      # EXTERMINATOR3618_ADMIN_ACCESS-TOKEN: your_admin_access_token_here
+    ports:
+      - "36018:36018/tcp"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  exterminator3618-server-data:
